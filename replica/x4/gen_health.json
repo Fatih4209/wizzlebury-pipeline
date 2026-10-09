@@ -1,0 +1,26 @@
+[
+ {
+  "metadata": {
+   "reason": "AWAITING_LIVE_API_HEALTH_CHECK"
+  },
+  "model_id": "6536ccd9-ed34-4e1b-af12-8e95dceece45",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "success_rate": null,
+  "failure_reason": null,
+  "last_checked_at": null,
+  "availability_status": "UNKNOWN",
+  "average_latency_seconds": null
+ },
+ {
+  "metadata": {
+   "reason": "AWAITING_LIVE_API_HEALTH_CHECK"
+  },
+  "model_id": "ca99e03d-40e8-4b31-8f80-258f6d5c6d69",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "success_rate": null,
+  "failure_reason": null,
+  "last_checked_at": null,
+  "availability_status": "UNKNOWN",
+  "average_latency_seconds": null
+ }
+]

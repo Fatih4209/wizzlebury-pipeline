@@ -1,0 +1,8 @@
+[
+ {
+  "key": "generation_enabled",
+  "value": false,
+  "updated_at": "2026-10-04T15:11:24.303497+00:00",
+  "description": "Master kill switch. Paid generation must not run when false."
+ }
+]

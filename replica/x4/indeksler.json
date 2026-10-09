@@ -1,0 +1,792 @@
+[
+ {
+  "ad": "approval_requests_pkey",
+  "tablo": "approval_requests",
+  "tanim": "CREATE UNIQUE INDEX approval_requests_pkey ON public.approval_requests USING btree (id)"
+ },
+ {
+  "ad": "approval_requests_token_hash_key",
+  "tablo": "approval_requests",
+  "tanim": "CREATE UNIQUE INDEX approval_requests_token_hash_key ON public.approval_requests USING btree (token_hash)"
+ },
+ {
+  "ad": "idx_approval_requests_scope",
+  "tablo": "approval_requests",
+  "tanim": "CREATE INDEX idx_approval_requests_scope ON public.approval_requests USING btree (scope_type, scope_id, status)"
+ },
+ {
+  "ad": "uq_approval_requests_one_pending",
+  "tablo": "approval_requests",
+  "tanim": "CREATE UNIQUE INDEX uq_approval_requests_one_pending ON public.approval_requests USING btree (scope_type, scope_id) WHERE (status = 'PENDING'::text)"
+ },
+ {
+  "ad": "asset_qualification_tests_pkey",
+  "tablo": "asset_qualification_tests",
+  "tanim": "CREATE UNIQUE INDEX asset_qualification_tests_pkey ON public.asset_qualification_tests USING btree (id)"
+ },
+ {
+  "ad": "asset_registry_pkey",
+  "tablo": "asset_registry",
+  "tanim": "CREATE UNIQUE INDEX asset_registry_pkey ON public.asset_registry USING btree (id)"
+ },
+ {
+  "ad": "asset_registry_series_id_asset_code_version_key",
+  "tablo": "asset_registry",
+  "tanim": "CREATE UNIQUE INDEX asset_registry_series_id_asset_code_version_key ON public.asset_registry USING btree (series_id, asset_code, version)"
+ },
+ {
+  "ad": "attempts_idempotency_key_key",
+  "tablo": "attempts",
+  "tanim": "CREATE UNIQUE INDEX attempts_idempotency_key_key ON public.attempts USING btree (idempotency_key)"
+ },
+ {
+  "ad": "attempts_pkey",
+  "tablo": "attempts",
+  "tanim": "CREATE UNIQUE INDEX attempts_pkey ON public.attempts USING btree (id)"
+ },
+ {
+  "ad": "attempts_shot_id_attempt_no_key",
+  "tablo": "attempts",
+  "tanim": "CREATE UNIQUE INDEX attempts_shot_id_attempt_no_key ON public.attempts USING btree (shot_id, attempt_no)"
+ },
+ {
+  "ad": "idx_attempts_provider_job_id",
+  "tablo": "attempts",
+  "tanim": "CREATE INDEX idx_attempts_provider_job_id ON public.attempts USING btree (provider_job_id)"
+ },
+ {
+  "ad": "idx_attempts_provider_job_unique",
+  "tablo": "attempts",
+  "tanim": "CREATE UNIQUE INDEX idx_attempts_provider_job_unique ON public.attempts USING btree (provider, provider_job_id) WHERE (provider_job_id IS NOT NULL)"
+ },
+ {
+  "ad": "idx_attempts_routing_decision_unique",
+  "tablo": "attempts",
+  "tanim": "CREATE UNIQUE INDEX idx_attempts_routing_decision_unique ON public.attempts USING btree (routing_decision_id) WHERE (routing_decision_id IS NOT NULL)"
+ },
+ {
+  "ad": "idx_attempts_shot_id",
+  "tablo": "attempts",
+  "tanim": "CREATE INDEX idx_attempts_shot_id ON public.attempts USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_attempts_status",
+  "tablo": "attempts",
+  "tanim": "CREATE INDEX idx_attempts_status ON public.attempts USING btree (status)"
+ },
+ {
+  "ad": "budgets_pkey",
+  "tablo": "budgets",
+  "tanim": "CREATE UNIQUE INDEX budgets_pkey ON public.budgets USING btree (id)"
+ },
+ {
+  "ad": "idx_budgets_type_active",
+  "tablo": "budgets",
+  "tanim": "CREATE INDEX idx_budgets_type_active ON public.budgets USING btree (budget_type, is_active)"
+ },
+ {
+  "ad": "character_outfits_character_id_outfit_code_version_key",
+  "tablo": "character_outfits",
+  "tanim": "CREATE UNIQUE INDEX character_outfits_character_id_outfit_code_version_key ON public.character_outfits USING btree (character_id, outfit_code, version)"
+ },
+ {
+  "ad": "character_outfits_pkey",
+  "tablo": "character_outfits",
+  "tanim": "CREATE UNIQUE INDEX character_outfits_pkey ON public.character_outfits USING btree (id)"
+ },
+ {
+  "ad": "characters_pkey",
+  "tablo": "characters",
+  "tanim": "CREATE UNIQUE INDEX characters_pkey ON public.characters USING btree (id)"
+ },
+ {
+  "ad": "characters_series_id_character_code_version_key",
+  "tablo": "characters",
+  "tanim": "CREATE UNIQUE INDEX characters_series_id_character_code_version_key ON public.characters USING btree (series_id, character_code, version)"
+ },
+ {
+  "ad": "cost_ledger_pkey",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE UNIQUE INDEX cost_ledger_pkey ON public.cost_ledger USING btree (id)"
+ },
+ {
+  "ad": "idx_cost_ledger_attempt_id",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE INDEX idx_cost_ledger_attempt_id ON public.cost_ledger USING btree (attempt_id)"
+ },
+ {
+  "ad": "idx_cost_ledger_episode_id",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE INDEX idx_cost_ledger_episode_id ON public.cost_ledger USING btree (episode_id)"
+ },
+ {
+  "ad": "idx_cost_ledger_shot_id",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE INDEX idx_cost_ledger_shot_id ON public.cost_ledger USING btree (shot_id)"
+ },
+ {
+  "ad": "episodes_content_id_key",
+  "tablo": "episodes",
+  "tanim": "CREATE UNIQUE INDEX episodes_content_id_key ON public.episodes USING btree (content_id)"
+ },
+ {
+  "ad": "episodes_pkey",
+  "tablo": "episodes",
+  "tanim": "CREATE UNIQUE INDEX episodes_pkey ON public.episodes USING btree (id)"
+ },
+ {
+  "ad": "idx_episodes_creative_profile_id",
+  "tablo": "episodes",
+  "tanim": "CREATE INDEX idx_episodes_creative_profile_id ON public.episodes USING btree (creative_profile_id)"
+ },
+ {
+  "ad": "idx_episodes_production_mode",
+  "tablo": "episodes",
+  "tanim": "CREATE INDEX idx_episodes_production_mode ON public.episodes USING btree (production_mode)"
+ },
+ {
+  "ad": "idx_episodes_series_id",
+  "tablo": "episodes",
+  "tanim": "CREATE INDEX idx_episodes_series_id ON public.episodes USING btree (series_id)"
+ },
+ {
+  "ad": "events_pkey",
+  "tablo": "events",
+  "tanim": "CREATE UNIQUE INDEX events_pkey ON public.events USING btree (id)"
+ },
+ {
+  "ad": "idx_events_attempt",
+  "tablo": "events",
+  "tanim": "CREATE INDEX idx_events_attempt ON public.events USING btree (attempt_id)"
+ },
+ {
+  "ad": "idx_events_created",
+  "tablo": "events",
+  "tanim": "CREATE INDEX idx_events_created ON public.events USING btree (created_at)"
+ },
+ {
+  "ad": "idx_events_episode",
+  "tablo": "events",
+  "tanim": "CREATE INDEX idx_events_episode ON public.events USING btree (episode_id)"
+ },
+ {
+  "ad": "idx_events_shot",
+  "tablo": "events",
+  "tanim": "CREATE INDEX idx_events_shot ON public.events USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_events_type",
+  "tablo": "events",
+  "tanim": "CREATE INDEX idx_events_type ON public.events USING btree (event_type)"
+ },
+ {
+  "ad": "generation_benchmark_cases_pkey",
+  "tablo": "generation_benchmark_cases",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_cases_pkey ON public.generation_benchmark_cases USING btree (id)"
+ },
+ {
+  "ad": "generation_benchmark_cases_unique_code",
+  "tablo": "generation_benchmark_cases",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_cases_unique_code ON public.generation_benchmark_cases USING btree (benchmark_run_id, case_code)"
+ },
+ {
+  "ad": "generation_benchmark_cases_unique_order",
+  "tablo": "generation_benchmark_cases",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_cases_unique_order ON public.generation_benchmark_cases USING btree (benchmark_run_id, case_order)"
+ },
+ {
+  "ad": "idx_generation_benchmark_cases_run",
+  "tablo": "generation_benchmark_cases",
+  "tanim": "CREATE INDEX idx_generation_benchmark_cases_run ON public.generation_benchmark_cases USING btree (benchmark_run_id)"
+ },
+ {
+  "ad": "generation_benchmark_job_authorizations_job_key",
+  "tablo": "generation_benchmark_job_authorizations",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_job_authorizations_job_key ON public.generation_benchmark_job_authorizations USING btree (benchmark_job_id)"
+ },
+ {
+  "ad": "generation_benchmark_job_authorizations_pkey",
+  "tablo": "generation_benchmark_job_authorizations",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_job_authorizations_pkey ON public.generation_benchmark_job_authorizations USING btree (id)"
+ },
+ {
+  "ad": "generation_benchmark_jobs_pkey",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_jobs_pkey ON public.generation_benchmark_jobs USING btree (id)"
+ },
+ {
+  "ad": "generation_benchmark_jobs_unique_attempt",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_jobs_unique_attempt ON public.generation_benchmark_jobs USING btree (benchmark_case_id, model_id, attempt_no)"
+ },
+ {
+  "ad": "idx_generation_benchmark_jobs_run",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE INDEX idx_generation_benchmark_jobs_run ON public.generation_benchmark_jobs USING btree (benchmark_run_id)"
+ },
+ {
+  "ad": "idx_generation_benchmark_jobs_status",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE INDEX idx_generation_benchmark_jobs_status ON public.generation_benchmark_jobs USING btree (status)"
+ },
+ {
+  "ad": "uq_generation_benchmark_jobs_provider_job_id",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE UNIQUE INDEX uq_generation_benchmark_jobs_provider_job_id ON public.generation_benchmark_jobs USING btree (provider_job_id) WHERE (provider_job_id IS NOT NULL)"
+ },
+ {
+  "ad": "generation_benchmark_runs_pkey",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_runs_pkey ON public.generation_benchmark_runs USING btree (id)"
+ },
+ {
+  "ad": "generation_benchmark_runs_run_code_key",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE UNIQUE INDEX generation_benchmark_runs_run_code_key ON public.generation_benchmark_runs USING btree (run_code)"
+ },
+ {
+  "ad": "idx_generation_benchmark_runs_status",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE INDEX idx_generation_benchmark_runs_status ON public.generation_benchmark_runs USING btree (status)"
+ },
+ {
+  "ad": "generation_model_benchmarks_pkey",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE UNIQUE INDEX generation_model_benchmarks_pkey ON public.generation_model_benchmarks USING btree (id)"
+ },
+ {
+  "ad": "generation_model_benchmarks_version_key",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE UNIQUE INDEX generation_model_benchmarks_version_key ON public.generation_model_benchmarks USING btree (model_id, benchmark_version)"
+ },
+ {
+  "ad": "idx_generation_model_benchmarks_model",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE INDEX idx_generation_model_benchmarks_model ON public.generation_model_benchmarks USING btree (model_id)"
+ },
+ {
+  "ad": "idx_generation_model_benchmarks_model_status",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE INDEX idx_generation_model_benchmarks_model_status ON public.generation_model_benchmarks USING btree (model_id, benchmark_status)"
+ },
+ {
+  "ad": "idx_generation_model_benchmarks_status",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE INDEX idx_generation_model_benchmarks_status ON public.generation_model_benchmarks USING btree (benchmark_status)"
+ },
+ {
+  "ad": "uq_generation_model_benchmarks_source_job",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE UNIQUE INDEX uq_generation_model_benchmarks_source_job ON public.generation_model_benchmarks USING btree (source_benchmark_job_id) WHERE (source_benchmark_job_id IS NOT NULL)"
+ },
+ {
+  "ad": "generation_model_health_pkey",
+  "tablo": "generation_model_health",
+  "tanim": "CREATE UNIQUE INDEX generation_model_health_pkey ON public.generation_model_health USING btree (model_id)"
+ },
+ {
+  "ad": "generation_model_health_history_pkey",
+  "tablo": "generation_model_health_history",
+  "tanim": "CREATE UNIQUE INDEX generation_model_health_history_pkey ON public.generation_model_health_history USING btree (id)"
+ },
+ {
+  "ad": "idx_generation_model_health_history_model_time",
+  "tablo": "generation_model_health_history",
+  "tanim": "CREATE INDEX idx_generation_model_health_history_model_time ON public.generation_model_health_history USING btree (model_id, checked_at DESC)"
+ },
+ {
+  "ad": "generation_model_pricing_pkey",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE UNIQUE INDEX generation_model_pricing_pkey ON public.generation_model_pricing USING btree (id)"
+ },
+ {
+  "ad": "generation_model_pricing_version_key",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE UNIQUE INDEX generation_model_pricing_version_key ON public.generation_model_pricing USING btree (model_id, pricing_version)"
+ },
+ {
+  "ad": "idx_generation_model_pricing_effective",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE INDEX idx_generation_model_pricing_effective ON public.generation_model_pricing USING btree (model_id, effective_from, effective_to)"
+ },
+ {
+  "ad": "idx_generation_model_pricing_model",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE INDEX idx_generation_model_pricing_model ON public.generation_model_pricing USING btree (model_id)"
+ },
+ {
+  "ad": "generation_models_pkey",
+  "tablo": "generation_models",
+  "tanim": "CREATE UNIQUE INDEX generation_models_pkey ON public.generation_models USING btree (id)"
+ },
+ {
+  "ad": "generation_models_provider_code_key",
+  "tablo": "generation_models",
+  "tanim": "CREATE UNIQUE INDEX generation_models_provider_code_key ON public.generation_models USING btree (provider_id, model_code)"
+ },
+ {
+  "ad": "idx_generation_models_media_type",
+  "tablo": "generation_models",
+  "tanim": "CREATE INDEX idx_generation_models_media_type ON public.generation_models USING btree (media_type)"
+ },
+ {
+  "ad": "idx_generation_models_provider",
+  "tablo": "generation_models",
+  "tanim": "CREATE INDEX idx_generation_models_provider ON public.generation_models USING btree (provider_id)"
+ },
+ {
+  "ad": "idx_generation_models_status",
+  "tablo": "generation_models",
+  "tanim": "CREATE INDEX idx_generation_models_status ON public.generation_models USING btree (status)"
+ },
+ {
+  "ad": "generation_outputs_attempt_output_key",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE UNIQUE INDEX generation_outputs_attempt_output_key ON public.generation_outputs USING btree (attempt_id, output_no)"
+ },
+ {
+  "ad": "generation_outputs_pkey",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE UNIQUE INDEX generation_outputs_pkey ON public.generation_outputs USING btree (id)"
+ },
+ {
+  "ad": "idx_generation_outputs_attempt",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE INDEX idx_generation_outputs_attempt ON public.generation_outputs USING btree (attempt_id)"
+ },
+ {
+  "ad": "idx_generation_outputs_one_canonical_per_shot",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE UNIQUE INDEX idx_generation_outputs_one_canonical_per_shot ON public.generation_outputs USING btree (shot_id) WHERE (is_canonical = true)"
+ },
+ {
+  "ad": "idx_generation_outputs_qc_status",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE INDEX idx_generation_outputs_qc_status ON public.generation_outputs USING btree (qc_status)"
+ },
+ {
+  "ad": "idx_generation_outputs_shot",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE INDEX idx_generation_outputs_shot ON public.generation_outputs USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_generation_outputs_status",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE INDEX idx_generation_outputs_status ON public.generation_outputs USING btree (status)"
+ },
+ {
+  "ad": "generation_policy_models_pkey",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE UNIQUE INDEX generation_policy_models_pkey ON public.generation_policy_models USING btree (id)"
+ },
+ {
+  "ad": "generation_policy_models_policy_model_key",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE UNIQUE INDEX generation_policy_models_policy_model_key ON public.generation_policy_models USING btree (policy_id, model_id)"
+ },
+ {
+  "ad": "idx_generation_policy_models_model",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE INDEX idx_generation_policy_models_model ON public.generation_policy_models USING btree (model_id)"
+ },
+ {
+  "ad": "idx_generation_policy_models_policy",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE INDEX idx_generation_policy_models_policy ON public.generation_policy_models USING btree (policy_id)"
+ },
+ {
+  "ad": "idx_generation_policy_models_role",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE INDEX idx_generation_policy_models_role ON public.generation_policy_models USING btree (policy_id, route_role, route_priority)"
+ },
+ {
+  "ad": "generation_providers_pkey",
+  "tablo": "generation_providers",
+  "tanim": "CREATE UNIQUE INDEX generation_providers_pkey ON public.generation_providers USING btree (id)"
+ },
+ {
+  "ad": "generation_providers_provider_code_key",
+  "tablo": "generation_providers",
+  "tanim": "CREATE UNIQUE INDEX generation_providers_provider_code_key ON public.generation_providers USING btree (provider_code)"
+ },
+ {
+  "ad": "idx_generation_providers_status",
+  "tablo": "generation_providers",
+  "tanim": "CREATE INDEX idx_generation_providers_status ON public.generation_providers USING btree (status)"
+ },
+ {
+  "ad": "generation_routing_decisions_pkey",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE UNIQUE INDEX generation_routing_decisions_pkey ON public.generation_routing_decisions USING btree (id)"
+ },
+ {
+  "ad": "generation_routing_decisions_shot_attempt_revision_key",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE UNIQUE INDEX generation_routing_decisions_shot_attempt_revision_key ON public.generation_routing_decisions USING btree (shot_id, attempt_no, decision_revision)"
+ },
+ {
+  "ad": "idx_generation_routing_decisions_shot",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE INDEX idx_generation_routing_decisions_shot ON public.generation_routing_decisions USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_generation_routing_decisions_status",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE INDEX idx_generation_routing_decisions_status ON public.generation_routing_decisions USING btree (decision_status)"
+ },
+ {
+  "ad": "uq_generation_routing_decisions_current_shot_attempt",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE UNIQUE INDEX uq_generation_routing_decisions_current_shot_attempt ON public.generation_routing_decisions USING btree (shot_id, attempt_no) WHERE (is_current = true)"
+ },
+ {
+  "ad": "generation_routing_policies_code_version_key",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE UNIQUE INDEX generation_routing_policies_code_version_key ON public.generation_routing_policies USING btree (policy_code, version)"
+ },
+ {
+  "ad": "generation_routing_policies_pkey",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE UNIQUE INDEX generation_routing_policies_pkey ON public.generation_routing_policies USING btree (id)"
+ },
+ {
+  "ad": "idx_generation_routing_policies_status",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE INDEX idx_generation_routing_policies_status ON public.generation_routing_policies USING btree (status)"
+ },
+ {
+  "ad": "idx_location_asset_plan_location",
+  "tablo": "location_asset_plan",
+  "tanim": "CREATE INDEX idx_location_asset_plan_location ON public.location_asset_plan USING btree (location_id)"
+ },
+ {
+  "ad": "idx_location_asset_plan_series",
+  "tablo": "location_asset_plan",
+  "tanim": "CREATE INDEX idx_location_asset_plan_series ON public.location_asset_plan USING btree (series_id)"
+ },
+ {
+  "ad": "location_asset_plan_pkey",
+  "tablo": "location_asset_plan",
+  "tanim": "CREATE UNIQUE INDEX location_asset_plan_pkey ON public.location_asset_plan USING btree (id)"
+ },
+ {
+  "ad": "location_asset_plan_series_id_location_id_asset_code_key",
+  "tablo": "location_asset_plan",
+  "tanim": "CREATE UNIQUE INDEX location_asset_plan_series_id_location_id_asset_code_key ON public.location_asset_plan USING btree (series_id, location_id, asset_code)"
+ },
+ {
+  "ad": "idx_location_relationships_from",
+  "tablo": "location_relationships",
+  "tanim": "CREATE INDEX idx_location_relationships_from ON public.location_relationships USING btree (from_location_id)"
+ },
+ {
+  "ad": "idx_location_relationships_series",
+  "tablo": "location_relationships",
+  "tanim": "CREATE INDEX idx_location_relationships_series ON public.location_relationships USING btree (series_id)"
+ },
+ {
+  "ad": "idx_location_relationships_to",
+  "tablo": "location_relationships",
+  "tanim": "CREATE INDEX idx_location_relationships_to ON public.location_relationships USING btree (to_location_id)"
+ },
+ {
+  "ad": "location_relationships_pkey",
+  "tablo": "location_relationships",
+  "tanim": "CREATE UNIQUE INDEX location_relationships_pkey ON public.location_relationships USING btree (id)"
+ },
+ {
+  "ad": "location_relationships_unique",
+  "tablo": "location_relationships",
+  "tanim": "CREATE UNIQUE INDEX location_relationships_unique ON public.location_relationships USING btree (series_id, from_location_id, to_location_id, relationship_type)"
+ },
+ {
+  "ad": "locations_pkey",
+  "tablo": "locations",
+  "tanim": "CREATE UNIQUE INDEX locations_pkey ON public.locations USING btree (id)"
+ },
+ {
+  "ad": "locations_series_id_location_code_version_key",
+  "tablo": "locations",
+  "tanim": "CREATE UNIQUE INDEX locations_series_id_location_code_version_key ON public.locations USING btree (series_id, location_code, version)"
+ },
+ {
+  "ad": "idx_production_creative_profiles_mode",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE INDEX idx_production_creative_profiles_mode ON public.production_creative_profiles USING btree (production_mode, status)"
+ },
+ {
+  "ad": "idx_production_creative_profiles_one_locked",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE UNIQUE INDEX idx_production_creative_profiles_one_locked ON public.production_creative_profiles USING btree (profile_code) WHERE (status = 'LOCKED'::text)"
+ },
+ {
+  "ad": "production_creative_profiles_code_version_key",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE UNIQUE INDEX production_creative_profiles_code_version_key ON public.production_creative_profiles USING btree (profile_code, version)"
+ },
+ {
+  "ad": "production_creative_profiles_pkey",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE UNIQUE INDEX production_creative_profiles_pkey ON public.production_creative_profiles USING btree (id)"
+ },
+ {
+  "ad": "idx_production_manifest_shots_manifest",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE INDEX idx_production_manifest_shots_manifest ON public.production_manifest_shots USING btree (manifest_id)"
+ },
+ {
+  "ad": "idx_production_manifest_shots_shot",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE INDEX idx_production_manifest_shots_shot ON public.production_manifest_shots USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_production_manifest_shots_spec",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE INDEX idx_production_manifest_shots_spec ON public.production_manifest_shots USING btree (shot_specification_id)"
+ },
+ {
+  "ad": "production_manifest_shots_manifest_order_key",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE UNIQUE INDEX production_manifest_shots_manifest_order_key ON public.production_manifest_shots USING btree (manifest_id, manifest_order)"
+ },
+ {
+  "ad": "production_manifest_shots_manifest_shot_key",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE UNIQUE INDEX production_manifest_shots_manifest_shot_key ON public.production_manifest_shots USING btree (manifest_id, shot_id)"
+ },
+ {
+  "ad": "production_manifest_shots_pkey",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE UNIQUE INDEX production_manifest_shots_pkey ON public.production_manifest_shots USING btree (id)"
+ },
+ {
+  "ad": "idx_production_manifests_episode",
+  "tablo": "production_manifests",
+  "tanim": "CREATE INDEX idx_production_manifests_episode ON public.production_manifests USING btree (episode_id)"
+ },
+ {
+  "ad": "idx_production_manifests_status",
+  "tablo": "production_manifests",
+  "tanim": "CREATE INDEX idx_production_manifests_status ON public.production_manifests USING btree (status)"
+ },
+ {
+  "ad": "production_manifests_episode_version_key",
+  "tablo": "production_manifests",
+  "tanim": "CREATE UNIQUE INDEX production_manifests_episode_version_key ON public.production_manifests USING btree (episode_id, production_version)"
+ },
+ {
+  "ad": "production_manifests_manifest_code_key",
+  "tablo": "production_manifests",
+  "tanim": "CREATE UNIQUE INDEX production_manifests_manifest_code_key ON public.production_manifests USING btree (manifest_code)"
+ },
+ {
+  "ad": "production_manifests_pkey",
+  "tablo": "production_manifests",
+  "tanim": "CREATE UNIQUE INDEX production_manifests_pkey ON public.production_manifests USING btree (id)"
+ },
+ {
+  "ad": "props_pkey",
+  "tablo": "props",
+  "tanim": "CREATE UNIQUE INDEX props_pkey ON public.props USING btree (id)"
+ },
+ {
+  "ad": "props_series_id_prop_code_version_key",
+  "tablo": "props",
+  "tanim": "CREATE UNIQUE INDEX props_series_id_prop_code_version_key ON public.props USING btree (series_id, prop_code, version)"
+ },
+ {
+  "ad": "idx_scenes_episode_id",
+  "tablo": "scenes",
+  "tanim": "CREATE INDEX idx_scenes_episode_id ON public.scenes USING btree (episode_id)"
+ },
+ {
+  "ad": "idx_scenes_location_id",
+  "tablo": "scenes",
+  "tanim": "CREATE INDEX idx_scenes_location_id ON public.scenes USING btree (location_id)"
+ },
+ {
+  "ad": "idx_scenes_state",
+  "tablo": "scenes",
+  "tanim": "CREATE INDEX idx_scenes_state ON public.scenes USING btree (state)"
+ },
+ {
+  "ad": "scenes_episode_scene_code_key",
+  "tablo": "scenes",
+  "tanim": "CREATE UNIQUE INDEX scenes_episode_scene_code_key ON public.scenes USING btree (episode_id, scene_code)"
+ },
+ {
+  "ad": "scenes_episode_scene_order_key",
+  "tablo": "scenes",
+  "tanim": "CREATE UNIQUE INDEX scenes_episode_scene_order_key ON public.scenes USING btree (episode_id, scene_order)"
+ },
+ {
+  "ad": "scenes_pkey",
+  "tablo": "scenes",
+  "tanim": "CREATE UNIQUE INDEX scenes_pkey ON public.scenes USING btree (id)"
+ },
+ {
+  "ad": "series_pkey",
+  "tablo": "series",
+  "tanim": "CREATE UNIQUE INDEX series_pkey ON public.series USING btree (id)"
+ },
+ {
+  "ad": "series_series_code_key",
+  "tablo": "series",
+  "tanim": "CREATE UNIQUE INDEX series_series_code_key ON public.series USING btree (series_code)"
+ },
+ {
+  "ad": "idx_shot_audio_character",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE INDEX idx_shot_audio_character ON public.shot_audio_productions USING btree (character_id)"
+ },
+ {
+  "ad": "idx_shot_audio_one_canonical",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE UNIQUE INDEX idx_shot_audio_one_canonical ON public.shot_audio_productions USING btree (shot_specification_id, character_id, audio_order) WHERE (is_canonical = true)"
+ },
+ {
+  "ad": "idx_shot_audio_spec",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE INDEX idx_shot_audio_spec ON public.shot_audio_productions USING btree (shot_specification_id)"
+ },
+ {
+  "ad": "idx_shot_audio_status",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE INDEX idx_shot_audio_status ON public.shot_audio_productions USING btree (status)"
+ },
+ {
+  "ad": "idx_shot_audio_voice",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE INDEX idx_shot_audio_voice ON public.shot_audio_productions USING btree (voice_identity_id)"
+ },
+ {
+  "ad": "shot_audio_productions_pkey",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE UNIQUE INDEX shot_audio_productions_pkey ON public.shot_audio_productions USING btree (id)"
+ },
+ {
+  "ad": "shot_audio_productions_spec_order_take_key",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE UNIQUE INDEX shot_audio_productions_spec_order_take_key ON public.shot_audio_productions USING btree (shot_specification_id, audio_order, take_no)"
+ },
+ {
+  "ad": "idx_shot_reference_assets_asset",
+  "tablo": "shot_reference_assets",
+  "tanim": "CREATE INDEX idx_shot_reference_assets_asset ON public.shot_reference_assets USING btree (asset_id)"
+ },
+ {
+  "ad": "idx_shot_reference_assets_spec",
+  "tablo": "shot_reference_assets",
+  "tanim": "CREATE INDEX idx_shot_reference_assets_spec ON public.shot_reference_assets USING btree (shot_specification_id)"
+ },
+ {
+  "ad": "shot_reference_assets_pkey",
+  "tablo": "shot_reference_assets",
+  "tanim": "CREATE UNIQUE INDEX shot_reference_assets_pkey ON public.shot_reference_assets USING btree (id)"
+ },
+ {
+  "ad": "shot_reference_assets_spec_asset_role_key",
+  "tablo": "shot_reference_assets",
+  "tanim": "CREATE UNIQUE INDEX shot_reference_assets_spec_asset_role_key ON public.shot_reference_assets USING btree (shot_specification_id, asset_id, reference_role)"
+ },
+ {
+  "ad": "idx_shot_specifications_one_active",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE UNIQUE INDEX idx_shot_specifications_one_active ON public.shot_specifications USING btree (shot_id) WHERE (is_active = true)"
+ },
+ {
+  "ad": "idx_shot_specifications_shot_id",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE INDEX idx_shot_specifications_shot_id ON public.shot_specifications USING btree (shot_id)"
+ },
+ {
+  "ad": "idx_shot_specifications_status",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE INDEX idx_shot_specifications_status ON public.shot_specifications USING btree (status)"
+ },
+ {
+  "ad": "shot_specifications_pkey",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE UNIQUE INDEX shot_specifications_pkey ON public.shot_specifications USING btree (id)"
+ },
+ {
+  "ad": "shot_specifications_shot_version_key",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE UNIQUE INDEX shot_specifications_shot_version_key ON public.shot_specifications USING btree (shot_id, version)"
+ },
+ {
+  "ad": "idx_shots_episode_id",
+  "tablo": "shots",
+  "tanim": "CREATE INDEX idx_shots_episode_id ON public.shots USING btree (episode_id)"
+ },
+ {
+  "ad": "idx_shots_scene_id",
+  "tablo": "shots",
+  "tanim": "CREATE INDEX idx_shots_scene_id ON public.shots USING btree (scene_id)"
+ },
+ {
+  "ad": "idx_shots_state",
+  "tablo": "shots",
+  "tanim": "CREATE INDEX idx_shots_state ON public.shots USING btree (state)"
+ },
+ {
+  "ad": "shots_episode_id_shot_code_key",
+  "tablo": "shots",
+  "tanim": "CREATE UNIQUE INDEX shots_episode_id_shot_code_key ON public.shots USING btree (episode_id, shot_code)"
+ },
+ {
+  "ad": "shots_episode_id_shot_order_key",
+  "tablo": "shots",
+  "tanim": "CREATE UNIQUE INDEX shots_episode_id_shot_order_key ON public.shots USING btree (episode_id, shot_order)"
+ },
+ {
+  "ad": "shots_pkey",
+  "tablo": "shots",
+  "tanim": "CREATE UNIQUE INDEX shots_pkey ON public.shots USING btree (id)"
+ },
+ {
+  "ad": "idx_storyboard_reviews_status",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE INDEX idx_storyboard_reviews_status ON public.storyboard_reviews USING btree (status)"
+ },
+ {
+  "ad": "storyboard_reviews_pkey",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE UNIQUE INDEX storyboard_reviews_pkey ON public.storyboard_reviews USING btree (id)"
+ },
+ {
+  "ad": "storyboard_reviews_spec_key",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE UNIQUE INDEX storyboard_reviews_spec_key ON public.storyboard_reviews USING btree (shot_specification_id)"
+ },
+ {
+  "ad": "style_bibles_pkey",
+  "tablo": "style_bibles",
+  "tanim": "CREATE UNIQUE INDEX style_bibles_pkey ON public.style_bibles USING btree (id)"
+ },
+ {
+  "ad": "style_bibles_series_id_version_key",
+  "tablo": "style_bibles",
+  "tanim": "CREATE UNIQUE INDEX style_bibles_series_id_version_key ON public.style_bibles USING btree (series_id, version)"
+ },
+ {
+  "ad": "system_flags_pkey",
+  "tablo": "system_flags",
+  "tanim": "CREATE UNIQUE INDEX system_flags_pkey ON public.system_flags USING btree (key)"
+ },
+ {
+  "ad": "system_settings_pkey",
+  "tablo": "system_settings",
+  "tanim": "CREATE UNIQUE INDEX system_settings_pkey ON public.system_settings USING btree (key)"
+ },
+ {
+  "ad": "voice_identities_character_id_voice_code_version_key",
+  "tablo": "voice_identities",
+  "tanim": "CREATE UNIQUE INDEX voice_identities_character_id_voice_code_version_key ON public.voice_identities USING btree (character_id, voice_code, version)"
+ },
+ {
+  "ad": "voice_identities_pkey",
+  "tablo": "voice_identities",
+  "tanim": "CREATE UNIQUE INDEX voice_identities_pkey ON public.voice_identities USING btree (id)"
+ }
+]

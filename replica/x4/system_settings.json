@@ -1,0 +1,8 @@
+[
+ {
+  "key": "model_health_max_age_minutes",
+  "updated_at": "2026-10-07T17:26:57.733021+00:00",
+  "description": "A paid attempt is refused when the selected model's last health check is older than this.",
+  "value_numeric": 60
+ }
+]

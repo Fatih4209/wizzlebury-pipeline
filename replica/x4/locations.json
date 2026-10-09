@@ -1,0 +1,258 @@
+[
+ {
+  "ad": "Bruce Home",
+  "kod": "LOC_BRUCE_HOME",
+  "tur": "HOME",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Bruce family home with a recognizable identity and atmosphere, distinct from all other core character homes."
+ },
+ {
+  "ad": "Bruce Room",
+  "kod": "LOC_BRUCE_ROOM",
+  "tur": "BEDROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Bruce personal room combining childhood interests, creativity, books, technology and practical project space without becoming an unrealistic laboratory."
+ },
+ {
+  "ad": "Neighborhood Cafe and Bakery",
+  "kod": "LOC_CAFE_BAKERY",
+  "tur": "CAFE",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "A warm recurring neighborhood cafe and bakery used for meetings, family scenes, conversations and friendship moments."
+ },
+ {
+  "ad": "Core Classroom",
+  "kod": "LOC_CORE_CLASSROOM",
+  "tur": "CLASSROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The primary classroom of the five core characters. Desk positions, windows, board, teacher area, doors and major landmarks must remain spatially consistent."
+ },
+ {
+  "ad": "Dance Course Studio",
+  "kod": "LOC_DANCE_STUDIO",
+  "tur": "DANCE_STUDIO",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring dance studio used for lessons, rehearsals, performances, friendships, challenges and character development."
+ },
+ {
+  "ad": "Fatih Home",
+  "kod": "LOC_FATIH_HOME",
+  "tur": "HOME",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Fatih family home. A major recurring family environment with a permanent exterior and recognizable interior identity."
+ },
+ {
+  "ad": "Fatih Room",
+  "kod": "LOC_FATIH_ROOM",
+  "tur": "BEDROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Fatih personal bedroom used for morning routines, homework, planning adventures, calls, private conversations and emotional moments."
+ },
+ {
+  "ad": "Nearby Forest",
+  "kod": "LOC_FOREST",
+  "tur": "FOREST",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "A nearby natural forest environment used for weekend adventures, exploration, mysteries and family outings."
+ },
+ {
+  "ad": "German Course",
+  "kod": "LOC_GERMAN_COURSE",
+  "tur": "COURSE_CLASSROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Recurring German language course attended by the M417 children. A bright international learning environment used for German lessons, dialogue scenes, class activities and recurring course storylines."
+ },
+ {
+  "ad": "Youth Activity & Fitness Studio",
+  "kod": "LOC_GYM",
+  "tur": "GYM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Age-appropriate activity and fitness studio for the M417 children, focused on movement, coordination, agility, balance, climbing, gymnastics and supervised physical activity."
+ },
+ {
+  "ad": "Lake and River Area",
+  "kod": "LOC_LAKE_RIVER",
+  "tur": "WATERFRONT",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "A recurring natural waterfront environment used for family outings, exploration, friendship scenes and adventures."
+ },
+ {
+  "ad": "M417 Main Neighborhood",
+  "kod": "LOC_MAIN_NEIGHBORHOOD",
+  "tur": "NEIGHBORHOOD",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The main neighborhood and visual heart of M417. It connects the homes of the core characters, school routes, parks, shops, courses, walking paths and recurring community locations."
+ },
+ {
+  "ad": "Main Street",
+  "kod": "LOC_MAIN_STREET",
+  "tur": "STREET",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recognizable main neighborhood street connecting homes, shops, school routes, courses and community locations."
+ },
+ {
+  "ad": "Neighborhood Market",
+  "kod": "LOC_MARKET",
+  "tur": "MARKET",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring local market used for everyday errands, chance encounters, small conflicts and neighborhood stories."
+ },
+ {
+  "ad": "Friends Meeting Point",
+  "kod": "LOC_MEETING_POINT",
+  "tur": "MEETING_POINT",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "A signature meeting location emotionally associated with Fatih, Mia, Ömer, Bruce and Tombik. It must become immediately recognizable to the audience."
+ },
+ {
+  "ad": "Mia Home",
+  "kod": "LOC_MIA_HOME",
+  "tur": "HOME",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Mia family home with its own recognizable architecture and warm family atmosphere, visually distinct from the other core character homes."
+ },
+ {
+  "ad": "Mia Room",
+  "kod": "LOC_MIA_ROOM",
+  "tur": "BEDROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Mia personal bedroom reflecting her energetic, expressive, stylish, affectionate and emotional personality."
+ },
+ {
+  "ad": "Mountain Area",
+  "kod": "LOC_MOUNTAINS",
+  "tur": "MOUNTAIN",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recognizable mountain landscape forming part of the wider M417 geography and used for selected family and adventure episodes."
+ },
+ {
+  "ad": "Neighborhood Night View",
+  "kod": "LOC_NEIGHBORHOOD_NIGHT",
+  "tur": "NIGHT_ENVIRONMENT",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The canonical nighttime interpretation of the main neighborhood. Geography, roads, buildings and landmarks must match the daytime M417 world."
+ },
+ {
+  "ad": "Neighborhood Park",
+  "kod": "LOC_NEIGHBORHOOD_PARK",
+  "tur": "PARK",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The principal neighborhood park where the core group meets, plays, talks and begins many small adventures."
+ },
+ {
+  "ad": "Ömer Home",
+  "kod": "LOC_OMER_HOME",
+  "tur": "HOME",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Ömer family home with its own recognizable architecture and family identity, visually distinct from the homes of the other characters."
+ },
+ {
+  "ad": "Ömer Room",
+  "kod": "LOC_OMER_ROOM",
+  "tur": "BEDROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Ömer personal bedroom reflecting his energetic, sporty, confident, loyal and competitive personality."
+ },
+ {
+  "ad": "M417 School",
+  "kod": "LOC_SCHOOL",
+  "tur": "SCHOOL",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The permanent school attended by Fatih, Mia, Ömer, Bruce and Tombik. The architecture and spatial identity must remain recognizable throughout the series."
+ },
+ {
+  "ad": "M417 School Bus",
+  "kod": "LOC_SCHOOL_BUS",
+  "tur": "VEHICLE",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The permanent exterior design of the school bus used by the core characters for recurring school transportation scenes."
+ },
+ {
+  "ad": "School Bus Interior",
+  "kod": "LOC_SCHOOL_BUS_INTERIOR",
+  "tur": "VEHICLE_INTERIOR",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The permanent interior of the M417 school bus including seats, windows, aisle, driver area and recurring seating relationships."
+ },
+ {
+  "ad": "School Canteen",
+  "kod": "LOC_SCHOOL_CANTEEN",
+  "tur": "CANTEEN",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring school cafeteria and social space used for lunch, friendship scenes, comedy and everyday school stories."
+ },
+ {
+  "ad": "School Corridor",
+  "kod": "LOC_SCHOOL_CORRIDOR",
+  "tur": "SCHOOL_INTERIOR",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring school corridor connecting classrooms and common areas, with recognizable lockers, notice boards, windows and architectural landmarks."
+ },
+ {
+  "ad": "School Yard",
+  "kod": "LOC_SCHOOL_YARD",
+  "tur": "SCHOOL_YARD",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The main outdoor school area used for breaks, sports, conversations, competitions, friendship scenes and school events."
+ },
+ {
+  "ad": "Neighborhood Sports Field",
+  "kod": "LOC_SPORTS_FIELD",
+  "tur": "SPORTS_FIELD",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring outdoor basketball and football area used for games, competitions, training and friendship scenes."
+ },
+ {
+  "ad": "Tombik Home",
+  "kod": "LOC_TOMBIK_HOME",
+  "tur": "HOME",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Tombik family home with a warm, welcoming, colorful and recognizable family atmosphere."
+ },
+ {
+  "ad": "Tombik Room",
+  "kod": "LOC_TOMBIK_ROOM",
+  "tur": "BEDROOM",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "Tombik personal bedroom reflecting his humor, warmth, hobbies and playful personality. His room must never be built around food or weight stereotypes."
+ },
+ {
+  "ad": "After-School Walking Route",
+  "kod": "LOC_WALKING_TRAIL",
+  "tur": "WALKING_ROUTE",
+  "durum": "DRAFT",
+  "surum": 1,
+  "aciklama": "The recurring scenic route used by the children after school and while walking between important neighborhood locations."
+ }
+]

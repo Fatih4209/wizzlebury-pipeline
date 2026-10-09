@@ -1,0 +1,55 @@
+[
+ {
+  "id": "6ff8b5f4-2fd9-464a-b526-a5bc51759fbd",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-05T22:35:23.541698+00:00",
+  "created_at": "2026-10-05T22:35:23.541698+00:00",
+  "updated_at": "2026-10-05T22:35:23.541698+00:00",
+  "aspect_ratio": "9:16",
+  "profile_code": "MICRO_SHORT_PREMIUM_V1",
+  "profile_name": "M417 Premium Micro Short",
+  "quality_rules": {
+   "qc_required": true,
+   "premium_visual_quality": true,
+   "camera_quality_required": true,
+   "motion_quality_required": true,
+   "anatomy_quality_required": true,
+   "face_consistency_required": true,
+   "lighting_quality_required": true,
+   "prompt_adherence_required": true,
+   "background_quality_required": true,
+   "expression_quality_required": true,
+   "failed_shot_only_regeneration": true
+  },
+  "creative_rules": {
+   "clear_visual_payoff": true,
+   "continuity_required": true,
+   "single_primary_event": true,
+   "replay_value_preferred": true,
+   "loop_potential_preferred": true,
+   "strong_first_second_hook": true,
+   "canonical_universe_required": true,
+   "character_consistency_required": true,
+   "cheap_quality_reduction_forbidden": true,
+   "unnecessary_scene_changes_forbidden": true
+  },
+  "learning_rules": {
+   "measure_replay": true,
+   "measure_retention": true,
+   "measure_hook_performance": true,
+   "measure_character_pairing": true,
+   "scale_winning_formats_only": true,
+   "measure_setting_performance": true,
+   "measure_duration_performance": true,
+   "measure_character_performance": true,
+   "measure_subscriber_conversion": true
+  },
+  "production_mode": "MICRO_SHORT",
+  "max_paid_attempts": 2,
+  "hook_deadline_seconds": 1,
+  "hard_duration_max_seconds": 15,
+  "target_duration_max_seconds": 10,
+  "target_duration_min_seconds": 6
+ }
+]

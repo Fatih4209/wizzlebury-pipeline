@@ -1,0 +1,601 @@
+table_name,column_name,data_type,udt_name,is_nullable,column_default
+approval_requests,id,uuid,uuid,NO,gen_random_uuid()
+approval_requests,scope_type,text,text,NO,null
+approval_requests,scope_id,uuid,uuid,NO,null
+approval_requests,scope_version,integer,int4,YES,null
+approval_requests,token_hash,text,text,NO,null
+approval_requests,status,text,text,NO,'PENDING'::text
+approval_requests,requested_by,text,text,NO,null
+approval_requests,summary,jsonb,jsonb,NO,'{}'::jsonb
+approval_requests,expires_at,timestamp with time zone,timestamptz,NO,null
+approval_requests,decided_at,timestamp with time zone,timestamptz,YES,null
+approval_requests,decided_by,text,text,YES,null
+approval_requests,decision_channel,text,text,YES,null
+approval_requests,decision_note,text,text,YES,null
+approval_requests,created_at,timestamp with time zone,timestamptz,NO,now()
+asset_qualification_tests,id,uuid,uuid,NO,gen_random_uuid()
+asset_qualification_tests,asset_id,uuid,uuid,NO,null
+asset_qualification_tests,test_type,text,text,NO,null
+asset_qualification_tests,provider,text,text,YES,null
+asset_qualification_tests,model,text,text,YES,null
+asset_qualification_tests,result,text,text,NO,'PENDING'::text
+asset_qualification_tests,score,numeric,numeric,YES,null
+asset_qualification_tests,notes,text,text,YES,null
+asset_qualification_tests,created_at,timestamp with time zone,timestamptz,NO,now()
+asset_qualification_tests,reviewed_at,timestamp with time zone,timestamptz,YES,null
+asset_registry,id,uuid,uuid,NO,gen_random_uuid()
+asset_registry,series_id,uuid,uuid,NO,null
+asset_registry,asset_code,text,text,NO,null
+asset_registry,asset_type,text,text,NO,null
+asset_registry,character_id,uuid,uuid,YES,null
+asset_registry,location_id,uuid,uuid,YES,null
+asset_registry,outfit_id,uuid,uuid,YES,null
+asset_registry,prop_id,uuid,uuid,YES,null
+asset_registry,voice_identity_id,uuid,uuid,YES,null
+asset_registry,storage_provider,text,text,YES,null
+asset_registry,storage_path,text,text,YES,null
+asset_registry,mime_type,text,text,YES,null
+asset_registry,checksum_sha256,text,text,YES,null
+asset_registry,metadata,jsonb,jsonb,NO,'{}'::jsonb
+asset_registry,status,text,text,NO,'DRAFT'::text
+asset_registry,version,integer,int4,NO,1
+asset_registry,locked_at,timestamp with time zone,timestamptz,YES,null
+asset_registry,created_at,timestamp with time zone,timestamptz,NO,now()
+attempts,id,uuid,uuid,NO,gen_random_uuid()
+attempts,shot_id,uuid,uuid,NO,null
+attempts,attempt_no,integer,int4,NO,null
+attempts,idempotency_key,text,text,NO,null
+attempts,provider,text,text,NO,null
+attempts,model,text,text,NO,null
+attempts,prompt_version,integer,int4,NO,null
+attempts,model_version,text,text,YES,null
+attempts,status,text,text,NO,'CREATED'::text
+attempts,provider_job_id,text,text,YES,null
+attempts,estimated_cost,numeric,numeric,NO,null
+attempts,actual_cost,numeric,numeric,YES,null
+attempts,error_code,text,text,YES,null
+attempts,error_detail,text,text,YES,null
+attempts,created_at,timestamp with time zone,timestamptz,NO,now()
+attempts,started_at,timestamp with time zone,timestamptz,YES,null
+attempts,finished_at,timestamp with time zone,timestamptz,YES,null
+attempts,last_provider_check_at,timestamp with time zone,timestamptz,YES,null
+attempts,provider_result_url,text,text,YES,null
+attempts,heartbeat_at,timestamp with time zone,timestamptz,YES,null
+attempts,recovery_count,integer,int4,NO,0
+attempts,routing_decision_id,uuid,uuid,YES,null
+attempts,monthly_budget_id,uuid,uuid,YES,null
+attempts,episode_budget_id,uuid,uuid,YES,null
+attempts,shot_budget_id,uuid,uuid,YES,null
+attempts,submission_claimed_at,timestamp with time zone,timestamptz,YES,null
+attempts,submission_claimed_by,text,text,YES,null
+budgets,id,uuid,uuid,NO,gen_random_uuid()
+budgets,budget_type,text,text,NO,null
+budgets,reference_id,uuid,uuid,YES,null
+budgets,currency,text,text,NO,'USD'::text
+budgets,hard_limit,numeric,numeric,NO,null
+budgets,reserved_amount,numeric,numeric,NO,0
+budgets,settled_amount,numeric,numeric,NO,0
+budgets,period_start,timestamp with time zone,timestamptz,YES,null
+budgets,period_end,timestamp with time zone,timestamptz,YES,null
+budgets,is_active,boolean,bool,NO,true
+budgets,created_at,timestamp with time zone,timestamptz,NO,now()
+budgets,updated_at,timestamp with time zone,timestamptz,NO,now()
+character_outfits,id,uuid,uuid,NO,gen_random_uuid()
+character_outfits,character_id,uuid,uuid,NO,null
+character_outfits,outfit_code,text,text,NO,null
+character_outfits,name,text,text,NO,null
+character_outfits,description,text,text,YES,null
+character_outfits,rules,jsonb,jsonb,NO,'{}'::jsonb
+character_outfits,status,text,text,NO,'DRAFT'::text
+character_outfits,version,integer,int4,NO,1
+character_outfits,locked_at,timestamp with time zone,timestamptz,YES,null
+character_outfits,created_at,timestamp with time zone,timestamptz,NO,now()
+characters,id,uuid,uuid,NO,gen_random_uuid()
+characters,series_id,uuid,uuid,NO,null
+characters,character_code,text,text,NO,null
+characters,name,text,text,NO,null
+characters,role_type,text,text,YES,null
+characters,age,integer,int4,YES,null
+characters,gender_identity,text,text,YES,null
+characters,personality,jsonb,jsonb,NO,'{}'::jsonb
+characters,appearance,jsonb,jsonb,NO,'{}'::jsonb
+characters,behavior_rules,jsonb,jsonb,NO,'{}'::jsonb
+characters,relationship_rules,jsonb,jsonb,NO,'{}'::jsonb
+characters,canonical_description,text,text,YES,null
+characters,status,text,text,NO,'DRAFT'::text
+characters,version,integer,int4,NO,1
+characters,locked_at,timestamp with time zone,timestamptz,YES,null
+characters,created_at,timestamp with time zone,timestamptz,NO,now()
+characters,updated_at,timestamp with time zone,timestamptz,NO,now()
+cost_ledger,id,uuid,uuid,NO,gen_random_uuid()
+cost_ledger,attempt_id,uuid,uuid,YES,null
+cost_ledger,episode_id,uuid,uuid,YES,null
+cost_ledger,shot_id,uuid,uuid,YES,null
+cost_ledger,entry_type,text,text,NO,null
+cost_ledger,amount,numeric,numeric,NO,null
+cost_ledger,currency,text,text,NO,'USD'::text
+cost_ledger,description,text,text,YES,null
+cost_ledger,created_at,timestamp with time zone,timestamptz,NO,now()
+episodes,id,uuid,uuid,NO,gen_random_uuid()
+episodes,content_id,text,text,NO,null
+episodes,series_id,uuid,uuid,NO,null
+episodes,title,text,text,YES,null
+episodes,concept,text,text,YES,null
+episodes,state,text,text,NO,'PLANNED'::text
+episodes,human_approved,boolean,bool,NO,false
+episodes,maximum_budget,numeric,numeric,YES,null
+episodes,currency,text,text,NO,'USD'::text
+episodes,created_at,timestamp with time zone,timestamptz,NO,now()
+episodes,updated_at,timestamp with time zone,timestamptz,NO,now()
+episodes,schema_version,integer,int4,NO,1
+episodes,production_version,integer,int4,NO,1
+episodes,production_authorized,boolean,bool,NO,false
+episodes,authorized_at,timestamp with time zone,timestamptz,YES,null
+episodes,production_mode,text,text,NO,'SERIES_EPISODE'::text
+episodes,creative_profile_id,uuid,uuid,YES,null
+episodes,blocked_from_state,text,text,YES,null
+events,id,uuid,uuid,NO,gen_random_uuid()
+events,event_type,text,text,NO,null
+events,episode_id,uuid,uuid,YES,null
+events,shot_id,uuid,uuid,YES,null
+events,attempt_id,uuid,uuid,YES,null
+events,severity,text,text,NO,'INFO'::text
+events,source,text,text,NO,null
+events,message,text,text,YES,null
+events,metadata,jsonb,jsonb,NO,'{}'::jsonb
+events,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_cases,id,uuid,uuid,NO,gen_random_uuid()
+generation_benchmark_cases,benchmark_run_id,uuid,uuid,NO,null
+generation_benchmark_cases,case_code,text,text,NO,null
+generation_benchmark_cases,case_order,integer,int4,NO,null
+generation_benchmark_cases,title,text,text,NO,null
+generation_benchmark_cases,generation_prompt,text,text,NO,null
+generation_benchmark_cases,negative_prompt,text,text,YES,null
+generation_benchmark_cases,duration_seconds,numeric,numeric,NO,null
+generation_benchmark_cases,aspect_ratio,text,text,NO,'16:9'::text
+generation_benchmark_cases,resolution,text,text,NO,'720p'::text
+generation_benchmark_cases,reference_metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_benchmark_cases,evaluation_profile,jsonb,jsonb,NO,'{}'::jsonb
+generation_benchmark_cases,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_job_authorizations,id,uuid,uuid,NO,gen_random_uuid()
+generation_benchmark_job_authorizations,benchmark_run_id,uuid,uuid,NO,null
+generation_benchmark_job_authorizations,benchmark_job_id,uuid,uuid,NO,null
+generation_benchmark_job_authorizations,authorization_stage,text,text,NO,null
+generation_benchmark_job_authorizations,authorization_status,text,text,NO,'PLANNED'::text
+generation_benchmark_job_authorizations,authorized_estimated_cost,numeric,numeric,NO,null
+generation_benchmark_job_authorizations,authorization_reason,text,text,NO,null
+generation_benchmark_job_authorizations,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_benchmark_job_authorizations,authorized_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_job_authorizations,consumed_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_job_authorizations,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_job_authorizations,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_jobs,id,uuid,uuid,NO,gen_random_uuid()
+generation_benchmark_jobs,benchmark_run_id,uuid,uuid,NO,null
+generation_benchmark_jobs,benchmark_case_id,uuid,uuid,NO,null
+generation_benchmark_jobs,model_id,uuid,uuid,NO,null
+generation_benchmark_jobs,pricing_id,uuid,uuid,NO,null
+generation_benchmark_jobs,attempt_no,integer,int4,NO,null
+generation_benchmark_jobs,estimated_cost,numeric,numeric,NO,null
+generation_benchmark_jobs,actual_cost,numeric,numeric,YES,null
+generation_benchmark_jobs,status,text,text,NO,'CREATED'::text
+generation_benchmark_jobs,provider_job_id,text,text,YES,null
+generation_benchmark_jobs,output_url,text,text,YES,null
+generation_benchmark_jobs,storage_path,text,text,YES,null
+generation_benchmark_jobs,error_code,text,text,YES,null
+generation_benchmark_jobs,error_detail,text,text,YES,null
+generation_benchmark_jobs,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_jobs,submitted_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_jobs,completed_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_runs,id,uuid,uuid,NO,gen_random_uuid()
+generation_benchmark_runs,run_code,text,text,NO,null
+generation_benchmark_runs,benchmark_name,text,text,NO,null
+generation_benchmark_runs,status,text,text,NO,'DRAFT'::text
+generation_benchmark_runs,hard_budget_usd,numeric,numeric,NO,null
+generation_benchmark_runs,reserved_usd,numeric,numeric,NO,0
+generation_benchmark_runs,settled_usd,numeric,numeric,NO,0
+generation_benchmark_runs,max_generation_count,integer,int4,NO,null
+generation_benchmark_runs,generation_count,integer,int4,NO,0
+generation_benchmark_runs,human_approved,boolean,bool,NO,false
+generation_benchmark_runs,approved_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_runs,started_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_runs,completed_at,timestamp with time zone,timestamptz,YES,null
+generation_benchmark_runs,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_benchmark_runs,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_benchmark_runs,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_model_benchmarks,id,uuid,uuid,NO,gen_random_uuid()
+generation_model_benchmarks,model_id,uuid,uuid,NO,null
+generation_model_benchmarks,benchmark_version,integer,int4,NO,null
+generation_model_benchmarks,benchmark_name,text,text,NO,null
+generation_model_benchmarks,benchmark_status,text,text,NO,'DRAFT'::text
+generation_model_benchmarks,continuity_score,numeric,numeric,YES,null
+generation_model_benchmarks,motion_score,numeric,numeric,YES,null
+generation_model_benchmarks,face_score,numeric,numeric,YES,null
+generation_model_benchmarks,anatomy_score,numeric,numeric,YES,null
+generation_model_benchmarks,prompt_adherence_score,numeric,numeric,YES,null
+generation_model_benchmarks,camera_score,numeric,numeric,YES,null
+generation_model_benchmarks,expression_score,numeric,numeric,YES,null
+generation_model_benchmarks,lip_sync_score,numeric,numeric,YES,null
+generation_model_benchmarks,overall_quality_score,numeric,numeric,YES,null
+generation_model_benchmarks,pass_rate,numeric,numeric,YES,null
+generation_model_benchmarks,average_generation_seconds,numeric,numeric,YES,null
+generation_model_benchmarks,sample_size,integer,int4,NO,0
+generation_model_benchmarks,test_profile,jsonb,jsonb,NO,'{}'::jsonb
+generation_model_benchmarks,notes,text,text,YES,null
+generation_model_benchmarks,tested_at,timestamp with time zone,timestamptz,YES,null
+generation_model_benchmarks,approved_at,timestamp with time zone,timestamptz,YES,null
+generation_model_benchmarks,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_model_benchmarks,source_benchmark_job_id,uuid,uuid,YES,null
+generation_model_health,model_id,uuid,uuid,NO,null
+generation_model_health,availability_status,text,text,NO,'UNKNOWN'::text
+generation_model_health,success_rate,numeric,numeric,YES,null
+generation_model_health,average_latency_seconds,numeric,numeric,YES,null
+generation_model_health,last_checked_at,timestamp with time zone,timestamptz,YES,null
+generation_model_health,failure_reason,text,text,YES,null
+generation_model_health,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_model_health,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_model_health_history,id,uuid,uuid,NO,gen_random_uuid()
+generation_model_health_history,model_id,uuid,uuid,NO,null
+generation_model_health_history,previous_status,text,text,YES,null
+generation_model_health_history,new_status,text,text,NO,null
+generation_model_health_history,check_source,text,text,NO,null
+generation_model_health_history,reason,text,text,NO,null
+generation_model_health_history,success_rate,numeric,numeric,YES,null
+generation_model_health_history,average_latency_seconds,numeric,numeric,YES,null
+generation_model_health_history,provider_http_status,integer,int4,YES,null
+generation_model_health_history,provider_request_id,text,text,YES,null
+generation_model_health_history,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_model_health_history,checked_at,timestamp with time zone,timestamptz,NO,now()
+generation_model_health_history,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_model_pricing,id,uuid,uuid,NO,gen_random_uuid()
+generation_model_pricing,model_id,uuid,uuid,NO,null
+generation_model_pricing,pricing_version,integer,int4,NO,null
+generation_model_pricing,billing_unit,text,text,NO,null
+generation_model_pricing,currency,text,text,NO,'USD'::text
+generation_model_pricing,unit_price,numeric,numeric,NO,null
+generation_model_pricing,minimum_charge,numeric,numeric,NO,0
+generation_model_pricing,effective_from,timestamp with time zone,timestamptz,NO,null
+generation_model_pricing,effective_to,timestamp with time zone,timestamptz,YES,null
+generation_model_pricing,source_reference,text,text,YES,null
+generation_model_pricing,is_verified,boolean,bool,NO,false
+generation_model_pricing,verified_at,timestamp with time zone,timestamptz,YES,null
+generation_model_pricing,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_model_pricing,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_models,id,uuid,uuid,NO,gen_random_uuid()
+generation_models,provider_id,uuid,uuid,NO,null
+generation_models,model_code,text,text,NO,null
+generation_models,display_name,text,text,NO,null
+generation_models,model_version,text,text,YES,null
+generation_models,media_type,text,text,NO,'VIDEO'::text
+generation_models,status,text,text,NO,'DISABLED'::text
+generation_models,priority,integer,int4,NO,100
+generation_models,supports_text_to_video,boolean,bool,NO,false
+generation_models,supports_image_to_video,boolean,bool,NO,false
+generation_models,supports_reference_images,boolean,bool,NO,false
+generation_models,supports_character_consistency,boolean,bool,NO,false
+generation_models,supports_camera_control,boolean,bool,NO,false
+generation_models,supports_native_audio,boolean,bool,NO,false
+generation_models,supports_lip_sync,boolean,bool,NO,false
+generation_models,supports_seed,boolean,bool,NO,false
+generation_models,min_duration_seconds,numeric,numeric,YES,null
+generation_models,max_duration_seconds,numeric,numeric,YES,null
+generation_models,supported_aspect_ratios,jsonb,jsonb,NO,'[]'::jsonb
+generation_models,supported_resolutions,jsonb,jsonb,NO,'[]'::jsonb
+generation_models,capability_metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_models,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_models,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_outputs,id,uuid,uuid,NO,gen_random_uuid()
+generation_outputs,attempt_id,uuid,uuid,NO,null
+generation_outputs,shot_id,uuid,uuid,NO,null
+generation_outputs,output_no,integer,int4,NO,1
+generation_outputs,storage_provider,text,text,YES,null
+generation_outputs,storage_path,text,text,YES,null
+generation_outputs,source_url,text,text,YES,null
+generation_outputs,mime_type,text,text,YES,null
+generation_outputs,checksum_sha256,text,text,YES,null
+generation_outputs,duration_seconds,numeric,numeric,YES,null
+generation_outputs,width,integer,int4,YES,null
+generation_outputs,height,integer,int4,YES,null
+generation_outputs,fps,numeric,numeric,YES,null
+generation_outputs,file_size_bytes,bigint,int8,YES,null
+generation_outputs,qc_status,text,text,NO,'PENDING'::text
+generation_outputs,qc_score,numeric,numeric,YES,null
+generation_outputs,qc_notes,text,text,YES,null
+generation_outputs,qc_details,jsonb,jsonb,NO,'{}'::jsonb
+generation_outputs,reviewed_at,timestamp with time zone,timestamptz,YES,null
+generation_outputs,is_canonical,boolean,bool,NO,false
+generation_outputs,canonical_at,timestamp with time zone,timestamptz,YES,null
+generation_outputs,status,text,text,NO,'REGISTERED'::text
+generation_outputs,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_outputs,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_policy_models,id,uuid,uuid,NO,gen_random_uuid()
+generation_policy_models,policy_id,uuid,uuid,NO,null
+generation_policy_models,model_id,uuid,uuid,NO,null
+generation_policy_models,route_role,text,text,NO,null
+generation_policy_models,route_priority,integer,int4,NO,100
+generation_policy_models,enabled,boolean,bool,NO,true
+generation_policy_models,minimum_quality_override,numeric,numeric,YES,null
+generation_policy_models,maximum_estimated_cost,numeric,numeric,YES,null
+generation_policy_models,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_policy_models,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_providers,id,uuid,uuid,NO,gen_random_uuid()
+generation_providers,provider_code,text,text,NO,null
+generation_providers,display_name,text,text,NO,null
+generation_providers,provider_type,text,text,NO,'VIDEO'::text
+generation_providers,status,text,text,NO,'DISABLED'::text
+generation_providers,priority,integer,int4,NO,100
+generation_providers,api_base_url,text,text,YES,null
+generation_providers,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_providers,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_providers,updated_at,timestamp with time zone,timestamptz,NO,now()
+generation_routing_decisions,id,uuid,uuid,NO,gen_random_uuid()
+generation_routing_decisions,shot_id,uuid,uuid,NO,null
+generation_routing_decisions,shot_specification_id,uuid,uuid,NO,null
+generation_routing_decisions,policy_id,uuid,uuid,NO,null
+generation_routing_decisions,attempt_no,integer,int4,NO,null
+generation_routing_decisions,selected_model_id,uuid,uuid,YES,null
+generation_routing_decisions,selected_pricing_id,uuid,uuid,YES,null
+generation_routing_decisions,route_role,text,text,YES,null
+generation_routing_decisions,estimated_cost,numeric,numeric,YES,null
+generation_routing_decisions,decision_status,text,text,NO,'PENDING'::text
+generation_routing_decisions,decision_reason,text,text,YES,null
+generation_routing_decisions,candidate_scores,jsonb,jsonb,NO,'{}'::jsonb
+generation_routing_decisions,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_routing_decisions,decision_revision,integer,int4,NO,1
+generation_routing_decisions,is_current,boolean,bool,NO,true
+generation_routing_policies,id,uuid,uuid,NO,gen_random_uuid()
+generation_routing_policies,policy_code,text,text,NO,null
+generation_routing_policies,version,integer,int4,NO,1
+generation_routing_policies,display_name,text,text,NO,null
+generation_routing_policies,status,text,text,NO,'DRAFT'::text
+generation_routing_policies,minimum_quality_score,numeric,numeric,NO,0
+generation_routing_policies,minimum_pass_rate,numeric,numeric,NO,0
+generation_routing_policies,quality_weight,numeric,numeric,NO,0.50
+generation_routing_policies,cost_weight,numeric,numeric,NO,0.30
+generation_routing_policies,reliability_weight,numeric,numeric,NO,0.15
+generation_routing_policies,latency_weight,numeric,numeric,NO,0.05
+generation_routing_policies,max_attempts,integer,int4,NO,2
+generation_routing_policies,fallback_on_second_attempt,boolean,bool,NO,true
+generation_routing_policies,require_verified_pricing,boolean,bool,NO,true
+generation_routing_policies,require_available_health,boolean,bool,NO,true
+generation_routing_policies,metadata,jsonb,jsonb,NO,'{}'::jsonb
+generation_routing_policies,approved_at,timestamp with time zone,timestamptz,YES,null
+generation_routing_policies,created_at,timestamp with time zone,timestamptz,NO,now()
+generation_routing_policies,updated_at,timestamp with time zone,timestamptz,NO,now()
+location_asset_plan,id,uuid,uuid,NO,gen_random_uuid()
+location_asset_plan,series_id,uuid,uuid,NO,null
+location_asset_plan,location_id,uuid,uuid,NO,null
+location_asset_plan,asset_code,text,text,NO,null
+location_asset_plan,asset_role,text,text,NO,null
+location_asset_plan,view_type,text,text,NO,null
+location_asset_plan,priority,text,text,NO,null
+location_asset_plan,generation_required,boolean,bool,NO,true
+location_asset_plan,production_rules,jsonb,jsonb,NO,'{}'::jsonb
+location_asset_plan,status,text,text,NO,'PLANNED'::text
+location_asset_plan,created_at,timestamp with time zone,timestamptz,NO,now()
+location_relationships,id,uuid,uuid,NO,gen_random_uuid()
+location_relationships,series_id,uuid,uuid,NO,null
+location_relationships,from_location_id,uuid,uuid,NO,null
+location_relationships,to_location_id,uuid,uuid,NO,null
+location_relationships,relationship_type,text,text,NO,null
+location_relationships,approximate_travel_minutes,integer,int4,YES,null
+location_relationships,travel_mode,text,text,YES,null
+location_relationships,geography_rules,jsonb,jsonb,NO,'{}'::jsonb
+location_relationships,created_at,timestamp with time zone,timestamptz,NO,now()
+locations,id,uuid,uuid,NO,gen_random_uuid()
+locations,series_id,uuid,uuid,NO,null
+locations,location_code,text,text,NO,null
+locations,name,text,text,NO,null
+locations,location_type,text,text,YES,null
+locations,canonical_description,text,text,YES,null
+locations,visual_rules,jsonb,jsonb,NO,'{}'::jsonb
+locations,lighting_rules,jsonb,jsonb,NO,'{}'::jsonb
+locations,continuity_rules,jsonb,jsonb,NO,'{}'::jsonb
+locations,status,text,text,NO,'DRAFT'::text
+locations,version,integer,int4,NO,1
+locations,locked_at,timestamp with time zone,timestamptz,YES,null
+locations,created_at,timestamp with time zone,timestamptz,NO,now()
+locations,updated_at,timestamp with time zone,timestamptz,NO,now()
+production_creative_profiles,id,uuid,uuid,NO,gen_random_uuid()
+production_creative_profiles,profile_code,text,text,NO,null
+production_creative_profiles,version,integer,int4,NO,null
+production_creative_profiles,production_mode,text,text,NO,null
+production_creative_profiles,profile_name,text,text,NO,null
+production_creative_profiles,status,text,text,NO,'DRAFT'::text
+production_creative_profiles,aspect_ratio,text,text,NO,null
+production_creative_profiles,target_duration_min_seconds,numeric,numeric,NO,null
+production_creative_profiles,target_duration_max_seconds,numeric,numeric,NO,null
+production_creative_profiles,hard_duration_max_seconds,numeric,numeric,NO,null
+production_creative_profiles,hook_deadline_seconds,numeric,numeric,NO,null
+production_creative_profiles,max_paid_attempts,integer,int4,NO,null
+production_creative_profiles,creative_rules,jsonb,jsonb,NO,'{}'::jsonb
+production_creative_profiles,quality_rules,jsonb,jsonb,NO,'{}'::jsonb
+production_creative_profiles,learning_rules,jsonb,jsonb,NO,'{}'::jsonb
+production_creative_profiles,locked_at,timestamp with time zone,timestamptz,YES,null
+production_creative_profiles,created_at,timestamp with time zone,timestamptz,NO,now()
+production_creative_profiles,updated_at,timestamp with time zone,timestamptz,NO,now()
+production_manifest_shots,id,uuid,uuid,NO,gen_random_uuid()
+production_manifest_shots,manifest_id,uuid,uuid,NO,null
+production_manifest_shots,shot_id,uuid,uuid,NO,null
+production_manifest_shots,shot_specification_id,uuid,uuid,NO,null
+production_manifest_shots,manifest_order,integer,int4,NO,null
+production_manifest_shots,created_at,timestamp with time zone,timestamptz,NO,now()
+production_manifests,id,uuid,uuid,NO,gen_random_uuid()
+production_manifests,episode_id,uuid,uuid,NO,null
+production_manifests,production_version,integer,int4,NO,1
+production_manifests,manifest_code,text,text,NO,null
+production_manifests,status,text,text,NO,'DRAFT'::text
+production_manifests,human_approved,boolean,bool,NO,false
+production_manifests,locked_at,timestamp with time zone,timestamptz,YES,null
+production_manifests,created_at,timestamp with time zone,timestamptz,NO,now()
+production_manifests,updated_at,timestamp with time zone,timestamptz,NO,now()
+production_manifests,pilot_shot_id,uuid,uuid,NO,null
+props,id,uuid,uuid,NO,gen_random_uuid()
+props,series_id,uuid,uuid,NO,null
+props,prop_code,text,text,NO,null
+props,name,text,text,NO,null
+props,canonical_description,text,text,YES,null
+props,visual_rules,jsonb,jsonb,NO,'{}'::jsonb
+props,status,text,text,NO,'DRAFT'::text
+props,version,integer,int4,NO,1
+props,locked_at,timestamp with time zone,timestamptz,YES,null
+props,created_at,timestamp with time zone,timestamptz,NO,now()
+scenes,id,uuid,uuid,NO,gen_random_uuid()
+scenes,episode_id,uuid,uuid,NO,null
+scenes,scene_code,text,text,NO,null
+scenes,scene_order,integer,int4,NO,null
+scenes,title,text,text,YES,null
+scenes,description,text,text,YES,null
+scenes,location_id,uuid,uuid,YES,null
+scenes,time_of_day,text,text,YES,null
+scenes,story_purpose,text,text,YES,null
+scenes,emotional_tone,text,text,YES,null
+scenes,estimated_duration_seconds,numeric,numeric,YES,null
+scenes,state,text,text,NO,'PLANNED'::text
+scenes,schema_version,integer,int4,NO,1
+scenes,created_at,timestamp with time zone,timestamptz,NO,now()
+scenes,updated_at,timestamp with time zone,timestamptz,NO,now()
+series,id,uuid,uuid,NO,gen_random_uuid()
+series,series_code,text,text,NO,null
+series,name,text,text,NO,null
+series,target_audience,text,text,YES,null
+series,target_age_min,integer,int4,YES,null
+series,target_age_max,integer,int4,YES,null
+series,primary_language,text,text,NO,'en'::text
+series,premise,text,text,YES,null
+series,world_rules,jsonb,jsonb,NO,'{}'::jsonb
+series,creative_rules,jsonb,jsonb,NO,'{}'::jsonb
+series,forbidden_rules,jsonb,jsonb,NO,'{}'::jsonb
+series,status,text,text,NO,'DRAFT'::text
+series,version,integer,int4,NO,1
+series,locked_at,timestamp with time zone,timestamptz,YES,null
+series,created_at,timestamp with time zone,timestamptz,NO,now()
+series,updated_at,timestamp with time zone,timestamptz,NO,now()
+shot_audio_productions,id,uuid,uuid,NO,gen_random_uuid()
+shot_audio_productions,shot_specification_id,uuid,uuid,NO,null
+shot_audio_productions,character_id,uuid,uuid,NO,null
+shot_audio_productions,voice_identity_id,uuid,uuid,NO,null
+shot_audio_productions,audio_order,integer,int4,NO,1
+shot_audio_productions,dialogue_text,text,text,NO,null
+shot_audio_productions,language,text,text,NO,'en'::text
+shot_audio_productions,provider,text,text,YES,null
+shot_audio_productions,model,text,text,YES,null
+shot_audio_productions,provider_job_id,text,text,YES,null
+shot_audio_productions,storage_provider,text,text,YES,null
+shot_audio_productions,storage_path,text,text,YES,null
+shot_audio_productions,source_url,text,text,YES,null
+shot_audio_productions,mime_type,text,text,YES,null
+shot_audio_productions,checksum_sha256,text,text,YES,null
+shot_audio_productions,duration_seconds,numeric,numeric,YES,null
+shot_audio_productions,start_offset_seconds,numeric,numeric,NO,0
+shot_audio_productions,end_offset_seconds,numeric,numeric,YES,null
+shot_audio_productions,lip_sync_required,boolean,bool,NO,true
+shot_audio_productions,lip_sync_status,text,text,NO,'PENDING'::text
+shot_audio_productions,timing_metadata,jsonb,jsonb,NO,'{}'::jsonb
+shot_audio_productions,qc_status,text,text,NO,'PENDING'::text
+shot_audio_productions,qc_score,numeric,numeric,YES,null
+shot_audio_productions,qc_notes,text,text,YES,null
+shot_audio_productions,reviewed_at,timestamp with time zone,timestamptz,YES,null
+shot_audio_productions,status,text,text,NO,'PLANNED'::text
+shot_audio_productions,is_canonical,boolean,bool,NO,false
+shot_audio_productions,canonical_at,timestamp with time zone,timestamptz,YES,null
+shot_audio_productions,created_at,timestamp with time zone,timestamptz,NO,now()
+shot_audio_productions,updated_at,timestamp with time zone,timestamptz,NO,now()
+shot_audio_productions,take_no,integer,int4,NO,1
+shot_reference_assets,id,uuid,uuid,NO,gen_random_uuid()
+shot_reference_assets,shot_specification_id,uuid,uuid,NO,null
+shot_reference_assets,asset_id,uuid,uuid,NO,null
+shot_reference_assets,reference_role,text,text,NO,null
+shot_reference_assets,reference_order,integer,int4,NO,1
+shot_reference_assets,is_required,boolean,bool,NO,true
+shot_reference_assets,usage_notes,text,text,YES,null
+shot_reference_assets,created_at,timestamp with time zone,timestamptz,NO,now()
+shot_specifications,id,uuid,uuid,NO,gen_random_uuid()
+shot_specifications,shot_id,uuid,uuid,NO,null
+shot_specifications,version,integer,int4,NO,1
+shot_specifications,is_active,boolean,bool,NO,true
+shot_specifications,narrative_action,text,text,NO,null
+shot_specifications,dialogue,text,text,YES,null
+shot_specifications,emotion,text,text,YES,null
+shot_specifications,shot_size,text,text,NO,null
+shot_specifications,camera_angle,text,text,YES,null
+shot_specifications,camera_movement,text,text,YES,null
+shot_specifications,duration_seconds,numeric,numeric,NO,null
+shot_specifications,generation_prompt,text,text,NO,null
+shot_specifications,negative_prompt,text,text,YES,null
+shot_specifications,aspect_ratio,text,text,NO,'16:9'::text
+shot_specifications,fps,integer,int4,NO,24
+shot_specifications,resolution,text,text,NO,'1920x1080'::text
+shot_specifications,character_codes,jsonb,jsonb,NO,'[]'::jsonb
+shot_specifications,required_asset_codes,jsonb,jsonb,NO,'[]'::jsonb
+shot_specifications,continuity_notes,text,text,YES,null
+shot_specifications,audio_required,boolean,bool,NO,false
+shot_specifications,voice_required,boolean,bool,NO,false
+shot_specifications,preferred_provider,text,text,YES,null
+shot_specifications,preferred_model,text,text,YES,null
+shot_specifications,status,text,text,NO,'DRAFT'::text
+shot_specifications,locked_at,timestamp with time zone,timestamptz,YES,null
+shot_specifications,created_at,timestamp with time zone,timestamptz,NO,now()
+shot_specifications,updated_at,timestamp with time zone,timestamptz,NO,now()
+shots,id,uuid,uuid,NO,gen_random_uuid()
+shots,episode_id,uuid,uuid,NO,null
+shots,shot_code,text,text,NO,null
+shots,shot_order,integer,int4,NO,null
+shots,state,text,text,NO,'PLANNED'::text
+shots,prompt_version,integer,int4,NO,1
+shots,asset_version,integer,int4,NO,1
+shots,model_version,text,text,YES,null
+shots,maximum_budget,numeric,numeric,YES,null
+shots,currency,text,text,NO,'USD'::text
+shots,locked_at,timestamp with time zone,timestamptz,YES,null
+shots,created_at,timestamp with time zone,timestamptz,NO,now()
+shots,updated_at,timestamp with time zone,timestamptz,NO,now()
+shots,schema_version,integer,int4,NO,1
+shots,scene_id,uuid,uuid,YES,null
+storyboard_reviews,id,uuid,uuid,NO,gen_random_uuid()
+storyboard_reviews,shot_specification_id,uuid,uuid,NO,null
+storyboard_reviews,storyboard_asset_id,uuid,uuid,YES,null
+storyboard_reviews,status,text,text,NO,'PENDING'::text
+storyboard_reviews,reviewer_type,text,text,YES,null
+storyboard_reviews,score,numeric,numeric,YES,null
+storyboard_reviews,notes,text,text,YES,null
+storyboard_reviews,reviewed_at,timestamp with time zone,timestamptz,YES,null
+storyboard_reviews,created_at,timestamp with time zone,timestamptz,NO,now()
+storyboard_reviews,updated_at,timestamp with time zone,timestamptz,NO,now()
+style_bibles,id,uuid,uuid,NO,gen_random_uuid()
+style_bibles,series_id,uuid,uuid,NO,null
+style_bibles,version,integer,int4,NO,1
+style_bibles,visual_style,text,text,YES,null
+style_bibles,color_language,text,text,YES,null
+style_bibles,lighting_language,text,text,YES,null
+style_bibles,camera_language,text,text,YES,null
+style_bibles,texture_language,text,text,YES,null
+style_bibles,animation_language,text,text,YES,null
+style_bibles,negative_rules,jsonb,jsonb,NO,'[]'::jsonb
+style_bibles,technical_rules,jsonb,jsonb,NO,'{}'::jsonb
+style_bibles,status,text,text,NO,'DRAFT'::text
+style_bibles,locked_at,timestamp with time zone,timestamptz,YES,null
+style_bibles,created_at,timestamp with time zone,timestamptz,NO,now()
+style_bibles,updated_at,timestamp with time zone,timestamptz,NO,now()
+system_flags,key,text,text,NO,null
+system_flags,value,boolean,bool,NO,null
+system_flags,description,text,text,YES,null
+system_flags,updated_at,timestamp with time zone,timestamptz,NO,now()
+system_settings,key,text,text,NO,null
+system_settings,value_numeric,numeric,numeric,NO,null
+system_settings,description,text,text,YES,null
+system_settings,updated_at,timestamp with time zone,timestamptz,NO,now()
+voice_identities,id,uuid,uuid,NO,gen_random_uuid()
+voice_identities,character_id,uuid,uuid,NO,null
+voice_identities,voice_code,text,text,NO,null
+voice_identities,provider,text,text,YES,null
+voice_identities,provider_voice_id,text,text,YES,null
+voice_identities,language,text,text,NO,'en'::text
+voice_identities,voice_description,text,text,YES,null
+voice_identities,speech_rate,numeric,numeric,YES,null
+voice_identities,energy_level,text,text,YES,null
+voice_identities,pronunciation_rules,jsonb,jsonb,NO,'{}'::jsonb
+voice_identities,emotion_rules,jsonb,jsonb,NO,'{}'::jsonb
+voice_identities,status,text,text,NO,'DRAFT'::text
+voice_identities,version,integer,int4,NO,1
+voice_identities,locked_at,timestamp with time zone,timestamptz,YES,null
+voice_identities,created_at,timestamp with time zone,timestamptz,NO,now()

@@ -1,0 +1,166 @@
+[
+ {
+  "id": "0c43d57f-2856-442f-bdf6-710c93b2ff14",
+  "status": "LOCKED",
+  "version": 1,
+  "language": "en",
+  "provider": "fish_audio",
+  "locked_at": "2026-10-05T18:06:10.554464+00:00",
+  "created_at": "2026-10-04T23:14:00.674414+00:00",
+  "voice_code": "VOICE_BRUCE_V1",
+  "speech_rate": 0.96,
+  "character_id": "d58b3a5f-45bd-45bd-96d0-783d148a3494",
+  "energy_level": "MEDIUM",
+  "emotion_rules": {
+   "sad": "quiet_warm_vulnerable",
+   "happy": "subtle_brightening",
+   "excited": "controlled_but_clearly_energized",
+   "worried": "slightly_faster_and_less_certain",
+   "baseline": "calm_thoughtful_warm",
+   "thinking": "measured_precise_with_natural_pauses",
+   "dry_humor": "understated_childlike_deadpan",
+   "surprised": "brief_break_from_usual_control"
+  },
+  "provider_voice_id": "1f621eebdee945a4b10470448aa5b286",
+  "voice_description": "11-year-old boy. Calm, intelligent, observant and quietly funny. Clear youthful voice with thoughtful pacing and subtle dry humor. Must remain emotionally alive and childlike, never robotic, emotionless or stereotyped.",
+  "pronunciation_rules": {
+   "age_voice": "child_11",
+   "natural_delivery": true,
+   "adult_voice_forbidden": true,
+   "robotic_delivery_forbidden": true,
+   "preserve_name_pronunciations": true,
+   "stereotyped_accent_forbidden": true
+  }
+ },
+ {
+  "id": "0f9e64fc-8908-4fb1-b2d7-d9f87c4ea084",
+  "status": "LOCKED",
+  "version": 1,
+  "language": "en",
+  "provider": "fish_audio",
+  "locked_at": "2026-10-05T18:06:10.554464+00:00",
+  "created_at": "2026-10-04T23:14:00.674414+00:00",
+  "voice_code": "VOICE_FATIH_V1",
+  "speech_rate": 1,
+  "character_id": "8db37ffe-765a-4eef-9f80-165bfc26225a",
+  "energy_level": "HIGH",
+  "emotion_rules": {
+   "sad": "soft_emotional_without_melodrama",
+   "fear": "audible_tension_while_remaining_youthful",
+   "angry": "firm_childlike_not_aggressive_adult",
+   "happy": "bright_playful",
+   "excited": "faster_energetic_but_clear",
+   "worried": "slightly_quieter_with_real_vulnerability",
+   "baseline": "warm_confident_energetic",
+   "determined": "focused_confident"
+  },
+  "provider_voice_id": "0c0f9d7d87e44e2dabb53ebb092f5f53",
+  "voice_description": "11-year-old boy. Warm, charismatic and naturally confident. Clear youthful tone with adventurous energy. Must sound like a real expressive child, never like an adult narrator or exaggerated cartoon hero.",
+  "pronunciation_rules": {
+   "age_voice": "child_11",
+   "natural_delivery": true,
+   "adult_voice_forbidden": true,
+   "preserve_name_pronunciations": true,
+   "overacted_cartoon_voice_forbidden": true
+  }
+ },
+ {
+  "id": "5bb973e2-835b-4429-bf62-8886ec7530c0",
+  "status": "LOCKED",
+  "version": 1,
+  "language": "en",
+  "provider": "fish_audio",
+  "locked_at": "2026-10-05T18:06:10.554464+00:00",
+  "created_at": "2026-10-04T23:14:00.674414+00:00",
+  "voice_code": "VOICE_MIA_V1",
+  "speech_rate": 1.03,
+  "character_id": "177e5aee-46fc-4c11-8616-944331e5ad26",
+  "energy_level": "HIGH",
+  "emotion_rules": {
+   "sad": "emotionally_open_soft_possible_crying_texture",
+   "angry": "direct_stubborn_expressive",
+   "happy": "open_contagious_happiness",
+   "excited": "bubbly_fast_energetic",
+   "worried": "softened_energy_with_clear_concern",
+   "baseline": "warm_bright_playful",
+   "stubborn": "firm_resolute",
+   "affectionate": "gentle_warm"
+  },
+  "provider_voice_id": "6dc11f3f67a543f6ad4537a4a347e224",
+  "voice_description": "11-year-old girl. Warm, bright, energetic and highly expressive. Naturally joyful with strong emotional range. Must remain youthful and authentic, never babyish, overly cute or adult-sounding.",
+  "pronunciation_rules": {
+   "age_voice": "child_11",
+   "natural_delivery": true,
+   "baby_voice_forbidden": true,
+   "adult_voice_forbidden": true,
+   "overly_cute_voice_forbidden": true,
+   "preserve_name_pronunciations": true
+  }
+ },
+ {
+  "id": "6001ffe3-4f32-40c1-8d9a-6caefe9d16ba",
+  "status": "LOCKED",
+  "version": 1,
+  "language": "en",
+  "provider": "fish_audio",
+  "locked_at": "2026-10-05T18:06:10.554464+00:00",
+  "created_at": "2026-10-04T23:14:00.674414+00:00",
+  "voice_code": "VOICE_OMER_V1",
+  "speech_rate": 1.02,
+  "character_id": "3abc4416-6b70-4039-b1b7-e85ca7d7f9f9",
+  "energy_level": "HIGH",
+  "emotion_rules": {
+   "sad": "quiet_sincere",
+   "angry": "firm_youthful_controlled",
+   "happy": "bright_relaxed",
+   "excited": "fast_sporty_enthusiasm",
+   "worried": "energy_reduced_but_direct",
+   "baseline": "confident_friendly_energetic",
+   "competitive": "playfully_challenging",
+   "encouraging": "warm_confident_supportive"
+  },
+  "provider_voice_id": "f2bc476d171843679e78c68dbac0f5ea",
+  "voice_description": "11-year-old boy. Energetic, confident, sporty and friendly. Warm youthful voice with natural humor and enthusiasm. Must never become an adult macho voice or a stereotyped performance.",
+  "pronunciation_rules": {
+   "age_voice": "child_11",
+   "natural_delivery": true,
+   "adult_voice_forbidden": true,
+   "macho_voice_forbidden": true,
+   "preserve_name_pronunciations": true,
+   "stereotyped_delivery_forbidden": true
+  }
+ },
+ {
+  "id": "e12c56de-b31e-4e26-b572-8d445aaecf72",
+  "status": "LOCKED",
+  "version": 1,
+  "language": "en",
+  "provider": "fish_audio",
+  "locked_at": "2026-10-05T18:06:10.554464+00:00",
+  "created_at": "2026-10-04T23:14:00.674414+00:00",
+  "voice_code": "VOICE_TOMBIK_V1",
+  "speech_rate": 1.01,
+  "character_id": "b7ea173b-b814-4df8-a72a-f4733e0e546c",
+  "energy_level": "HIGH",
+  "emotion_rules": {
+   "sad": "warm_quiet_sincere",
+   "brave": "surprisingly_firm_and_heartfelt",
+   "happy": "bright_mischievous",
+   "afraid": "genuine_child_fear_with_personality_preserved",
+   "joking": "quick_natural_comic_timing",
+   "worried": "humor_may_mask_real_nervousness",
+   "baseline": "warm_playful_confident",
+   "sarcastic": "light_playful_never_cruel"
+  },
+  "provider_voice_id": "93d8eba6b108466c9a60fd15f2922bfd",
+  "voice_description": "11-year-old boy. Warm, playful, quick-witted and socially confident. Highly expressive youthful voice with excellent comic timing and genuine emotional warmth. Humor must come from timing and personality, never from body size.",
+  "pronunciation_rules": {
+   "age_voice": "child_11",
+   "natural_delivery": true,
+   "adult_voice_forbidden": true,
+   "buffoon_voice_forbidden": true,
+   "preserve_name_pronunciations": true,
+   "body_based_comedy_voice_forbidden": true
+  }
+ }
+]

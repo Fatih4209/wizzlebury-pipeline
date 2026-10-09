@@ -1,0 +1,44 @@
+[
+ {
+  "ad": "issue_graphql_placeholder",
+  "acik": "O",
+  "olay": "sql_drop",
+  "fonksiyon": "set_graphql_placeholder"
+ },
+ {
+  "ad": "pgrst_ddl_watch",
+  "acik": "O",
+  "olay": "ddl_command_end",
+  "fonksiyon": "pgrst_ddl_watch"
+ },
+ {
+  "ad": "pgrst_drop_watch",
+  "acik": "O",
+  "olay": "sql_drop",
+  "fonksiyon": "pgrst_drop_watch"
+ },
+ {
+  "ad": "issue_pg_cron_access",
+  "acik": "O",
+  "olay": "ddl_command_end",
+  "fonksiyon": "grant_pg_cron_access"
+ },
+ {
+  "ad": "issue_pg_net_access",
+  "acik": "O",
+  "olay": "ddl_command_end",
+  "fonksiyon": "grant_pg_net_access"
+ },
+ {
+  "ad": "issue_pg_graphql_access",
+  "acik": "O",
+  "olay": "ddl_command_end",
+  "fonksiyon": "grant_pg_graphql_access"
+ },
+ {
+  "ad": "ensure_rls",
+  "acik": "O",
+  "olay": "ddl_command_end",
+  "fonksiyon": "rls_auto_enable"
+ }
+]

@@ -1,0 +1,43 @@
+[
+ {
+  "id": "f27d70fb-7d47-4196-9ac8-92751d737382",
+  "currency": "USD",
+  "metadata": {
+   "audio_mode": "NATIVE_AUDIO",
+   "resolution": "1080p",
+   "verification_date": "2026-10-05"
+  },
+  "model_id": "6536ccd9-ed34-4e1b-af12-8e95dceece45",
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "unit_price": 0.12,
+  "is_verified": true,
+  "verified_at": "2026-10-05T18:35:10.054219+00:00",
+  "billing_unit": "PER_SECOND",
+  "effective_to": null,
+  "effective_from": "2026-10-05T00:00:00+00:00",
+  "minimum_charge": 0,
+  "pricing_version": 1,
+  "source_reference": "GOOGLE_GEMINI_API_OFFICIAL_PRICING_2026-10-05"
+ },
+ {
+  "id": "b0bae060-239e-4e4c-8cd5-226469b8544f",
+  "currency": "USD",
+  "metadata": {
+   "resolution": "720p",
+   "credit_price_usd": 0.01,
+   "verification_date": "2026-10-05",
+   "credits_per_second": 12
+  },
+  "model_id": "ca99e03d-40e8-4b31-8f80-258f6d5c6d69",
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "unit_price": 0.12,
+  "is_verified": true,
+  "verified_at": "2026-10-05T18:35:10.054219+00:00",
+  "billing_unit": "PER_SECOND",
+  "effective_to": null,
+  "effective_from": "2026-10-05T00:00:00+00:00",
+  "minimum_charge": 0,
+  "pricing_version": 1,
+  "source_reference": "RUNWAY_DEV_OFFICIAL_PRICING_2026-10-05"
+ }
+]

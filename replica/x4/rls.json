@@ -1,0 +1,212 @@
+[
+ {
+  "rls": true,
+  "tablo": "approval_requests",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "asset_qualification_tests",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "asset_registry",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "attempts",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "budgets",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "character_outfits",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "characters",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "cost_ledger",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "episodes",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "events",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_benchmark_cases",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_benchmark_job_authorizations",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_benchmark_jobs",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_benchmark_runs",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_model_benchmarks",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_model_health",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_model_health_history",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_model_pricing",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_models",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_outputs",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_policy_models",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_providers",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_routing_decisions",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "generation_routing_policies",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "location_asset_plan",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "location_relationships",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "locations",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "production_creative_profiles",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "production_manifest_shots",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "production_manifests",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "props",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "scenes",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "series",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "shot_audio_productions",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "shot_reference_assets",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "shot_specifications",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "shots",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "storyboard_reviews",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "style_bibles",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "system_flags",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "system_settings",
+  "zorunlu": false
+ },
+ {
+  "rls": true,
+  "tablo": "voice_identities",
+  "zorunlu": false
+ }
+]

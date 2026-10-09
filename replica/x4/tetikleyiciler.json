@@ -1,0 +1,692 @@
+[
+ {
+  "ad": "trg_protect_approval_request_delete",
+  "acik": "O",
+  "tablo": "approval_requests",
+  "tanim": "CREATE TRIGGER trg_protect_approval_request_delete BEFORE DELETE ON public.approval_requests FOR EACH ROW EXECUTE FUNCTION protect_approval_request()"
+ },
+ {
+  "ad": "trg_protect_approval_request_update",
+  "acik": "O",
+  "tablo": "approval_requests",
+  "tanim": "CREATE TRIGGER trg_protect_approval_request_update BEFORE UPDATE ON public.approval_requests FOR EACH ROW EXECUTE FUNCTION protect_approval_request()"
+ },
+ {
+  "ad": "trg_protect_locked_asset_registry",
+  "acik": "O",
+  "tablo": "asset_registry",
+  "tanim": "CREATE TRIGGER trg_protect_locked_asset_registry BEFORE UPDATE ON public.asset_registry FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_enforce_settlement_source_state",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_enforce_settlement_source_state BEFORE UPDATE OF status ON public.attempts FOR EACH ROW EXECUTE FUNCTION enforce_settlement_source_state()"
+ },
+ {
+  "ad": "trg_protect_attempt_budget_bindings",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_protect_attempt_budget_bindings BEFORE UPDATE OF monthly_budget_id, episode_budget_id, shot_budget_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION protect_attempt_budget_bindings()"
+ },
+ {
+  "ad": "trg_protect_attempt_routing_decision",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_protect_attempt_routing_decision BEFORE UPDATE OF routing_decision_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION protect_attempt_routing_decision()"
+ },
+ {
+  "ad": "trg_protect_attempt_routing_identity",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_protect_attempt_routing_identity BEFORE UPDATE OF shot_id, attempt_no, idempotency_key, provider, model, prompt_version, model_version, estimated_cost, routing_decision_id, monthly_budget_id, episode_budget_id, shot_budget_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION protect_attempt_routing_identity()"
+ },
+ {
+  "ad": "trg_protect_finalized_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_protect_finalized_attempt BEFORE UPDATE ON public.attempts FOR EACH ROW EXECUTE FUNCTION protect_finalized_attempt()"
+ },
+ {
+  "ad": "trg_require_attempt_acquisition_path",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_attempt_acquisition_path BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_attempt_acquisition_path()"
+ },
+ {
+  "ad": "trg_require_attempt_budget_bindings",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_attempt_budget_bindings BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_attempt_budget_bindings()"
+ },
+ {
+  "ad": "trg_require_attempt_insert_authorization",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_attempt_insert_authorization BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_attempt_insert_authorization()"
+ },
+ {
+  "ad": "trg_require_fresh_model_health_for_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_fresh_model_health_for_attempt BEFORE INSERT OR UPDATE OF status, routing_decision_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_fresh_model_health_for_attempt()"
+ },
+ {
+  "ad": "trg_require_mandatory_storyboard_for_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_mandatory_storyboard_for_attempt BEFORE INSERT OR UPDATE OF status, routing_decision_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_mandatory_storyboard_for_attempt()"
+ },
+ {
+  "ad": "trg_require_manifest_authorized_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_manifest_authorized_attempt BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_manifest_authorized_attempt()"
+ },
+ {
+  "ad": "trg_require_paid_generation_readiness",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_paid_generation_readiness BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_paid_generation_readiness()"
+ },
+ {
+  "ad": "trg_require_production_authorization",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_production_authorization BEFORE UPDATE OF status ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_production_authorization()"
+ },
+ {
+  "ad": "trg_require_production_pilot_gate",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_production_pilot_gate BEFORE INSERT OR UPDATE OF status, shot_id ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_production_pilot_gate()"
+ },
+ {
+  "ad": "trg_require_router_authorized_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_require_router_authorized_attempt BEFORE INSERT ON public.attempts FOR EACH ROW EXECUTE FUNCTION require_router_authorized_attempt()"
+ },
+ {
+  "ad": "trg_sync_shot_state_from_attempt",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_sync_shot_state_from_attempt AFTER UPDATE OF status ON public.attempts FOR EACH ROW EXECUTE FUNCTION sync_shot_state_from_attempt()"
+ },
+ {
+  "ad": "trg_validate_attempt_status_transition",
+  "acik": "O",
+  "tablo": "attempts",
+  "tanim": "CREATE TRIGGER trg_validate_attempt_status_transition BEFORE UPDATE OF status ON public.attempts FOR EACH ROW EXECUTE FUNCTION validate_attempt_status_transition()"
+ },
+ {
+  "ad": "trg_budgets_updated_at",
+  "acik": "O",
+  "tablo": "budgets",
+  "tanim": "CREATE TRIGGER trg_budgets_updated_at BEFORE UPDATE ON public.budgets FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_outfit",
+  "acik": "O",
+  "tablo": "character_outfits",
+  "tanim": "CREATE TRIGGER trg_protect_locked_outfit BEFORE UPDATE ON public.character_outfits FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_characters_updated_at",
+  "acik": "O",
+  "tablo": "characters",
+  "tanim": "CREATE TRIGGER trg_characters_updated_at BEFORE UPDATE ON public.characters FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_character",
+  "acik": "O",
+  "tablo": "characters",
+  "tanim": "CREATE TRIGGER trg_protect_locked_character BEFORE UPDATE ON public.characters FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_cost_ledger_no_delete",
+  "acik": "O",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE TRIGGER trg_cost_ledger_no_delete BEFORE DELETE ON public.cost_ledger FOR EACH ROW EXECUTE FUNCTION prevent_cost_ledger_mutation()"
+ },
+ {
+  "ad": "trg_cost_ledger_no_update",
+  "acik": "O",
+  "tablo": "cost_ledger",
+  "tanim": "CREATE TRIGGER trg_cost_ledger_no_update BEFORE UPDATE ON public.cost_ledger FOR EACH ROW EXECUTE FUNCTION prevent_cost_ledger_mutation()"
+ },
+ {
+  "ad": "trg_episodes_updated_at",
+  "acik": "O",
+  "tablo": "episodes",
+  "tanim": "CREATE TRIGGER trg_episodes_updated_at BEFORE UPDATE ON public.episodes FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_episode_creative_profile_binding",
+  "acik": "O",
+  "tablo": "episodes",
+  "tanim": "CREATE TRIGGER trg_protect_episode_creative_profile_binding BEFORE UPDATE OF creative_profile_id, production_mode ON public.episodes FOR EACH ROW EXECUTE FUNCTION protect_episode_creative_profile_binding()"
+ },
+ {
+  "ad": "trg_validate_episode_creative_profile",
+  "acik": "O",
+  "tablo": "episodes",
+  "tanim": "CREATE TRIGGER trg_validate_episode_creative_profile BEFORE INSERT OR UPDATE OF creative_profile_id, production_mode, state ON public.episodes FOR EACH ROW EXECUTE FUNCTION validate_episode_creative_profile()"
+ },
+ {
+  "ad": "trg_validate_episode_state_transition",
+  "acik": "O",
+  "tablo": "episodes",
+  "tanim": "CREATE TRIGGER trg_validate_episode_state_transition BEFORE UPDATE ON public.episodes FOR EACH ROW EXECUTE FUNCTION validate_episode_state_transition()"
+ },
+ {
+  "ad": "trg_validate_micro_short_episode",
+  "acik": "O",
+  "tablo": "episodes",
+  "tanim": "CREATE TRIGGER trg_validate_micro_short_episode BEFORE INSERT OR UPDATE OF production_mode, state ON public.episodes FOR EACH ROW EXECUTE FUNCTION validate_micro_short_production_mode()"
+ },
+ {
+  "ad": "trg_events_no_delete",
+  "acik": "O",
+  "tablo": "events",
+  "tanim": "CREATE TRIGGER trg_events_no_delete BEFORE DELETE ON public.events FOR EACH ROW EXECUTE FUNCTION prevent_event_mutation()"
+ },
+ {
+  "ad": "trg_events_no_update",
+  "acik": "O",
+  "tablo": "events",
+  "tanim": "CREATE TRIGGER trg_events_no_update BEFORE UPDATE ON public.events FOR EACH ROW EXECUTE FUNCTION prevent_event_mutation()"
+ },
+ {
+  "ad": "trg_protect_benchmark_authorization_identity",
+  "acik": "O",
+  "tablo": "generation_benchmark_job_authorizations",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_authorization_identity BEFORE UPDATE ON public.generation_benchmark_job_authorizations FOR EACH ROW EXECUTE FUNCTION protect_benchmark_authorization_identity()"
+ },
+ {
+  "ad": "trg_validate_benchmark_authorization_transition",
+  "acik": "O",
+  "tablo": "generation_benchmark_job_authorizations",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_authorization_transition BEFORE UPDATE OF authorization_status ON public.generation_benchmark_job_authorizations FOR EACH ROW EXECUTE FUNCTION validate_benchmark_authorization_transition()"
+ },
+ {
+  "ad": "trg_validate_benchmark_job_authorization",
+  "acik": "O",
+  "tablo": "generation_benchmark_job_authorizations",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_job_authorization BEFORE INSERT OR UPDATE ON public.generation_benchmark_job_authorizations FOR EACH ROW EXECUTE FUNCTION validate_benchmark_job_authorization()"
+ },
+ {
+  "ad": "trg_protect_benchmark_evidence_job_delete",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_evidence_job_delete BEFORE DELETE ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION protect_benchmark_evidence_job_delete()"
+ },
+ {
+  "ad": "trg_protect_benchmark_job_accounting_fields",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_job_accounting_fields BEFORE UPDATE ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION protect_benchmark_job_accounting_fields()"
+ },
+ {
+  "ad": "trg_protect_benchmark_job_delete",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_job_delete BEFORE DELETE ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION protect_finalized_benchmark_job()"
+ },
+ {
+  "ad": "trg_protect_benchmark_job_update",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_job_update BEFORE UPDATE ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION protect_finalized_benchmark_job()"
+ },
+ {
+  "ad": "trg_protect_benchmark_provider_job_id",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_provider_job_id BEFORE UPDATE OF provider_job_id ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION protect_benchmark_provider_job_id()"
+ },
+ {
+  "ad": "trg_require_benchmark_generation_enabled",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_require_benchmark_generation_enabled BEFORE INSERT OR UPDATE OF status ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION require_benchmark_generation_enabled()"
+ },
+ {
+  "ad": "trg_require_benchmark_job_authorization",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_require_benchmark_job_authorization BEFORE UPDATE OF status ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION require_benchmark_job_authorization()"
+ },
+ {
+  "ad": "trg_reserve_benchmark_job_budget_insert",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_reserve_benchmark_job_budget_insert BEFORE INSERT ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION reserve_benchmark_job_budget()"
+ },
+ {
+  "ad": "trg_reserve_benchmark_job_budget_update",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_reserve_benchmark_job_budget_update BEFORE UPDATE OF status ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION reserve_benchmark_job_budget()"
+ },
+ {
+  "ad": "trg_validate_benchmark_job_identity",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_job_identity BEFORE INSERT ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION validate_benchmark_job_identity()"
+ },
+ {
+  "ad": "trg_validate_benchmark_job_state_fields",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_job_state_fields BEFORE INSERT OR UPDATE ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION validate_benchmark_job_state_fields()"
+ },
+ {
+  "ad": "trg_validate_benchmark_job_transition",
+  "acik": "O",
+  "tablo": "generation_benchmark_jobs",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_job_transition BEFORE UPDATE OF status ON public.generation_benchmark_jobs FOR EACH ROW EXECUTE FUNCTION validate_benchmark_job_transition()"
+ },
+ {
+  "ad": "trg_generation_benchmark_runs_updated_at",
+  "acik": "O",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE TRIGGER trg_generation_benchmark_runs_updated_at BEFORE UPDATE ON public.generation_benchmark_runs FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_benchmark_run_fields",
+  "acik": "O",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE TRIGGER trg_protect_benchmark_run_fields BEFORE UPDATE ON public.generation_benchmark_runs FOR EACH ROW EXECUTE FUNCTION protect_benchmark_run_fields()"
+ },
+ {
+  "ad": "trg_validate_benchmark_run_transition",
+  "acik": "O",
+  "tablo": "generation_benchmark_runs",
+  "tanim": "CREATE TRIGGER trg_validate_benchmark_run_transition BEFORE UPDATE OF status ON public.generation_benchmark_runs FOR EACH ROW EXECUTE FUNCTION validate_benchmark_run_transition()"
+ },
+ {
+  "ad": "trg_protect_generation_benchmark_delete",
+  "acik": "O",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE TRIGGER trg_protect_generation_benchmark_delete BEFORE DELETE ON public.generation_model_benchmarks FOR EACH ROW EXECUTE FUNCTION protect_approved_generation_benchmark()"
+ },
+ {
+  "ad": "trg_protect_generation_benchmark_source_job",
+  "acik": "O",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE TRIGGER trg_protect_generation_benchmark_source_job BEFORE UPDATE OF source_benchmark_job_id ON public.generation_model_benchmarks FOR EACH ROW EXECUTE FUNCTION protect_generation_benchmark_source_job()"
+ },
+ {
+  "ad": "trg_protect_generation_benchmark_update",
+  "acik": "O",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE TRIGGER trg_protect_generation_benchmark_update BEFORE UPDATE ON public.generation_model_benchmarks FOR EACH ROW EXECUTE FUNCTION protect_approved_generation_benchmark()"
+ },
+ {
+  "ad": "trg_require_complete_approved_benchmark",
+  "acik": "O",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE TRIGGER trg_require_complete_approved_benchmark BEFORE INSERT OR UPDATE ON public.generation_model_benchmarks FOR EACH ROW EXECUTE FUNCTION require_complete_approved_benchmark()"
+ },
+ {
+  "ad": "trg_validate_generation_benchmark_evidence",
+  "acik": "O",
+  "tablo": "generation_model_benchmarks",
+  "tanim": "CREATE TRIGGER trg_validate_generation_benchmark_evidence BEFORE INSERT OR UPDATE ON public.generation_model_benchmarks FOR EACH ROW EXECUTE FUNCTION validate_generation_benchmark_evidence()"
+ },
+ {
+  "ad": "trg_generation_model_health_updated_at",
+  "acik": "O",
+  "tablo": "generation_model_health",
+  "tanim": "CREATE TRIGGER trg_generation_model_health_updated_at BEFORE UPDATE ON public.generation_model_health FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_generation_model_health_delete",
+  "acik": "O",
+  "tablo": "generation_model_health",
+  "tanim": "CREATE TRIGGER trg_protect_generation_model_health_delete BEFORE DELETE ON public.generation_model_health FOR EACH ROW EXECUTE FUNCTION protect_generation_model_health_mutation()"
+ },
+ {
+  "ad": "trg_protect_generation_model_health_insert",
+  "acik": "O",
+  "tablo": "generation_model_health",
+  "tanim": "CREATE TRIGGER trg_protect_generation_model_health_insert BEFORE INSERT ON public.generation_model_health FOR EACH ROW EXECUTE FUNCTION protect_generation_model_health_mutation()"
+ },
+ {
+  "ad": "trg_protect_generation_model_health_update",
+  "acik": "O",
+  "tablo": "generation_model_health",
+  "tanim": "CREATE TRIGGER trg_protect_generation_model_health_update BEFORE UPDATE ON public.generation_model_health FOR EACH ROW EXECUTE FUNCTION protect_generation_model_health_mutation()"
+ },
+ {
+  "ad": "trg_protect_generation_model_health_history_delete",
+  "acik": "O",
+  "tablo": "generation_model_health_history",
+  "tanim": "CREATE TRIGGER trg_protect_generation_model_health_history_delete BEFORE DELETE ON public.generation_model_health_history FOR EACH ROW EXECUTE FUNCTION protect_generation_model_health_history()"
+ },
+ {
+  "ad": "trg_protect_generation_model_health_history_update",
+  "acik": "O",
+  "tablo": "generation_model_health_history",
+  "tanim": "CREATE TRIGGER trg_protect_generation_model_health_history_update BEFORE UPDATE ON public.generation_model_health_history FOR EACH ROW EXECUTE FUNCTION protect_generation_model_health_history()"
+ },
+ {
+  "ad": "trg_prevent_overlapping_verified_model_pricing",
+  "acik": "O",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE TRIGGER trg_prevent_overlapping_verified_model_pricing BEFORE INSERT OR UPDATE ON public.generation_model_pricing FOR EACH ROW EXECUTE FUNCTION prevent_overlapping_verified_model_pricing()"
+ },
+ {
+  "ad": "trg_protect_referenced_generation_pricing_delete",
+  "acik": "O",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE TRIGGER trg_protect_referenced_generation_pricing_delete BEFORE DELETE ON public.generation_model_pricing FOR EACH ROW EXECUTE FUNCTION protect_referenced_generation_pricing()"
+ },
+ {
+  "ad": "trg_protect_referenced_generation_pricing_update",
+  "acik": "O",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE TRIGGER trg_protect_referenced_generation_pricing_update BEFORE UPDATE ON public.generation_model_pricing FOR EACH ROW EXECUTE FUNCTION protect_referenced_generation_pricing()"
+ },
+ {
+  "ad": "trg_protect_verified_generation_model_pricing_delete",
+  "acik": "O",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE TRIGGER trg_protect_verified_generation_model_pricing_delete BEFORE DELETE ON public.generation_model_pricing FOR EACH ROW EXECUTE FUNCTION protect_verified_generation_model_pricing()"
+ },
+ {
+  "ad": "trg_protect_verified_generation_model_pricing_update",
+  "acik": "O",
+  "tablo": "generation_model_pricing",
+  "tanim": "CREATE TRIGGER trg_protect_verified_generation_model_pricing_update BEFORE UPDATE ON public.generation_model_pricing FOR EACH ROW EXECUTE FUNCTION protect_verified_generation_model_pricing()"
+ },
+ {
+  "ad": "trg_generation_models_updated_at",
+  "acik": "O",
+  "tablo": "generation_models",
+  "tanim": "CREATE TRIGGER trg_generation_models_updated_at BEFORE UPDATE ON public.generation_models FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_generation_outputs_updated_at",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_generation_outputs_updated_at BEFORE UPDATE ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_prevent_canonical_generation_output_delete",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_prevent_canonical_generation_output_delete BEFORE DELETE ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION prevent_canonical_generation_output_delete()"
+ },
+ {
+  "ad": "trg_protect_canonical_generation_output",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_protect_canonical_generation_output BEFORE UPDATE ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION protect_canonical_generation_output()"
+ },
+ {
+  "ad": "trg_sync_shot_state_from_output",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_sync_shot_state_from_output AFTER INSERT ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION sync_shot_state_from_output()"
+ },
+ {
+  "ad": "trg_validate_canonical_generation_output",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_validate_canonical_generation_output BEFORE INSERT OR UPDATE ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION validate_canonical_generation_output()"
+ },
+ {
+  "ad": "trg_validate_generation_output_attempt",
+  "acik": "O",
+  "tablo": "generation_outputs",
+  "tanim": "CREATE TRIGGER trg_validate_generation_output_attempt BEFORE INSERT OR UPDATE OF attempt_id, shot_id ON public.generation_outputs FOR EACH ROW EXECUTE FUNCTION validate_generation_output_attempt()"
+ },
+ {
+  "ad": "trg_protect_policy_model_delete",
+  "acik": "O",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE TRIGGER trg_protect_policy_model_delete BEFORE DELETE ON public.generation_policy_models FOR EACH ROW EXECUTE FUNCTION protect_active_policy_model_assignment()"
+ },
+ {
+  "ad": "trg_protect_policy_model_insert",
+  "acik": "O",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE TRIGGER trg_protect_policy_model_insert BEFORE INSERT ON public.generation_policy_models FOR EACH ROW EXECUTE FUNCTION protect_active_policy_model_assignment()"
+ },
+ {
+  "ad": "trg_protect_policy_model_update",
+  "acik": "O",
+  "tablo": "generation_policy_models",
+  "tanim": "CREATE TRIGGER trg_protect_policy_model_update BEFORE UPDATE ON public.generation_policy_models FOR EACH ROW EXECUTE FUNCTION protect_active_policy_model_assignment()"
+ },
+ {
+  "ad": "trg_generation_providers_updated_at",
+  "acik": "O",
+  "tablo": "generation_providers",
+  "tanim": "CREATE TRIGGER trg_generation_providers_updated_at BEFORE UPDATE ON public.generation_providers FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_routing_decision_delete",
+  "acik": "O",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE TRIGGER trg_protect_routing_decision_delete BEFORE DELETE ON public.generation_routing_decisions FOR EACH ROW EXECUTE FUNCTION protect_finalized_routing_decision()"
+ },
+ {
+  "ad": "trg_protect_routing_decision_update",
+  "acik": "O",
+  "tablo": "generation_routing_decisions",
+  "tanim": "CREATE TRIGGER trg_protect_routing_decision_update BEFORE UPDATE ON public.generation_routing_decisions FOR EACH ROW EXECUTE FUNCTION protect_finalized_routing_decision()"
+ },
+ {
+  "ad": "trg_generation_routing_policies_updated_at",
+  "acik": "O",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE TRIGGER trg_generation_routing_policies_updated_at BEFORE UPDATE ON public.generation_routing_policies FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_routing_policy_delete",
+  "acik": "O",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE TRIGGER trg_protect_routing_policy_delete BEFORE DELETE ON public.generation_routing_policies FOR EACH ROW EXECUTE FUNCTION protect_active_generation_routing_policy()"
+ },
+ {
+  "ad": "trg_protect_routing_policy_update",
+  "acik": "O",
+  "tablo": "generation_routing_policies",
+  "tanim": "CREATE TRIGGER trg_protect_routing_policy_update BEFORE UPDATE ON public.generation_routing_policies FOR EACH ROW EXECUTE FUNCTION protect_active_generation_routing_policy()"
+ },
+ {
+  "ad": "trg_locations_updated_at",
+  "acik": "O",
+  "tablo": "locations",
+  "tanim": "CREATE TRIGGER trg_locations_updated_at BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_location",
+  "acik": "O",
+  "tablo": "locations",
+  "tanim": "CREATE TRIGGER trg_protect_locked_location BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_production_creative_profiles_updated_at",
+  "acik": "O",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE TRIGGER trg_production_creative_profiles_updated_at BEFORE UPDATE ON public.production_creative_profiles FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_creative_profile",
+  "acik": "O",
+  "tablo": "production_creative_profiles",
+  "tanim": "CREATE TRIGGER trg_protect_locked_creative_profile BEFORE DELETE OR UPDATE ON public.production_creative_profiles FOR EACH ROW EXECUTE FUNCTION protect_locked_creative_profile()"
+ },
+ {
+  "ad": "trg_protect_locked_manifest_content",
+  "acik": "O",
+  "tablo": "production_manifest_shots",
+  "tanim": "CREATE TRIGGER trg_protect_locked_manifest_content BEFORE INSERT OR DELETE OR UPDATE ON public.production_manifest_shots FOR EACH ROW EXECUTE FUNCTION protect_locked_manifest_content()"
+ },
+ {
+  "ad": "trg_production_manifests_updated_at",
+  "acik": "O",
+  "tablo": "production_manifests",
+  "tanim": "CREATE TRIGGER trg_production_manifests_updated_at BEFORE UPDATE ON public.production_manifests FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_production_manifest",
+  "acik": "O",
+  "tablo": "production_manifests",
+  "tanim": "CREATE TRIGGER trg_protect_production_manifest BEFORE UPDATE ON public.production_manifests FOR EACH ROW EXECUTE FUNCTION protect_production_manifest()"
+ },
+ {
+  "ad": "trg_validate_manifest_pilot_shot",
+  "acik": "O",
+  "tablo": "production_manifests",
+  "tanim": "CREATE TRIGGER trg_validate_manifest_pilot_shot BEFORE INSERT OR UPDATE OF pilot_shot_id, episode_id, status ON public.production_manifests FOR EACH ROW EXECUTE FUNCTION validate_manifest_pilot_shot()"
+ },
+ {
+  "ad": "trg_validate_micro_short_manifest",
+  "acik": "O",
+  "tablo": "production_manifests",
+  "tanim": "CREATE TRIGGER trg_validate_micro_short_manifest BEFORE INSERT OR UPDATE OF episode_id, pilot_shot_id, status, human_approved ON public.production_manifests FOR EACH ROW EXECUTE FUNCTION validate_micro_short_manifest()"
+ },
+ {
+  "ad": "trg_protect_locked_prop",
+  "acik": "O",
+  "tablo": "props",
+  "tanim": "CREATE TRIGGER trg_protect_locked_prop BEFORE UPDATE ON public.props FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_scenes_updated_at",
+  "acik": "O",
+  "tablo": "scenes",
+  "tanim": "CREATE TRIGGER trg_scenes_updated_at BEFORE UPDATE ON public.scenes FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_series",
+  "acik": "O",
+  "tablo": "series",
+  "tanim": "CREATE TRIGGER trg_protect_locked_series BEFORE UPDATE ON public.series FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_series_updated_at",
+  "acik": "O",
+  "tablo": "series",
+  "tanim": "CREATE TRIGGER trg_series_updated_at BEFORE UPDATE ON public.series FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_shot_audio_updated_at",
+  "acik": "O",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE TRIGGER trg_shot_audio_updated_at BEFORE UPDATE ON public.shot_audio_productions FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_validate_canonical_shot_audio",
+  "acik": "O",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE TRIGGER trg_validate_canonical_shot_audio BEFORE INSERT OR UPDATE ON public.shot_audio_productions FOR EACH ROW EXECUTE FUNCTION validate_canonical_shot_audio()"
+ },
+ {
+  "ad": "trg_validate_shot_audio_voice",
+  "acik": "O",
+  "tablo": "shot_audio_productions",
+  "tanim": "CREATE TRIGGER trg_validate_shot_audio_voice BEFORE INSERT OR UPDATE OF character_id, voice_identity_id ON public.shot_audio_productions FOR EACH ROW EXECUTE FUNCTION validate_shot_audio_voice_identity()"
+ },
+ {
+  "ad": "trg_validate_shot_reference_asset",
+  "acik": "O",
+  "tablo": "shot_reference_assets",
+  "tanim": "CREATE TRIGGER trg_validate_shot_reference_asset BEFORE INSERT OR UPDATE OF asset_id ON public.shot_reference_assets FOR EACH ROW EXECUTE FUNCTION validate_shot_reference_asset()"
+ },
+ {
+  "ad": "trg_protect_shot_specification",
+  "acik": "O",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE TRIGGER trg_protect_shot_specification BEFORE UPDATE ON public.shot_specifications FOR EACH ROW EXECUTE FUNCTION protect_shot_specification()"
+ },
+ {
+  "ad": "trg_shot_specifications_updated_at",
+  "acik": "O",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE TRIGGER trg_shot_specifications_updated_at BEFORE UPDATE ON public.shot_specifications FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_validate_micro_short_shot_specification",
+  "acik": "O",
+  "tablo": "shot_specifications",
+  "tanim": "CREATE TRIGGER trg_validate_micro_short_shot_specification BEFORE INSERT OR UPDATE OF shot_id, is_active, aspect_ratio, duration_seconds, status ON public.shot_specifications FOR EACH ROW EXECUTE FUNCTION validate_micro_short_production_mode()"
+ },
+ {
+  "ad": "trg_protect_locked_shot",
+  "acik": "O",
+  "tablo": "shots",
+  "tanim": "CREATE TRIGGER trg_protect_locked_shot BEFORE UPDATE ON public.shots FOR EACH ROW EXECUTE FUNCTION protect_locked_shot()"
+ },
+ {
+  "ad": "trg_shots_updated_at",
+  "acik": "O",
+  "tablo": "shots",
+  "tanim": "CREATE TRIGGER trg_shots_updated_at BEFORE UPDATE ON public.shots FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_validate_shot_state_transition",
+  "acik": "O",
+  "tablo": "shots",
+  "tanim": "CREATE TRIGGER trg_validate_shot_state_transition BEFORE UPDATE OF state ON public.shots FOR EACH ROW EXECUTE FUNCTION validate_shot_state_transition()"
+ },
+ {
+  "ad": "trg_enforce_storyboard_review_integrity",
+  "acik": "O",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE TRIGGER trg_enforce_storyboard_review_integrity BEFORE INSERT OR UPDATE OF status, storyboard_asset_id, reviewed_at, reviewer_type ON public.storyboard_reviews FOR EACH ROW EXECUTE FUNCTION enforce_storyboard_review_integrity()"
+ },
+ {
+  "ad": "trg_prevent_approved_storyboard_review_delete",
+  "acik": "O",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE TRIGGER trg_prevent_approved_storyboard_review_delete BEFORE DELETE ON public.storyboard_reviews FOR EACH ROW EXECUTE FUNCTION prevent_approved_storyboard_review_delete()"
+ },
+ {
+  "ad": "trg_protect_approved_storyboard_review",
+  "acik": "O",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE TRIGGER trg_protect_approved_storyboard_review BEFORE UPDATE ON public.storyboard_reviews FOR EACH ROW EXECUTE FUNCTION protect_approved_storyboard_review()"
+ },
+ {
+  "ad": "trg_storyboard_reviews_updated_at",
+  "acik": "O",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE TRIGGER trg_storyboard_reviews_updated_at BEFORE UPDATE ON public.storyboard_reviews FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_validate_storyboard_asset",
+  "acik": "O",
+  "tablo": "storyboard_reviews",
+  "tanim": "CREATE TRIGGER trg_validate_storyboard_asset BEFORE INSERT OR UPDATE OF storyboard_asset_id ON public.storyboard_reviews FOR EACH ROW EXECUTE FUNCTION validate_storyboard_asset()"
+ },
+ {
+  "ad": "trg_protect_locked_style",
+  "acik": "O",
+  "tablo": "style_bibles",
+  "tanim": "CREATE TRIGGER trg_protect_locked_style BEFORE UPDATE ON public.style_bibles FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ },
+ {
+  "ad": "trg_style_bibles_updated_at",
+  "acik": "O",
+  "tablo": "style_bibles",
+  "tanim": "CREATE TRIGGER trg_style_bibles_updated_at BEFORE UPDATE ON public.style_bibles FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_system_flags_updated_at",
+  "acik": "O",
+  "tablo": "system_flags",
+  "tanim": "CREATE TRIGGER trg_system_flags_updated_at BEFORE UPDATE ON public.system_flags FOR EACH ROW EXECUTE FUNCTION set_updated_at()"
+ },
+ {
+  "ad": "trg_protect_locked_voice",
+  "acik": "O",
+  "tablo": "voice_identities",
+  "tanim": "CREATE TRIGGER trg_protect_locked_voice BEFORE UPDATE ON public.voice_identities FOR EACH ROW EXECUTE FUNCTION prevent_locked_asset_mutation()"
+ }
+]

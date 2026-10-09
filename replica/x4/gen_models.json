@@ -1,0 +1,76 @@
+[
+ {
+  "id": "6536ccd9-ed34-4e1b-af12-8e95dceece45",
+  "status": "TESTING",
+  "priority": 100,
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "media_type": "VIDEO",
+  "model_code": "veo-3.1-fast-generate-preview",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "provider_id": "bb8d525d-0eba-42ab-9ea0-cdb7878a9f99",
+  "display_name": "Veo 3.1 Fast",
+  "model_version": "3.1",
+  "supports_seed": false,
+  "supports_lip_sync": false,
+  "capability_metadata": {
+   "native_audio": true,
+   "verification_date": "2026-10-05",
+   "verification_status": "OFFICIAL_SOURCE_VERIFIED",
+   "reference_image_limit": 3
+  },
+  "max_duration_seconds": 8,
+  "min_duration_seconds": 8,
+  "supported_resolutions": [
+   "720p",
+   "1080p",
+   "4K"
+  ],
+  "supports_native_audio": true,
+  "supports_text_to_video": true,
+  "supported_aspect_ratios": [
+   "16:9",
+   "9:16"
+  ],
+  "supports_camera_control": true,
+  "supports_image_to_video": true,
+  "supports_reference_images": true,
+  "supports_character_consistency": false
+ },
+ {
+  "id": "ca99e03d-40e8-4b31-8f80-258f6d5c6d69",
+  "status": "TESTING",
+  "priority": 100,
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "media_type": "VIDEO",
+  "model_code": "gen4.5",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "provider_id": "6e4ed3cc-0c8c-4331-9217-e131ef4ff8d7",
+  "display_name": "Runway Gen-4.5",
+  "model_version": "4.5",
+  "supports_seed": true,
+  "supports_lip_sync": false,
+  "capability_metadata": {
+   "credit_price_usd": 0.01,
+   "verification_date": "2026-10-05",
+   "credits_per_second": 12,
+   "verification_status": "OFFICIAL_SOURCE_VERIFIED"
+  },
+  "max_duration_seconds": 10,
+  "min_duration_seconds": 2,
+  "supported_resolutions": [
+   "720p"
+  ],
+  "supports_native_audio": false,
+  "supports_text_to_video": true,
+  "supported_aspect_ratios": [
+   "16:9",
+   "9:16",
+   "4:3",
+   "1:1"
+  ],
+  "supports_camera_control": true,
+  "supports_image_to_video": true,
+  "supports_reference_images": false,
+  "supports_character_consistency": false
+ }
+]

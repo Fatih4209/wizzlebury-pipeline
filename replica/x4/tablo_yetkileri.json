@@ -1,0 +1,307 @@
+[
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_benchmark_cases"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_benchmarks"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_health_history"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_models"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_outputs"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_policy_models"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_providers"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_routing_policies"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_asset_plan"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_relationships"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "production_manifest_shots"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "scenes"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_audio_productions"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_reference_assets"
+ },
+ {
+  "grantee": "anon",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "storyboard_reviews"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_benchmark_cases"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_benchmarks"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_health_history"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_models"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_outputs"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_policy_models"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_providers"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_routing_policies"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_asset_plan"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_relationships"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "production_manifest_shots"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "scenes"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_audio_productions"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_reference_assets"
+ },
+ {
+  "grantee": "authenticated",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "storyboard_reviews"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "DELETE,INSERT,REFERENCES,SELECT,TRIGGER,TRUNCATE,UPDATE",
+  "table_name": "approval_requests"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "asset_qualification_tests"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "asset_registry"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "SELECT",
+  "table_name": "attempts"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "SELECT",
+  "table_name": "budgets"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "character_outfits"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "characters"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "SELECT",
+  "table_name": "cost_ledger"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "events"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_benchmark_cases"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_benchmarks"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_model_health_history"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_models"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_outputs"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_policy_models"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_providers"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "generation_routing_policies"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_asset_plan"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "location_relationships"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "locations"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "production_manifest_shots"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "props"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "scenes"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "series"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_audio_productions"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "shot_reference_assets"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "storyboard_reviews"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "style_bibles"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "SELECT",
+  "table_name": "system_flags"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "DELETE,INSERT,REFERENCES,SELECT,TRIGGER,TRUNCATE,UPDATE",
+  "table_name": "system_settings"
+ },
+ {
+  "grantee": "service_role",
+  "yetkiler": "REFERENCES,TRIGGER,TRUNCATE",
+  "table_name": "voice_identities"
+ }
+]

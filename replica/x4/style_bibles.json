@@ -1,0 +1,45 @@
+[
+ {
+  "id": "fc29ff3e-e8e8-45eb-b3f5-2fb8ee3c3217",
+  "status": "DRAFT",
+  "version": 1,
+  "locked_at": null,
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "created_at": "2026-10-04T15:28:51.60866+00:00",
+  "updated_at": "2026-10-04T15:28:51.60866+00:00",
+  "visual_style": "Premium stylized cinematic 3D animation. Appealing expressive characters, clean silhouettes, recognizable facial geometry, believable environments, controlled detail, strong visual consistency and family-animation quality. Not photorealistic and not flat preschool cartoon.",
+  "color_language": "Warm natural palette with controlled character-specific accent colors. Environments remain believable and readable. Mystery scenes may introduce cooler contrast without changing the canonical world palette.",
+  "negative_rules": [
+   "photorealism",
+   "flat preschool aesthetic",
+   "random character redesign",
+   "random eye color changes",
+   "random hairstyle changes",
+   "random costume changes",
+   "plastic skin",
+   "uncanny facial motion",
+   "hyperactive camera",
+   "excessive depth of field",
+   "unmotivated cinematic effects",
+   "horror imagery",
+   "visual clutter"
+  ],
+  "camera_language": "Story-driven cinematography using establishing shots, medium shots, close-ups and reaction shots. Camera movement must have narrative purpose. Avoid constant movement and random dramatic angles.",
+  "technical_rules": {
+   "shot_based_generation": true,
+   "shorts_derivative_ratio": "9:16",
+   "preferred_aspect_ratio_main": "16:9",
+   "canonical_reference_required": true,
+   "locked_assets_must_be_reused": true,
+   "target_shot_duration_seconds": {
+    "maximum": 8,
+    "minimum": 3,
+    "typical": 5
+   },
+   "successful_shots_must_not_be_regenerated": true
+  },
+  "texture_language": "Clean stylized materials with moderate tactile detail. Skin, hair, fabric, wood, metal and environmental surfaces must remain visually distinct without photorealistic micro-detail.",
+  "lighting_language": "Soft cinematic lighting with motivated practical and environmental light. Daylight remains warm and natural. Mystery moments use controlled contrast and atmosphere without becoming horror.",
+  "animation_language": "Expressive but controlled performance. Clear posing, readable facial acting, natural body mechanics and strong eye direction. Avoid exaggerated preschool motion unless intentionally used for comedy."
+ }
+]

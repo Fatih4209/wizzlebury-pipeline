@@ -1,0 +1,7 @@
+[
+ "pg_stat_statements",
+ "pgcrypto",
+ "plpgsql",
+ "supabase_vault",
+ "uuid-ossp"
+]

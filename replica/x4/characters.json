@@ -1,0 +1,599 @@
+[
+ {
+  "id": "3abc4416-6b70-4039-b1b7-e85ca7d7f9f9",
+  "age": 11,
+  "name": "Ömer",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-04T16:24:57.189709+00:00",
+  "role_type": "CORE_FRIEND",
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "appearance": {
+   "body": {
+    "age": 11,
+    "build": "athletic_age_appropriate_child",
+    "movement": "energetic_confident_sporty",
+    "proportions": "stylized_balanced_child"
+   },
+   "face": {
+    "eyes": "dark_brown_expressive",
+    "brows": "dark_defined",
+    "smile": "bright_warm_confident",
+    "identity": "youthful_distinct_warm_confident",
+    "expression_range": "high"
+   },
+   "hair": {
+    "color": "very_dark_brown_black",
+    "style": "short_defined_natural_curls_with_clean_tapered_sides",
+    "identity_rule": "curl_pattern_and_hair_silhouette_must_remain_consistent"
+   },
+   "skin": {
+    "tone": "deep_warm_brown",
+    "rendering": "natural_warm_stylized"
+   },
+   "visual_style": "premium_stylized_cinematic_3d",
+   "identity_lock": {
+    "age_change_forbidden": true,
+    "face_change_forbidden": true,
+    "reference_image_required": true,
+    "do_not_reinterpret_character": true,
+    "body_identity_change_forbidden": true,
+    "hair_identity_change_forbidden": true,
+    "skin_identity_change_forbidden": true
+   },
+   "identity_source": "approved_master_reference_image",
+   "fashion_identity": {
+    "style": "sporty_modern_cool_casual",
+    "canonical_colors": [
+     "blue",
+     "white",
+     "black",
+     "red"
+    ],
+    "outfit_changes_allowed": true,
+    "identity_must_survive_outfit_changes": true
+   },
+   "reference_policy": "master_reference_required_for_every_generation",
+   "canonical_visual_id": "OMER_CANONICAL_V1"
+  },
+  "created_at": "2026-10-04T15:40:27.265294+00:00",
+  "updated_at": "2026-10-04T16:24:57.189709+00:00",
+  "personality": {
+   "strengths": [
+    "teamwork",
+    "courage",
+    "physical_confidence",
+    "loyalty",
+    "humor",
+    "encouraging_friends"
+   ],
+   "story_role": "core_friend_with_independent_story_potential",
+   "weaknesses": [
+    "competitive",
+    "sometimes_overconfident",
+    "acts_before_thinking_when_excited",
+    "dislikes_backing_down_from_a_challenge"
+   ],
+   "core_traits": [
+    "energetic",
+    "confident",
+    "loyal",
+    "funny",
+    "supportive",
+    "brave",
+    "positive",
+    "competitive"
+   ]
+  },
+  "behavior_rules": {
+   "can_lead_episode": true,
+   "can_make_mistakes": true,
+   "can_disagree_with_mia": true,
+   "can_disagree_with_fatih": true,
+   "must_have_emotional_range": true,
+   "independent_goals_required": true,
+   "must_not_be_only_comic_relief": true,
+   "must_have_independent_character_arcs": true
+  },
+  "character_code": "CHR_OMER",
+  "gender_identity": "male",
+  "relationship_rules": {
+   "mia": "mutual_respect_and_friendship",
+   "jack": "close_friend",
+   "bruce": "close_friend",
+   "fatih": "close_friend_with_friendly_competition",
+   "tombik": "protective_playful_friendship",
+   "group_role": "energy_courage_and_team_momentum"
+  },
+  "canonical_description": "Ömer is an 11-year-old core character in M417. His approved identity is OMER_CANONICAL_V1. He has deep warm-brown skin, expressive dark-brown eyes, short defined natural curls with tapered sides, a bright confident smile and athletic age-appropriate child proportions. His visual identity is sporty, modern and energetic. Ömer is confident, loyal, funny, supportive, brave and competitive. He is a genuine member of the core cast with his own goals, conflicts and story arcs."
+ },
+ {
+  "id": "8db37ffe-765a-4eef-9f80-165bfc26225a",
+  "age": 11,
+  "name": "Fatih",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-04T16:00:44.492537+00:00",
+  "role_type": "MAIN_PROTAGONIST",
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "appearance": {
+   "body_type": "balanced_athletic_child_proportions",
+   "face_shape": "appealing_soft_angular",
+   "design_rule": "must_have_a_clear_memorable_silhouette_and_remain_immediately_recognizable_across_all_shots",
+   "final_eye_color": "pending_character_asset_generation",
+   "height_relative": "medium_tall",
+   "visual_priority": "hero_level",
+   "signature_colors": "pending_visual_design",
+   "final_face_design": "pending_character_asset_generation",
+   "final_hair_design": "pending_character_asset_generation",
+   "expression_identity": "confident_warm_highly_expressive"
+  },
+  "created_at": "2026-10-04T15:40:27.265294+00:00",
+  "updated_at": "2026-10-04T16:00:44.492537+00:00",
+  "personality": {
+   "strengths": [
+    "natural_leadership",
+    "courage",
+    "initiative",
+    "creative_problem_solving",
+    "bringing_friends_together"
+   ],
+   "weaknesses": [
+    "acts_before_thinking",
+    "can_be_overconfident",
+    "sometimes_hides_worry",
+    "does_not_like_giving_up"
+   ],
+   "core_traits": [
+    "charismatic",
+    "curious",
+    "brave",
+    "energetic",
+    "creative",
+    "loyal"
+   ],
+   "humor_style": "confident_playful_and_situational",
+   "story_weight": "primary",
+   "emotional_core": "cares_deeply_about_his_friends_and_wants_to_be_someone_they_can_trust"
+  },
+  "behavior_rules": {
+   "can_show_fear": true,
+   "protects_friends": true,
+   "can_show_vulnerability": true,
+   "must_face_consequences": true,
+   "central_story_character": true,
+   "must_make_real_mistakes": true,
+   "must_not_become_invincible": true,
+   "must_not_solve_every_problem": true,
+   "must_not_dominate_every_scene": true,
+   "mia_must_remain_equally_capable": true
+  },
+  "character_code": "CHR_FATIH",
+  "gender_identity": "male",
+  "relationship_rules": {
+   "mia": "co_lead_deep_trust_equal_narrative_partner",
+   "jack": "close_friend",
+   "omer": "close_friend",
+   "bruce": "close_friend",
+   "tombik": "close_friend",
+   "group_role": "central_connector_and_primary_protagonist"
+  },
+  "canonical_description": "Fatih is the main protagonist and central connector of the core friend group. He is charismatic, curious, brave and naturally draws people into adventures. He is not an invincible hero: his confidence can create problems and he must learn from consequences. Mia is not his assistant or secondary follower; she is a powerful co-lead with independent agency and comparable narrative importance."
+ },
+ {
+  "id": "b7ea173b-b814-4df8-a72a-f4733e0e546c",
+  "age": 11,
+  "name": "Tombik",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-04T16:49:55.820123+00:00",
+  "role_type": "CORE_FRIEND",
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "appearance": {
+   "body": {
+    "age": 11,
+    "build": "heavier_rounder_age_appropriate_child",
+    "movement": "expressive_confident_active_and_surprisingly_agile",
+    "body_rule": "body_shape_is_identity_not_comedy",
+    "proportions": "stylized_round_balanced_child"
+   },
+   "face": {
+    "eyes": "bright_blue_expressive",
+    "smile": "warm_mischievous_highly_expressive",
+    "cheeks": "soft_round_rosy",
+    "freckles": "visible_natural_freckles",
+    "identity": "distinct_warm_friendly_playful",
+    "expression_range": "very_high"
+   },
+   "hair": {
+    "color": "natural_warm_copper_red",
+    "style": "messy_wavy_curly_with_distinct_volume",
+    "identity_rule": "copper_red_color_curl_pattern_and_silhouette_must_remain_consistent"
+   },
+   "skin": {
+    "tone": "warm_light_with_freckles",
+    "rendering": "natural_warm_stylized"
+   },
+   "visual_style": "premium_stylized_cinematic_3d",
+   "identity_lock": {
+    "age_change_forbidden": true,
+    "face_change_forbidden": true,
+    "reference_image_required": true,
+    "earring_removal_forbidden": true,
+    "eye_color_change_forbidden": true,
+    "freckles_removal_forbidden": true,
+    "hair_color_change_forbidden": true,
+    "do_not_reinterpret_character": true,
+    "body_identity_change_forbidden": true,
+    "hair_identity_change_forbidden": true
+   },
+   "identity_source": "approved_master_reference_image",
+   "fashion_identity": {
+    "style": "comfortable_sporty_colorful_streetwear",
+    "signature_piece": "green_varsity_jacket",
+    "canonical_colors": [
+     "forest_green",
+     "mustard_yellow",
+     "cream",
+     "navy"
+    ],
+    "outfit_changes_allowed": true,
+    "identity_must_survive_outfit_changes": true
+   },
+   "reference_policy": "master_reference_required_for_every_generation",
+   "signature_features": {
+    "earring": "small_silver_hoop",
+    "freckles": true,
+    "blue_eyes": true,
+    "copper_red_hair": true,
+    "earring_required": true
+   },
+   "canonical_visual_id": "TOMBIK_CANONICAL_V1"
+  },
+  "created_at": "2026-10-04T15:40:27.265294+00:00",
+  "updated_at": "2026-10-04T16:49:55.820123+00:00",
+  "personality": {
+   "strengths": [
+    "quick_humor",
+    "empathy",
+    "friendship",
+    "group_morale",
+    "reading_other_peoples_emotions",
+    "loyalty",
+    "unexpected_courage",
+    "making_people_feel_better"
+   ],
+   "story_role": "core_friend_primary_comedy_character_and_emotional_heart",
+   "weaknesses": [
+    "sometimes_hides_fear_with_humor",
+    "can_be_overconfident",
+    "sometimes_underestimates_himself",
+    "can_worry_more_than_he_admits",
+    "uses_jokes_to_escape_uncomfortable_moments"
+   ],
+   "core_traits": [
+    "funny",
+    "warm",
+    "friendly",
+    "loyal",
+    "social",
+    "emotionally_intuitive",
+    "kind",
+    "surprisingly_brave",
+    "playful",
+    "confident"
+   ],
+   "humor_style": [
+    "quick_witted_replies",
+    "unexpected_one_liners",
+    "confident_statements_before_things_go_wrong",
+    "expressive_reactions",
+    "playful_teasing_between_friends",
+    "comic_timing"
+   ]
+  },
+  "behavior_rules": {
+   "can_be_brave": true,
+   "can_be_afraid": true,
+   "can_be_serious": true,
+   "can_lead_episode": true,
+   "can_make_mistakes": true,
+   "fat_shaming_forbidden": true,
+   "weight_jokes_forbidden": true,
+   "can_be_physically_active": true,
+   "can_disagree_with_friends": true,
+   "lazy_stereotype_forbidden": true,
+   "independent_goals_required": true,
+   "must_not_be_only_comic_relief": true,
+   "must_have_emotional_storylines": true,
+   "food_obsession_stereotype_forbidden": true,
+   "must_have_independent_character_arcs": true,
+   "body_shape_must_never_be_the_punchline": true,
+   "humor_must_come_from_personality_timing_dialogue_and_reactions": true
+  },
+  "character_code": "CHR_TOMBIK",
+  "gender_identity": "male",
+  "relationship_rules": {
+   "mia": "close_trusting_friendship",
+   "jack": "strong_comedic_dynamic",
+   "omer": "playful_supportive_friendship",
+   "bruce": "patient_supportive_friendship",
+   "fatih": "close_trusting_friendship",
+   "group_role": "emotional_heart_and_warm_comedy"
+  },
+  "canonical_description": "Tombik is an 11-year-old core character in M417 and the primary comedy personality of the group. His approved visual identity is TOMBIK_CANONICAL_V1. He has natural warm copper-red messy wavy-curly hair, bright blue expressive eyes, visible freckles, soft round youthful facial features, a small silver hoop earring and heavier rounder age-appropriate child proportions. His canonical clothing identity uses forest green, mustard yellow, cream and navy, with a green varsity-style jacket as a recognizable signature piece. Tombik is funny, warm, loyal, socially intelligent, emotionally perceptive, playful and surprisingly brave. His humor comes from quick replies, comic timing, confidence and expressive reactions, never from his body shape. He is also the emotional heart of the group and must have meaningful serious moments, independent goals, mistakes and character arcs."
+ },
+ {
+  "id": "177e5aee-46fc-4c11-8616-944331e5ad26",
+  "age": 11,
+  "name": "Mia",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-04T16:15:40.453055+00:00",
+  "role_type": "CO_LEAD",
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "appearance": {
+   "body": {
+    "age": 11,
+    "build": "fit_energetic_child",
+    "proportions": "age_appropriate_stylized_child",
+    "movement_identity": "energetic_light_playful"
+   },
+   "face": {
+    "eyes": {
+     "color": "hazel_green_mix",
+     "expression": "large_warm_lively_expressive",
+     "identity_rule": "hazel_green_eye_identity_must_remain_consistent"
+    },
+    "shape": "soft_appealing_youthful",
+    "baseline_expression": "warm_playful_affectionate",
+    "expression_identity": "warm_bright_highly_expressive"
+   },
+   "hair": {
+    "color": "warm_sandy_brown",
+    "style": "long_naturally_wavy",
+    "volume": "full_soft",
+    "identity_rule": "hair_color_texture_length_and_general_silhouette_must_remain_recognizable",
+    "color_reference": "beach_sand_warm_brown"
+   },
+   "visual_style": "premium_stylized_cinematic_3d",
+   "identity_lock": {
+    "age_change_forbidden": true,
+    "face_change_forbidden": true,
+    "reference_image_required": true,
+    "do_not_reinterpret_character": true,
+    "eye_identity_change_forbidden": true,
+    "body_identity_change_forbidden": true,
+    "hair_identity_change_forbidden": true
+   },
+   "identity_source": "approved_master_reference_image",
+   "expression_range": {
+    "sad": "emotionally_open_and_capable_of_crying",
+    "angry": "strong_readable_frustration_without_losing_character_identity",
+    "happy": "very_bright_open_smile",
+    "excited": "jumps_moves_and_visibly_radiates_joy",
+    "stubborn": "determined_brows_and_resolute_posture",
+    "affectionate": "soft_warm_eye_contact_and_gentle_smile",
+    "food_happiness": "visibly_delighted_when_eating_food_she_loves"
+   },
+   "fashion_identity": {
+    "style": "modern_colorful_well_dressed_age_appropriate",
+    "priority": "Mia_enjoys_clothing_and_should_have_strong_but_age_appropriate_fashion_identity",
+    "outfit_changes_allowed": true,
+    "identity_must_survive_outfit_changes": true
+   },
+   "reference_policy": "master_reference_required_for_every_generation",
+   "canonical_visual_id": "MIA_CANONICAL_V1"
+  },
+  "created_at": "2026-10-04T15:40:27.265294+00:00",
+  "updated_at": "2026-10-04T16:15:40.453055+00:00",
+  "personality": {
+   "strengths": [
+    "emotional_intelligence",
+    "enthusiasm",
+    "courage",
+    "creativity",
+    "observation",
+    "lifting_group_morale",
+    "independent_decision_making"
+   ],
+   "weaknesses": [
+    "stubborn",
+    "can_become_angry_quickly",
+    "emotionally_reactive",
+    "sometimes_overexcited",
+    "dislikes_being_underestimated"
+   ],
+   "core_traits": [
+    "energetic",
+    "childlike",
+    "stubborn",
+    "joyful",
+    "affectionate",
+    "emotional",
+    "brave",
+    "playful",
+    "expressive"
+   ],
+   "joy_behavior": {
+    "baseline": "finds_happiness_in_small_things",
+    "smile_identity": "bright_contagious_and_warm",
+    "when_very_happy": "may_jump_with_excitement_and_become_visibly_bubbly"
+   },
+   "story_weight": "co_primary",
+   "food_behavior": {
+    "rule": "food_is_a_source_of_joy_but_not_her_entire_personality",
+    "enjoys_food": true,
+    "visible_happiness_when_eating": true
+   },
+   "anger_behavior": {
+    "rule": "anger_is_temporary_and_does_not_remove_her_affectionate_core",
+    "style": "expressive_stubborn_and_direct",
+    "can_get_angry": true
+   },
+   "fashion_behavior": {
+    "style_interest": "high",
+    "likes_dressing_well": true
+   },
+   "sadness_behavior": {
+    "rule": "crying_is_a_normal_emotional_expression_not_weakness",
+    "can_cry": true
+   }
+  },
+  "behavior_rules": {
+   "can_cry": true,
+   "can_be_angry": true,
+   "can_be_stubborn": true,
+   "can_make_mistakes": true,
+   "can_show_affection": true,
+   "must_not_be_perfect": true,
+   "can_jump_when_excited": true,
+   "can_be_extremely_happy": true,
+   "can_lead_full_episodes": true,
+   "independent_goals_required": true,
+   "must_not_follow_fatih_blindly": true,
+   "can_solve_problems_fatih_cannot": true,
+   "emotional_range_must_be_preserved": true,
+   "must_have_independent_character_arcs": true,
+   "must_not_exist_only_as_romantic_interest": true
+  },
+  "character_code": "CHR_MIA",
+  "gender_identity": "female",
+  "relationship_rules": {
+   "jack": "close_friend",
+   "omer": "close_friend",
+   "bruce": "close_friend",
+   "fatih": "deep_trust_special_bond_equal_narrative_partner",
+   "tombik": "close_affectionate_friendship",
+   "group_role": "co_leader_emotional_energy_and_independent_story_driver"
+  },
+  "canonical_description": "Mia is the 11-year-old co-lead of M417 and has narrative importance close to Fatih. Her approved visual identity is MIA_CANONICAL_V1. She has long naturally wavy warm sandy-brown hair, distinctive hazel-green eyes, an energetic age-appropriate fit child build and a warm highly expressive face. Mia is energetic, childlike, stubborn, affectionate and emotionally open. She can become visibly angry, can cry when hurt, and becomes extremely expressive when happy, including jumping with excitement. She loves dressing well and visibly enjoys food she likes. Her warmth, beautiful expressive gaze and contagious happiness are central parts of her identity. She has independent goals and story arcs and must never be reduced to merely supporting Fatih."
+ },
+ {
+  "id": "d58b3a5f-45bd-45bd-96d0-783d148a3494",
+  "age": 11,
+  "name": "Bruce",
+  "status": "LOCKED",
+  "version": 1,
+  "locked_at": "2026-10-04T16:40:20.932121+00:00",
+  "role_type": "CORE_FRIEND",
+  "series_id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "appearance": {
+   "body": {
+    "age": 11,
+    "build": "slim_balanced_age_appropriate_child",
+    "movement": "calm_precise_observant_with_bursts_of_child_energy",
+    "proportions": "stylized_balanced_child"
+   },
+   "face": {
+    "eyes": "dark_brown_expressive",
+    "brows": "dark_natural",
+    "smile": "warm_subtle_playful",
+    "identity": "distinct_youthful_japanese",
+    "expression_range": "high"
+   },
+   "hair": {
+    "color": "black",
+    "style": "tousled_layered_black_hair_with_distinct_silhouette",
+    "identity_rule": "hair_shape_and_fringe_must_remain_consistent"
+   },
+   "skin": {
+    "tone": "warm_light",
+    "rendering": "natural_warm_stylized"
+   },
+   "visual_style": "premium_stylized_cinematic_3d",
+   "identity_lock": {
+    "age_change_forbidden": true,
+    "face_change_forbidden": true,
+    "reference_image_required": true,
+    "do_not_reinterpret_character": true,
+    "body_identity_change_forbidden": true,
+    "hair_identity_change_forbidden": true,
+    "skin_identity_change_forbidden": true
+   },
+   "identity_source": "approved_master_reference_image",
+   "fashion_identity": {
+    "style": "modern_japanese_streetwear_tech_inspired",
+    "canonical_colors": [
+     "blue",
+     "red",
+     "white",
+     "black"
+    ],
+    "signature_accessories": [
+     "black_red_headphones",
+     "black_red_backpack"
+    ],
+    "outfit_changes_allowed": true,
+    "identity_must_survive_outfit_changes": true
+   },
+   "reference_policy": "master_reference_required_for_every_generation",
+   "canonical_visual_id": "BRUCE_CANONICAL_V1"
+  },
+  "created_at": "2026-10-04T15:40:27.265294+00:00",
+  "updated_at": "2026-10-04T16:40:20.932121+00:00",
+  "personality": {
+   "strengths": [
+    "pattern_recognition",
+    "planning",
+    "problem_solving",
+    "technology",
+    "patience",
+    "logical_reasoning",
+    "creative_thinking",
+    "attention_to_detail"
+   ],
+   "story_role": "core_friend_brain_creator_with_independent_story_potential",
+   "weaknesses": [
+    "overthinking",
+    "hesitation",
+    "detail_fixation",
+    "sometimes_overcomplicates_simple_problems",
+    "can_be_too_cautious"
+   ],
+   "core_traits": [
+    "intelligent",
+    "calm",
+    "creative",
+    "observant",
+    "loyal",
+    "inventive",
+    "quietly_funny",
+    "supportive",
+    "curious"
+   ],
+   "humor_style": [
+    "dry_childlike_observations",
+    "overly_logical_answers_to_simple_questions",
+    "overengineered_solutions",
+    "unexpected_deadpan_reactions"
+   ]
+  },
+  "behavior_rules": {
+   "can_be_wrong": true,
+   "can_lead_episode": true,
+   "can_make_mistakes": true,
+   "can_disagree_with_mia": true,
+   "can_disagree_with_omer": true,
+   "can_disagree_with_fatih": true,
+   "must_not_be_magic_hacker": true,
+   "independent_goals_required": true,
+   "must_have_emotional_storylines": true,
+   "technology_must_be_age_plausible": true,
+   "must_have_independent_character_arcs": true,
+   "must_not_be_defined_only_by_intelligence": true,
+   "must_participate_physically_in_adventures": true
+  },
+  "character_code": "CHR_BRUCE",
+  "gender_identity": "male",
+  "relationship_rules": {
+   "mia": "strong_problem_solving_dynamic",
+   "jack": "close_friend",
+   "omer": "contrasting_energy_with_mutual_respect",
+   "fatih": "close_friend",
+   "tombik": "patient_supportive_friendship",
+   "group_role": "strategist_pattern_finder_and_builder"
+  },
+  "canonical_description": "Bruce is an 11-year-old Japanese core character in M417. His approved visual identity is BRUCE_CANONICAL_V1. He has expressive dark-brown eyes, tousled layered black hair with a recognizable silhouette, warm youthful facial features and slim age-appropriate child proportions. His visual style combines modern Japanese-inspired streetwear with subtle technology-oriented accessories. Bruce is intelligent, calm, creative, observant, loyal, inventive and quietly funny. He is the strategic thinker of the group, but he is not always correct and must never function as a magical hacker or automatic solution machine. His tendency to overthink and overcomplicate simple situations creates both conflict and natural comedy. Bruce has his own emotions, mistakes, goals and independent story arcs."
+ }
+]

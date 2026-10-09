@@ -1,0 +1,32 @@
+[
+ {
+  "id": "bb8d525d-0eba-42ab-9ea0-cdb7878a9f99",
+  "status": "TESTING",
+  "metadata": {
+   "verification_date": "2026-10-05",
+   "verification_status": "OFFICIAL_SOURCE_VERIFIED"
+  },
+  "priority": 100,
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "api_base_url": null,
+  "display_name": "Google Gemini API",
+  "provider_code": "GOOGLE_GEMINI",
+  "provider_type": "VIDEO"
+ },
+ {
+  "id": "6e4ed3cc-0c8c-4331-9217-e131ef4ff8d7",
+  "status": "TESTING",
+  "metadata": {
+   "verification_date": "2026-10-05",
+   "verification_status": "OFFICIAL_SOURCE_VERIFIED"
+  },
+  "priority": 100,
+  "created_at": "2026-10-05T18:35:10.054219+00:00",
+  "updated_at": "2026-10-05T18:35:10.054219+00:00",
+  "api_base_url": null,
+  "display_name": "Runway API",
+  "provider_code": "RUNWAY",
+  "provider_type": "VIDEO"
+ }
+]

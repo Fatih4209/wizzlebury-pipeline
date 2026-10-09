@@ -1,0 +1,64 @@
+[
+ {
+  "id": "40666ad3-2441-48b5-95c6-29e39c5e79e2",
+  "name": "M417",
+  "status": "DRAFT",
+  "premise": "Four close friends live ordinary lives around home, school and their neighborhood while slowly discovering that unusual events repeatedly occur at exactly 16:17. Each episode contains a complete emotional or comedic story while selected episodes advance a larger season mystery.",
+  "version": 1,
+  "locked_at": null,
+  "created_at": "2026-10-04T15:28:51.60866+00:00",
+  "updated_at": "2026-10-04T15:28:51.60866+00:00",
+  "series_code": "M417",
+  "world_rules": {
+   "world_type": "grounded_modern_world_with_light_mystery",
+   "core_places": [
+    "home",
+    "school",
+    "neighborhood",
+    "park",
+    "local_shops"
+   ],
+   "magic_system": "none_confirmed",
+   "mystery_time": "16:17",
+   "technology_level": "contemporary",
+   "continuity_required": true,
+   "persistent_consequences": true,
+   "persistent_relationships": true,
+   "characters_remember_previous_events": true
+  },
+  "creative_rules": {
+   "tone": "warm_funny_curious_cinematic",
+   "mystery_usage": "selective_not_every_episode",
+   "dialogue_style": "natural_short_character_specific",
+   "primary_genres": [
+    "comedy",
+    "adventure",
+    "mystery",
+    "slice_of_life"
+   ],
+   "character_driven": true,
+   "family_coviewing": true,
+   "visual_direction": "high_quality_stylized_3d_animation",
+   "episode_structure": "standalone_story_plus_serialized_continuity",
+   "shorts_extractable": true,
+   "long_compilation_ready": true,
+   "avoid_constant_high_stakes": true
+  },
+  "target_age_max": 12,
+  "target_age_min": 6,
+  "forbidden_rules": {
+   "no_excessive_screaming": true,
+   "no_random_location_redesign": true,
+   "no_unexplained_voice_change": true,
+   "no_random_character_redesign": true,
+   "no_unnecessary_new_locations": true,
+   "no_unnecessary_new_characters": true,
+   "no_low_effort_content_farm_style": true,
+   "no_fake_cliffhanger_every_episode": true,
+   "no_automatic_canon_changes_from_analytics": true,
+   "no_resetting_relationships_between_episodes": true
+  },
+  "target_audience": "Children and family co-viewing",
+  "primary_language": "en"
+ }
+]

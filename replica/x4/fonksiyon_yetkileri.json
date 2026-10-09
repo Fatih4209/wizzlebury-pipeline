@@ -1,0 +1,219 @@
+[
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "acquire_generation_attempt_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": false,
+  "fonksiyon": "add_m417_location_asset_plan",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": false,
+  "fonksiyon": "add_m417_location_relationship",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "apply_shot_qc_decision",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "authorize_episode_production",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": false,
+  "fonksiyon": "calculate_benchmark_quality_score",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": false,
+  "fonksiyon": "calculate_generation_routing_score",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "claim_attempt_submission",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "consume_approval_token",
+  "service_role": false,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "create_generation_routing_decision",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "decide_human_approval",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "episode_production_status",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": false,
+  "fonksiyon": "evaluate_generation_candidates",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "find_stuck_attempts",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "mark_attempt_generating",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "mark_attempt_submitted",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "record_generation_model_health",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "release_benchmark_job",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "release_generation_attempt_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "request_human_approval",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "reset_attempt_submission_claim",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "resolve_escalated_shot",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "retire_locked_asset",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "set_generation_enabled",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "settle_benchmark_job_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "settle_charged_benchmark_failure_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "settle_charged_generation_failure_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "settle_generation_attempt_v2",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "supersede_routing_decision",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "supersede_shot_specification",
+  "service_role": true,
+  "authenticated": false
+ },
+ {
+  "anon": false,
+  "definer": true,
+  "fonksiyon": "touch_attempt_heartbeat",
+  "service_role": true,
+  "authenticated": false
+ }
+]

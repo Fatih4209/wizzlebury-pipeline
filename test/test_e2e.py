@@ -1,0 +1,151 @@
+from flow import *
+
+sql(open('seed_video.sql').read())
+job = start()
+ctx = rpc('get_job_context', {"p_job_id": job})
+check('bible tells the writers the allowed shot durations', json.loads(ctx['series_bible_text'])['format']['allowed_shot_durations_seconds'] == [5, 10])
+rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "TREND_REPORT", "p_producer": "GROK", "p_content": TREND})
+rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "TOPIC_SELECTION", "p_producer": "CLAUDE", "p_content": TOPIC})
+rpc('record_policy_check', {"p_job_id": job, "p_gate_no": 1, "p_checker": "CLAUDE", "p_result": POLICY_PASS})
+rpc('get_series_bible', {"p_job_id": job})
+rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "SCRIPT", "p_producer": "CLAUDE", "p_content": SCRIPT})
+r = rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "SHOT_PACKAGE", "p_producer": "OPENAI", "p_content": shots(4, 6)})
+check('durations the video model cannot make are sent back', r['accepted'] is False and 'not supported by the video model' in json.dumps(r['issues']), str(r)[:300])
+r = rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "SHOT_PACKAGE", "p_producer": "OPENAI", "p_content": shots()})
+rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "PREQC_REPORT", "p_producer": "GEMINI", "p_content": PREQC_PASS})
+rpc('route_revision', {"p_job_id": job})
+rpc('record_final_director_decision', {"p_job_id": job, "p_actor": "CLAUDE", "p_result": DIRECTOR_APPROVE})
+rpc('commit_production_package', {"p_job_id": job})
+g = voice(job)
+check('gate 2 passes with a qualified catalog', g['passed'] is True and g['step_no'] == 22 and g['estimated_video_cost'] == 0.5, str(g))
+ep = one(f"select episode_id from public.production_jobs where id='{job}'")
+s1, s2 = one(f"select string_agg(id::text, ',' order by shot_order) from public.shots where episode_id='{ep}'").split(',')
+
+# --- video: switched off -----------------------------------------------
+check('nothing pending while generation is off', rpc('video_work_pending')['pending'] is False)
+check('no actions while generation is off', actions() == [])
+p = rpc('prepare_shot_attempt', {"p_shot_id": s1}); check('acquire refused while generation is off', p['decision'] == 'GENERATION_DISABLED', str(p))
+rpc('set_generation_enabled', {"p_enabled": True})
+check('pending once generation is on', rpc('video_work_pending')['pending'] is True)
+
+# --- pilot gate ---------------------------------------------------------
+a = actions()
+check('only the pilot shot is offered first', len(a) == 1 and a[0]['action'] == 'ACQUIRE' and a[0]['shot_id'] == s1, str(a)[:300])
+check('every item carries every field', set(a[0].keys()) == {'action','job_id','shot_id','attempt_id','provider','submit_url','provider_request_text','poll_url','download_url','storage_path','qc_context_text','notify_chat_id','review_text','storage_base_url'})
+p = rpc('prepare_shot_attempt', {"p_shot_id": s2}); check('non-pilot shot cannot jump the pilot gate', p['decision'] == 'BLOCKED' and 'PILOT_SHOT_NOT_YET_LOCKED' in p['reason'], str(p))
+check('job blocked by the refusal, nothing reserved', one(f"select state from public.production_jobs where id='{job}'") == 'BLOCKED' and one("select coalesce(sum(reserved_amount),0) from public.budgets") == '0')
+rpc('resume_production_job', {"p_job_id": job, "p_actor": "OWNER", "p_reason": "test"})
+
+# --- attempt 1 (Kling) fails QC, attempt 2 (Veo fallback) passes ----------
+p = rpc('prepare_shot_attempt', {"p_shot_id": s1}); check('pilot attempt authorised', p['decision'] == 'AUTHORIZED' and p['attempt_no'] == 1 and p['reserved_cost'] == 0.25, str(p))
+p2 = rpc('prepare_shot_attempt', {"p_shot_id": s1}); check('repeat acquire does not double reserve', p2['decision'] == 'SHOT_NOT_READY' and one("select reserved_amount from public.budgets where budget_type='MONTHLY'") == '0.25', str(p2))
+a = actions(); sub = a[0]
+check('SUBMIT via the Kling branch', len(a) == 1 and sub['action'] == 'SUBMIT' and sub['provider'] == 'KLING' and sub['submit_url'] == 'https://api.piapi.ai/api/v1/task', str(sub)[:300])
+body = json.loads(sub['provider_request_text'])
+check('Kling body is vertical, 5 s, silent', body['model'] == 'kling' and body['input']['aspect_ratio'] == '9:16' and body['input']['duration'] == 5 and body['input']['enable_audio'] is False and len(body['input']['prompt']) > 100, str(body)[:300])
+poll, out, q = submit_and_finish(sub, VISUAL_FAIL)
+check('poll url built from the job id', poll['poll_url'].startswith('https://api.piapi.ai/api/v1/task/task-'))
+check('output path and QC context', out['storage_path'].startswith('M417/') and '/video/SH01_A1_' in out['storage_path'] and 'Fatih' in out['qc_context_text'] and out['download_url'] == 'https://cdn.example/k.mp4', str(out)[:300])
+check('visual FAIL -> retry', q['decision'] == 'RETRY_REQUIRED' and q['shot_state'] == 'RETRY_REQUIRED' and q['score'] == 30, str(q))
+check('attempt 1 charged at the reserved price', one("select settled_amount||'/'||reserved_amount from public.budgets where budget_type='MONTHLY'") == '0.25/0.00' or one("select settled_amount||'/'||reserved_amount from public.budgets where budget_type='MONTHLY'") == '0.25/0')
+sub2, (poll, out, q) = run_shot(s1)
+check('attempt 2 uses the Veo fallback', sub2['provider'] == 'VEO' and 'veo-3.1-fast-generate-preview:predictLongRunning' in sub2['submit_url'], str(sub2)[:200])
+vb = json.loads(sub2['provider_request_text']); check('Veo body shape', vb['parameters']['aspectRatio'] == '9:16' and vb['parameters']['durationSeconds'] == 5 and vb['instances'][0]['prompt'], str(vb)[:300])
+check('Veo poll url', poll['poll_url'] == 'https://generativelanguage.googleapis.com/v1beta/models/veo/operations/op-' + sub2['attempt_id'][:8])
+check('pilot LOCKED', q['decision'] == 'CANONICAL_LOCKED' and q['shot_state'] == 'LOCKED', str(q))
+r = rpc('apply_visual_qc', {"p_output_id": q['output_id'], "p_result": VISUAL_FAIL}); check('second QC on same output changes nothing', r['decision'] == 'ALREADY_REVIEWED' and r['qc_status'] == 'PASS')
+
+# --- shot 2: PASS overruled by details ------------------------------------
+over = json.loads(json.dumps(VISUAL_PASS)); over['details']['child_safety'] = 'FAIL'
+_, (_, _, q) = run_shot(s2, over); check('PASS with child_safety FAIL is a FAIL', q['qc_status'] == 'FAIL' and q['shot_state'] == 'RETRY_REQUIRED', str(q))
+_, (_, _, q) = run_shot(s2); check('shot 2 LOCKED on retry', q['shot_state'] == 'LOCKED')
+a = actions(); check('ADVANCE offered, job already at step 30', [x['action'] for x in a] == ['ADVANCE'] and rpc('job_next_step', {"p_job_id": job})['step_no'] == 30, str(a)[:200])
+check('episode in ASSEMBLY', one(f"select state from public.episodes where id='{ep}'") == 'ASSEMBLY')
+check('unacknowledged ADVANCE is repeated', [x['action'] for x in actions()] == ['ADVANCE'] and rpc('video_work_pending')['pending'] is True)
+rpc('ack_video_advance', {"p_job_id": job})
+check('after ack nothing is pending', actions() == [] and rpc('video_work_pending')['pending'] is False)
+check('ledger: 4 reserves, 4 settles', one(f"select string_agg(entry_type||':'||n, ',' order by entry_type) from (select entry_type, count(*) n from public.cost_ledger where episode_id='{ep}' group by 1) x") == 'RESERVE:4,SETTLE:4')
+check('budgets: 1.70 settled (2 x 0.25 Kling + 2 x 0.60 Veo), nothing reserved', one("select settled_amount::float||'/'||reserved_amount::float from public.budgets where budget_type='MONTHLY'") == '1.7/0')
+
+# --- S6 -------------------------------------------------------------------
+r = rpc('select_final_audio_track', {"p_job_id": job}); check('audio selected -> 31', r['step_no'] == 31 and r['voice_lines'] == 2, str(r))
+b = rpc('begin_assembly', {"p_job_id": job}); req = json.loads(b['sign_request_text'])
+check('START with 4 paths to sign', b['phase'] == 'START' and len(req['paths']) == 4 and req['expiresIn'] == 86400, str(b)[:300])
+expect_error('render needs the storage base url', 'create_render', {"p_job_id": job, "p_signed_urls": sign(b['sign_request_text'])}, 'STORAGE_BASE_URL_NOT_SET')
+rpc('set_text_setting', {"p_key": "storage_base_url", "p_value": "https://proj.supabase.co/storage/v1"})
+expect_error('missing signed url is caught', 'create_render', {"p_job_id": job, "p_signed_urls": sign(b['sign_request_text'])[:-1]}, 'SIGNED_URL_MISSING')
+c = rpc('create_render', {"p_job_id": job, "p_signed_urls": sign(b['sign_request_text'])}); tl = json.loads(c['shotstack_request_text'])
+check('timeline: voice track on top of 2 video clips, 10 s', len(tl['timeline']['tracks']) == 2 and len(tl['timeline']['tracks'][1]['clips']) == 2 and tl['timeline']['tracks'][1]['clips'][1]['start'] == 5 and c['total_seconds'] == 10 and tl['output']['aspectRatio'] == '9:16', str(tl)[:400])
+check('clips use full signed urls and are muted', all(cl['asset']['src'].startswith('https://proj.supabase.co/storage/v1/object/sign/production-assets/M417/') and cl['asset']['volume'] == 0 for cl in tl['timeline']['tracks'][1]['clips']))
+check('voice lines placed inside their shots', [cl['start'] for cl in tl['timeline']['tracks'][0]['clips']] == [0.15, 5.15], str(tl['timeline']['tracks'][0]))
+b2 = rpc('begin_assembly', {"p_job_id": job}); check('START repeats until submitted', b2['phase'] == 'START' and b2['render_id'] == b['render_id'])
+rpc('mark_render_submitted', {"p_render_id": c['render_id'], "p_shotstack_render_id": "ss-1"})
+b3 = rpc('begin_assembly', {"p_job_id": job}); check('then POLL', b3['phase'] == 'POLL' and b3['shotstack_render_id'] == 'ss-1')
+d = rpc('record_render_poll', {"p_render_id": c['render_id'], "p_status": "rendering", "p_output_url": ""}); check('rendering', d['status'] == 'RENDERING')
+d = rpc('record_render_poll', {"p_render_id": c['render_id'], "p_status": "done", "p_output_url": "https://cdn.shotstack.io/x.mp4"}); check('done with a storage path', d['status'] == 'DONE' and '/render/R1_' in d['storage_path'])
+expect_error('render must be uploaded first', 'complete_render', {"p_render_id": c['render_id'], "p_storage_path": d['storage_path']}, 'RENDER_FILE_NOT_FOUND_IN_STORAGE')
+put(d['storage_path'], 5_000_000, 'video/mp4')
+r = rpc('complete_render', {"p_render_id": c['render_id'], "p_storage_path": d['storage_path']}); check('stored -> 32, episode FINAL_QC', r['step_no'] == 32 and one(f"select state from public.episodes where id='{ep}'") == 'FINAL_QC')
+r = rpc('apply_final_qc', {"p_render_id": c['render_id'], "p_result": FINAL_FAIL}); check('final QC fail -> render again', r['verdict'] == 'FAIL' and r['step_no'] == 31 and one(f"select state from public.episodes where id='{ep}'") == 'ASSEMBLY', str(r))
+b = rpc('begin_assembly', {"p_job_id": job}); check('second render starts', b['phase'] == 'START' and b['render_id'] != c['render_id'])
+c = rpc('create_render', {"p_job_id": job, "p_signed_urls": sign(b['sign_request_text'])})
+rpc('mark_render_submitted', {"p_render_id": c['render_id'], "p_shotstack_render_id": "ss-2"})
+d = rpc('record_render_poll', {"p_render_id": c['render_id'], "p_status": "done", "p_output_url": "https://cdn.shotstack.io/y.mp4"}); put(d['storage_path'], 5_000_000, 'video/mp4')
+rpc('complete_render', {"p_render_id": c['render_id'], "p_storage_path": d['storage_path']})
+r = rpc('apply_final_qc', {"p_render_id": c['render_id'], "p_result": FINAL_PASS}); check('final QC pass -> 33', r['verdict'] == 'PASS' and r['step_no'] == 33, str(r))
+ctx = rpc('get_job_context', {"p_job_id": job}); check('final QC report in context', '"verdict": "PASS"' in ctx['final_qc_report_text'])
+expect_error('release before policy gate 2', 'approve_release', {"p_job_id": job, "p_actor": "CLAUDE", "p_result": RELEASE_APPROVE}, 'STEP_MISMATCH')
+r = rpc('record_policy_check', {"p_job_id": job, "p_gate_no": 2, "p_checker": "CLAUDE", "p_result": POLICY_PASS}); check('gate 2 -> 34', r['step_no'] == 34)
+r = rpc('approve_release', {"p_job_id": job, "p_actor": "CLAUDE", "p_result": RELEASE_APPROVE}); check('release approved -> 35, READY_TO_PUBLISH', r['step_no'] == 35 and one(f"select state from public.episodes where id='{ep}'") == 'READY_TO_PUBLISH')
+
+# --- S7 -------------------------------------------------------------------
+r = rpc('resolve_thumbnail', {"p_job_id": job}); check('thumbnail skipped -> 36', r['step_no'] == 36)
+r = rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "METADATA_CANDIDATES", "p_producer": "GROK", "p_content": METADATA}); check('metadata -> 37', r['step_no'] == 37)
+r = rpc('save_publication_package', {"p_job_id": job, "p_selected_by": "CLAUDE", "p_result": {**PACKAGE, "made_for_kids": False, "privacy_status": "public"}})
+check('package saved -> 38 with owner settings, not the model\'s', r['step_no'] == 38 and r['privacy_status'] == 'private' and one(f"select made_for_kids from public.publication_packages where job_id='{job}'") == 't', str(r))
+expect_error('approval needs a chat id', 'request_publish_approval', {"p_job_id": job}, 'NOTIFY_CHAT_ID_NOT_SET')
+rpc('set_text_setting', {"p_key": "notify_chat_id", "p_value": "123456"})
+ap = rpc('request_publish_approval', {"p_job_id": job})
+check('approval requested, job waits for the owner', ap['state'] == 'WAITING_HUMAN' and len(ap['token']) == 64 and ap['notify_chat_id'] == '123456' and ap['storage_base_url'] == 'https://proj.supabase.co/storage/v1' and '/render/R2_' in ap['storage_path'], str(ap)[:300])
+expect_error('publish before approval', 'claim_publication', {"p_job_id": job}, 'JOB_NOT_READY')
+
+# --- approval link --------------------------------------------------------
+h = rpc('handle_approval_link', {"p_token": "nope", "p_decision": "YES", "p_decided_by": "OWNER", "p_channel": "TELEGRAM_LINK"}); check('bad token', h['outcome'] == 'INVALID' and h['scope_type'] == '')
+h = rpc('handle_approval_link', {"p_token": ap['token'], "p_decision": "MAYBE", "p_decided_by": "OWNER", "p_channel": "TELEGRAM_LINK"}); check('bad decision', h['outcome'] == 'INVALID')
+h = rpc('handle_approval_link', {"p_token": ap['token'], "p_decision": "YES", "p_decided_by": "OWNER", "p_channel": "TELEGRAM_LINK"})
+check('owner approves', h['outcome'] == 'APPROVED' and h['scope_type'] == 'PUBLICATION' and h['job_id'] == job and 'Onaylandı' in h['message'], str(h))
+h = rpc('handle_approval_link', {"p_token": ap['token'], "p_decision": "NO", "p_decided_by": "OWNER", "p_channel": "TELEGRAM_LINK"}); check('second click cannot change the decision', h['outcome'] == 'ALREADY_DECIDED' and h['scope_type'] == 'PUBLICATION', str(h))
+
+# --- S8 -------------------------------------------------------------------
+c = rpc('claim_publication', {"p_job_id": job})
+check('publication claimed with package fields', c['decision'] == 'CLAIMED' and c['title'] == PACKAGE['title'] and c['tags_csv'] == 'kite,animation,kids,wizzlebury' and c['privacy_status'] == 'private' and c['made_for_kids'] is True and c['notify_chat_id'] == '123456', str(c)[:300])
+c2 = rpc('claim_publication', {"p_job_id": job}); check('second claim does not upload again', c2['decision'] == 'ALREADY_CLAIMED' and c2['publication_id'] == c['publication_id'])
+expect_error('video id required', 'record_publication', {"p_publication_id": c['publication_id'], "p_video_id": "", "p_url": "", "p_status": "PUBLISHED"}, 'VIDEO_ID_REQUIRED')
+r = rpc('record_publication', {"p_publication_id": c['publication_id'], "p_video_id": "abc123XYZ", "p_url": "https://www.youtube.com/watch?v=abc123XYZ", "p_status": "PUBLISHED"})
+check('published: job DONE, episode PUBLISHED', r['state'] == 'DONE' and one(f"select state from public.episodes where id='{ep}'") == 'PUBLISHED', str(r))
+r = rpc('record_publication', {"p_publication_id": c['publication_id'], "p_video_id": "abc123XYZ", "p_url": "", "p_status": "PUBLISHED"}); check('repeat is harmless', r['decision'] == 'ALREADY_RECORDED')
+
+# --- S9 -------------------------------------------------------------------
+l = rpc('list_publications_for_analytics'); it = l['items'][0]
+check('one video to measure', len(l['items']) == 1 and it['video_id'] == 'abc123XYZ' and len(it['snapshot_date']) == 10)
+rpc('record_analytics_snapshot', {"p_publication_id": it['publication_id'], "p_snapshot_date": it['snapshot_date'], "p_metrics": {"views": "120", "likes": "9", "comments": ""}})
+s = rpc('record_analytics_snapshot', {"p_publication_id": it['publication_id'], "p_snapshot_date": it['snapshot_date'], "p_metrics": {"minutes_watched": "14.5", "average_view_duration_seconds": "7", "subscribers_gained": ""}})
+check('two calls merge into one snapshot', s['views'] == 120 and s['likes'] == 9 and s['comments'] is None and s['minutes_watched'] == 14.5 and s['subscribers_gained'] is None, str(s))
+w = rpc('weekly_learning_input'); data = json.loads(w['input_text'])
+check('weekly input', len(w['week_start']) == 10 and data['episode_count'] == 1 and data['episodes_published_last_8_weeks'][0]['title'] == PACKAGE['title'] and data['episodes_published_last_8_weeks'][0]['production']['video_charged_usd'] == 1.7 and data['episodes_published_last_8_weeks'][0]['latest']['views'] == 120, str(data)[:500])
+sv = rpc('save_learning_report', {"p_week_start": w['week_start'], "p_report": {"headline": "x", "summary_for_owner_tr": "Bu hafta tek bölüm yayınlandı."}, "p_model": "claude-sonnet-5"})
+check('report saved, Turkish summary returned', 'Bu hafta tek bölüm' in sv['summary_text'] and sv['notify_chat_id'] == '123456', str(sv))
+m = rpc('daily_maintenance'); check('nothing to report', m['has_issues'] is False and m['message_text'] == '', str(m))
+o = rpc('pipeline_overview'); check('overview lists the job', o['jobs'][0]['state'] == 'DONE' and o['generation_enabled'] is True and o['monthly_budget']['settled'] == 1.7)
+cs = rpc('episode_cost_summary', {"p_episode_id": ep}); check('cost summary', cs['video_charged_usd'] == 1.7 and cs['video_attempts'] == 4 and any(u['service'] == 'FISH_AUDIO' and u['unit'] == 'character' for u in cs['service_usage']), str(cs)[:400])
+check('no open reservations anywhere', one("select coalesce(sum(reserved_amount),0)::float from public.budgets") == '0')
+r = rpc('start_production_job', {"p_idempotency_key": "t-2", "p_series_code": "M417", "p_request": REQUEST}); check('a new job may start after the first is done', r['decision'] == 'CREATED')
+# --- every field a Make module maps from a response really comes back -------
+from contract import CALLS
+import lib
+for scen, fn, params, fields in CALLS:
+    if fields and fn in lib.SEEN:
+        check(f'{fn} returns the fields {scen} maps', set(fields) <= lib.SEEN[fn], f'missing {set(fields) - lib.SEEN[fn]}')
+    elif fields and fn not in ('request_human_approval',):
+        check(f'{fn} was exercised', False)
+summary()
