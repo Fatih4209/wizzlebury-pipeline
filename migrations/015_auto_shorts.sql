@@ -188,6 +188,10 @@ declare
     v_s1 jsonb := p_spec -> 's1';
     v_s2 jsonb := p_spec -> 's2';
     v_s3 jsonb := p_spec -> 's3';
+    v_s4 jsonb := case when jsonb_typeof(p_spec -> 's4') = 'object' then p_spec -> 's4' else '{}'::jsonb end;
+    v_names text := '';
+    v_expected jsonb;
+    v_total integer;
     v_sp jsonb;
     v_c2 jsonb;
     v_c3 jsonb;
@@ -234,6 +238,7 @@ begin
             raise exception 'AUTO_SPEC: unknown character or wardrobe: % / %', v_cast[i], coalesce(p_spec ->> 'wardrobe', 'classic');
         end if;
         v_positions := v_positions || v_pos[i] || ': ' || format(v_c ->> 'frame', v_ord[i]) || '. ';
+        v_names := v_names || case when i > 1 then '; ' else '' end || lower(v_pos[i]) || ' ' || (v_c ->> 'clip');
         v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || (v_c ->> 'ref'), 'mimeType', 'image/png');
     end loop;
     v_sp := m417_internal.as_char(v_s1 ->> 'speaker', p_spec ->> 'wardrobe');
@@ -304,13 +309,31 @@ begin
         || btrim(v_s3 ->> 'guard') || ' no text, no subtitles.';
     v_clips := v_clips || jsonb_build_object('key', 'C3', 'frame', 'F3', 'seconds', coalesce((v_s3 ->> 'seconds')::integer, 3), 'prompt', v_text);
 
-    return jsonb_build_object(
-        'frames', v_frames, 'clips', v_clips,
-        'expected', jsonb_build_array(
-            (v_sp ->> 'name') || ' says: "' || btrim(v_s1 ->> 'line') || '"',
-            (v_c2 ->> 'name') || ' says: "' || btrim(v_s2 ->> 'line') || '"',
-            btrim(v_s3 ->> 'expect')),
-        'seconds', coalesce((v_s1 ->> 'seconds')::integer, 4) + coalesce((v_s2 ->> 'seconds')::integer, 3) + coalesce((v_s3 ->> 'seconds')::integer, 3));
+    v_expected := jsonb_build_array(
+        (v_sp ->> 'name') || ' says: "' || btrim(v_s1 ->> 'line') || '"',
+        (v_c2 ->> 'name') || ' says: "' || btrim(v_s2 ->> 'line') || '"',
+        btrim(v_s3 ->> 'expect'));
+    v_total := coalesce((v_s1 ->> 'seconds')::integer, 4) + coalesce((v_s2 ->> 'seconds')::integer, 3) + coalesce((v_s3 ->> 'seconds')::integer, 3);
+
+    -- scene 4: everybody reacts. Written by default; "s4": false leaves it out.
+    if coalesce(p_spec ->> 's4', '') <> 'false' then
+        v_text := v_style || ', shallow depth of field. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Medium close-up at eye level on the same '
+            || v_num[v_n] || ' children, standing close together shoulder to shoulder in the same order from left to right, exactly as they look in the last reference image. ' || v_positions
+            || 'All ' || v_num[v_n] || ' look down at something just below the frame with wide, amazed eyes, mouths closed. The background is softly blurred. Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. Exactly '
+            || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.';
+        v_frames := v_frames || jsonb_build_object('key', 'F4', 'prompt', v_text,
+            'refs', v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_dir || 'W.jpg', 'mimeType', 'image/jpeg'));
+        v_text := format(v_open, coalesce((v_s4 ->> 'seconds')::integer, 3)) || 'Medium close-up on ' || v_num[v_n] || ' children standing close together: ' || v_names
+            || '. ' || coalesce(nullif(btrim(v_s4 ->> 'action'), ''),
+                   'All ' || v_num[v_n] || ' stare down at something just below the frame with wide, amazed eyes and open mouths for a moment, then burst out laughing together, happy and delighted, and look at each other.')
+            || ' Nobody says a word; there is only happy children''s laughter. The camera does not move. Sound: the children''s gasp and laughter and a quiet room tone. No music, no words, no narrator. Exactly '
+            || v_num[v_n] || ' children, nobody else appears, no text, no subtitles.';
+        v_clips := v_clips || jsonb_build_object('key', 'C4', 'frame', 'F4', 'seconds', coalesce((v_s4 ->> 'seconds')::integer, 3), 'prompt', v_text);
+        v_expected := v_expected || to_jsonb('All the children look amazed and then laugh together; nobody speaks.'::text);
+        v_total := v_total + coalesce((v_s4 ->> 'seconds')::integer, 3);
+    end if;
+
+    return jsonb_build_object('frames', v_frames, 'clips', v_clips, 'expected', v_expected, 'seconds', v_total);
 end;
 $function$;
 
@@ -352,11 +375,11 @@ $function$;
 create or replace function m417_internal.as_qc_prompt(p_prompts jsonb)
  returns text language sql stable set search_path to ''
 as $function$
-    select 'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It was made from three generated clips joined with soft fades; a fade between two clips is not a defect, and quiet background music is wanted.'
-        || E'\nExpected, in this order:\n1) ' || (p_prompts -> 'expected' ->> 0)
-        || E'\n2) ' || (p_prompts -> 'expected' ->> 1)
-        || E'\n3) ' || (p_prompts -> 'expected' ->> 2)
-        || E'\nAnswer FAIL if any of these is true: a spoken line is missing, cut off, in another language or has clearly different words; a voice speaks while nobody''s mouth moves, or the wrong character speaks; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character or an object is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
+    select 'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It was made from several generated clips joined with soft fades; a fade between two clips is not a defect, and quiet background music is wanted.'
+        || E'\nExpected, in this order:'
+        || (select string_agg(E'\n' || e.ord || ') ' || e.value, '' order by e.ord)
+            from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
+        || E'\nAnswer FAIL if any of these is true: a spoken line is missing, cut off, in another language or has clearly different words; a voice speaks while nobody''s mouth moves, or the wrong character speaks; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character looks like a different child from one scene to the next (other face, hair or skin); a character or an object is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
         || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.';
 $function$;
 
@@ -436,7 +459,9 @@ begin
                and coalesce((r.data -> 'retried' ->> r.state)::boolean, false) is not true;
     for v_item in select * from jsonb_array_elements(v_p -> p_kind)
     loop
-        continue when not ((v_item ->> 'key') = any (p_keys));
+        -- '*' means every file of the kind, '!W' every one but the wide picture
+        continue when p_keys[1] = '!W' and (v_item ->> 'key') = 'W';
+        continue when p_keys[1] not in ('*', '!W') and not ((v_item ->> 'key') = any (p_keys));
         v_file := (v_item ->> 'key') || case when p_kind = 'frames' then '.jpg' else '.mp4' end;
         continue when m417_internal.as_exists(r.code, v_file);
         v_missing := v_missing || v_file;
@@ -515,27 +540,29 @@ begin
         v_missing := m417_internal.as_request(r.id, 'frames', array['W'], false);
         if coalesce(array_length(v_missing, 1), 0) = 0 then
             perform m417_internal.as_move(r.id, 'FRAMES');
-            perform m417_internal.as_request(r.id, 'frames', array['F2', 'F3'], true);
+            perform m417_internal.as_request(r.id, 'frames', array['!W'], true);
             v_done := v_done || jsonb_build_object('code', r.code, 'to', 'FRAMES');
         elsif r.state_since < now() - v_timeout and coalesce((r.data -> 'retried' ->> 'FRAME_WIDE')::boolean, false) then
             perform m417_internal.as_fail(r.id, 'FRAME_NOT_DRAWN', array_to_string(v_missing, ', '));
         end if;
 
     elsif r.state = 'FRAMES' then
-        v_missing := m417_internal.as_request(r.id, 'frames', array['F2', 'F3'], false);
+        v_missing := m417_internal.as_request(r.id, 'frames', array['!W'], false);
         if coalesce(array_length(v_missing, 1), 0) = 0 then
             perform m417_internal.as_move(r.id, 'CLIPS');
-            perform m417_internal.as_request(r.id, 'clips', array['C1', 'C2', 'C3'], true);
+            perform m417_internal.as_request(r.id, 'clips', array['*'], true);
             v_done := v_done || jsonb_build_object('code', r.code, 'to', 'CLIPS');
         elsif r.state_since < now() - v_timeout and coalesce((r.data -> 'retried' ->> 'FRAMES')::boolean, false) then
             perform m417_internal.as_fail(r.id, 'FRAME_NOT_DRAWN', array_to_string(v_missing, ', '));
         end if;
 
     elsif r.state = 'CLIPS' then
-        v_missing := m417_internal.as_request(r.id, 'clips', array['C1', 'C2', 'C3'], false);
+        v_missing := m417_internal.as_request(r.id, 'clips', array['*'], false);
         if coalesce(array_length(v_missing, 1), 0) = 0 then
             v_p := m417_internal.as_prompts(r.code, r.spec);
+            -- a short that is rendered again starts with a clean slate
             perform m417_internal.as_move(r.id, 'RENDERING', jsonb_build_object(
+                'render_id', null, 'poll_req', null, 'poll_at', null, 'qc_req', null,
                 'render_req', m417_internal.as_post(m417_internal.as_set('webhook_render'),
                     jsonb_build_object('request_text', m417_internal.as_render_request(r.code, v_p)::text), 120000)));
             v_done := v_done || jsonb_build_object('code', r.code, 'to', 'RENDERING');
@@ -579,7 +606,7 @@ begin
                         'render_url', v_body ->> 'url',
                         'qc_req', m417_internal.as_post(m417_internal.as_set('webhook_qc'), jsonb_build_object(
                             'video_url', v_body ->> 'url',
-                            'path', 'auto/' || r.code || '/final.mp4',
+                            'path', 'auto/' || r.code || '/final_' || left(r.data ->> 'render_id', 8) || '.mp4',
                             'prompt', m417_internal.as_qc_prompt(v_p)), 170000)));
                     v_done := v_done || jsonb_build_object('code', r.code, 'to', 'QC');
                 elsif lower(coalesce(v_body ->> 'status', '')) = 'failed' then
@@ -610,13 +637,13 @@ begin
             v_score := case when (v_body ->> 'score') ~ '^[0-9]+(\.[0-9]+)?$' then (v_body ->> 'score')::numeric end;
             if v_status = 200 and upper(coalesce(v_body ->> 'verdict', '')) = 'PASS'
                and coalesce(v_score, 0) >= coalesce(m417_internal.as_set('qc_min_score')::numeric, 70)
-               and m417_internal.as_exists(r.code, 'final.mp4')
+               and m417_internal.as_exists(r.code, 'final_' || left(r.data ->> 'render_id', 8) || '.mp4')
             then
                 perform m417_internal.as_move(r.id, 'READY', jsonb_build_object(
-                    'qc', v_body, 'video_url', v_base || 'auto/' || r.code || '/final.mp4', 'ready_at', now()));
+                    'qc', v_body, 'video_url', v_base || 'auto/' || r.code || '/final_' || left(r.data ->> 'render_id', 8) || '.mp4', 'ready_at', now()));
                 perform m417_internal.as_notify(format(
                     E'🎬 Hazır: %s\nİzle: %s\nYayın saati: %s\nOtomatik kontrol puanı: %s\n\nYayınlanmasın istersen: %s?code=%s&t=%s',
-                    r.title, v_base || 'auto/' || r.code || '/final.mp4',
+                    r.title, v_base || 'auto/' || r.code || '/final_' || left(r.data ->> 'render_id', 8) || '.mp4',
                     to_char(r.publish_at at time zone 'Europe/Istanbul', 'DD.MM HH24:MI'),
                     v_score, m417_internal.as_set('webhook_cancel'), r.code, r.cancel_token));
                 v_done := v_done || jsonb_build_object('code', r.code, 'to', 'READY');
