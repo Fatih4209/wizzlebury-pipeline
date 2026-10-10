@@ -68,37 +68,96 @@ as $function$
     select s.value from public.auto_shorts_settings s where s.key = p_key;
 $function$;
 
--- ----- the cast ------------------------------------------------------
-create or replace function m417_internal.as_char(p_code text)
- returns jsonb language sql immutable set search_path to ''
+-- ----- the cast and its wardrobe ----------------------------------------
+-- Who somebody is (face, hair) is fixed here and comes from the reference
+-- image. What they wear depends on where the short plays: a row of
+-- auto_wardrobe per character and wardrobe. Every character keeps one
+-- colour of their own, the clothes change with the place.
+create table if not exists public.auto_wardrobe (
+    character_code text not null,
+    wardrobe text not null,
+    outfit_frame text not null,
+    outfit_clip text not null,
+    primary key (character_code, wardrobe)
+);
+alter table public.auto_wardrobe enable row level security;
+insert into public.auto_wardrobe (character_code, wardrobe, outfit_frame, outfit_clip) values
+    ('FATIH', 'classic', 'the same red jacket over a white shirt as', 'the red jacket'),
+    ('FATIH', 'home', 'a soft red hoodie and grey sweatpants', 'the red hoodie'),
+    ('FATIH', 'pajamas', 'red-and-white striped pajamas with long sleeves', 'the red-and-white striped pajamas'),
+    ('FATIH', 'park', 'a white T-shirt with red sleeves, blue denim shorts and a red cap worn backwards', 'the white T-shirt with red sleeves and the red cap'),
+    ('FATIH', 'school', 'a red polo shirt with a white collar, navy trousers and a navy backpack', 'the red polo shirt'),
+    ('FATIH', 'dance', 'a red tracksuit jacket with white stripes on the sleeves and black track pants', 'the red tracksuit jacket'),
+    ('FATIH', 'party', 'a red checked shirt with rolled sleeves, a small blue bow tie and dark jeans', 'the red checked shirt and the blue bow tie'),
+    ('MIA', 'classic', 'a lilac top with short sleeves', 'the lilac top'),
+    ('MIA', 'home', 'a lilac long-sleeved top under light blue denim dungarees', 'the lilac top and the denim dungarees'),
+    ('MIA', 'pajamas', 'lilac pajamas with small white stars, long sleeves and long trousers', 'the lilac pajamas'),
+    ('MIA', 'park', 'a lilac summer dress with short sleeves that reaches her knees, white sneakers and a purple hair band', 'the lilac summer dress and the purple hair band'),
+    ('MIA', 'school', 'a lilac cardigan over a white collared blouse, a grey pleated skirt that reaches her knees with white tights, and a purple backpack', 'the lilac cardigan'),
+    ('MIA', 'dance', 'a lilac dance T-shirt and a pink tutu skirt over purple leggings', 'the lilac dance T-shirt and the pink tutu'),
+    ('MIA', 'party', 'a lilac party dress with short puffy sleeves that reaches her knees', 'the lilac party dress'),
+    ('TOMBIK', 'classic', 'the same green-and-white varsity jacket over a yellow hoodie as', 'the green-and-white varsity jacket'),
+    ('TOMBIK', 'home', 'a green-and-white striped long-sleeved shirt and blue jeans', 'the green-and-white striped shirt'),
+    ('TOMBIK', 'pajamas', 'green pajamas with small yellow dots and long sleeves', 'the green pajamas'),
+    ('TOMBIK', 'park', 'a yellow T-shirt under green dungaree shorts', 'the yellow T-shirt and the green dungarees'),
+    ('TOMBIK', 'school', 'a green knitted vest over a white collared shirt, grey trousers and a yellow backpack', 'the green knitted vest'),
+    ('TOMBIK', 'dance', 'a green tracksuit jacket with yellow stripes, zipped up, and a yellow sweatband on his forehead', 'the green tracksuit jacket and the yellow sweatband'),
+    ('TOMBIK', 'party', 'a yellow shirt with a green bow tie and green suspenders', 'the yellow shirt and the green suspenders'),
+    ('OMER', 'classic', 'the same blue jacket over a white hoodie as', 'the blue jacket'),
+    ('OMER', 'home', 'an orange T-shirt with white sleeves and dark grey jogger pants', 'the orange T-shirt with white sleeves'),
+    ('OMER', 'pajamas', 'orange pajamas with a white collar and long sleeves', 'the orange pajamas'),
+    ('OMER', 'park', 'an orange football jersey with white stripes, black shorts and white sneakers', 'the orange football jersey'),
+    ('OMER', 'school', 'an orange polo shirt with a white collar, navy trousers and a blue backpack', 'the orange polo shirt'),
+    ('OMER', 'dance', 'an orange sleeveless hoodie over a white T-shirt and black track pants', 'the orange sleeveless hoodie'),
+    ('OMER', 'party', 'an orange shirt with a white bow tie under a dark grey waistcoat', 'the orange shirt and the grey waistcoat'),
+    ('BRUCE', 'classic', 'the same blue jacket over a white hoodie as', 'the blue jacket'),
+    ('BRUCE', 'home', 'a teal sweatshirt, light grey cargo pants and small white headphones around his neck', 'the teal sweatshirt and the white headphones around his neck'),
+    ('BRUCE', 'pajamas', 'teal pajamas with thin white stripes and long sleeves', 'the teal striped pajamas'),
+    ('BRUCE', 'park', 'a teal windbreaker jacket over a white T-shirt and grey shorts', 'the teal windbreaker'),
+    ('BRUCE', 'school', 'a teal zip cardigan over a white collared shirt, dark trousers and a black backpack', 'the teal zip cardigan'),
+    ('BRUCE', 'dance', 'a loose teal T-shirt over a long-sleeved white shirt, black track pants and small white headphones around his neck', 'the loose teal T-shirt'),
+    ('BRUCE', 'party', 'a teal shirt with a short black tie and a black waistcoat', 'the teal shirt and the black tie')
+on conflict (character_code, wardrobe) do nothing;
+
+drop function if exists m417_internal.as_char(text);
+create or replace function m417_internal.as_char(p_code text, p_wardrobe text)
+ returns jsonb language sql stable security definer set search_path to ''
 as $function$
-    select case upper(btrim(p_code))
-        when 'FATIH' then jsonb_build_object(
-            'name', 'Fatih', 'ref', 'FATIH_REF_V8.png',
-            'frame', 'the boy from the %s reference image, same face, same messy brown hair, green eyes, same red jacket over a white shirt',
-            'clip', 'Fatih, the boy with messy brown hair and the red jacket',
-            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
-        when 'MIA' then jsonb_build_object(
-            'name', 'Mia', 'ref', 'MIA_REF_V2.png',
-            'frame', 'the cartoon girl from the %s reference image, same face and same long wavy blonde hair, wearing a lilac top with short sleeves',
-            'clip', 'Mia, the cartoon character with long wavy blonde hair and the lilac top',
-            'he', 'she', 'his', 'her', 'voice', 'cartoon child voice')
-        when 'TOMBIK' then jsonb_build_object(
-            'name', 'Tombik', 'ref', 'TOMBIK_REF_V1.png',
-            'frame', 'the chubby boy from the %s reference image, same face, same curly ginger hair, same green-and-white varsity jacket over a yellow hoodie',
-            'clip', 'Tombik, the chubby boy with curly ginger hair and the green-and-white varsity jacket',
-            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
-        when 'OMER' then jsonb_build_object(
-            'name', 'Ömer', 'ref', 'OMER_REF_V1.png',
-            'frame', 'the boy from the %s reference image, same face, same deep brown skin, same short curly dark hair with tapered sides, same blue jacket over a white hoodie',
-            'clip', 'Ömer, the boy with deep brown skin, short curly dark hair and the blue jacket',
-            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
-        when 'BRUCE' then jsonb_build_object(
-            'name', 'Bruce', 'ref', 'BRUCE_REF_V1.png',
-            'frame', 'the boy from the %s reference image, same face, same tousled layered black hair, same blue jacket over a white hoodie',
-            'clip', 'Bruce, the boy with tousled black hair and the blue jacket',
-            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
-    end;
+    with who as (
+        select case upper(btrim(p_code))
+            when 'FATIH' then jsonb_build_object('name', 'Fatih', 'ref', 'FATIH_REF_V8.png',
+                'face', 'the boy from the %s reference image, same face, same messy brown hair, same green eyes',
+                'base', 'Fatih, the boy with messy brown hair',
+                'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+            when 'MIA' then jsonb_build_object('name', 'Mia', 'ref', 'MIA_REF_V2.png',
+                'face', 'the cartoon girl from the %s reference image, same face and same long wavy blonde hair',
+                'base', 'Mia, the cartoon character with long wavy blonde hair',
+                'he', 'she', 'his', 'her', 'voice', 'cartoon child voice')
+            when 'TOMBIK' then jsonb_build_object('name', 'Tombik', 'ref', 'TOMBIK_REF_V1.png',
+                'face', 'the chubby boy from the %s reference image, same face, same curly ginger hair, same round body',
+                'base', 'Tombik, the chubby boy with curly ginger hair',
+                'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+            when 'OMER' then jsonb_build_object('name', 'Ömer', 'ref', 'OMER_REF_V1.png',
+                'face', 'the boy from the %s reference image, same face, same deep brown skin, same short curly dark hair with tapered sides',
+                'base', 'Ömer, the boy with deep brown skin and short curly dark hair',
+                'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+            when 'BRUCE' then jsonb_build_object('name', 'Bruce', 'ref', 'BRUCE_REF_V1.png',
+                'face', 'the boy from the %s reference image, same face, same tousled layered black hair',
+                'base', 'Bruce, the boy with tousled black hair',
+                'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+        end as c
+    )
+    select who.c || jsonb_build_object(
+        'frame', (who.c ->> 'face') || ', wearing ' || w.outfit_frame
+                 || case when w.wardrobe = 'classic' and w.outfit_frame like '% as' then ' in that reference image'
+                         when w.wardrobe = 'classic' then ''
+                         else ' instead of the clothes in that reference image' end,
+        'clip', (who.c ->> 'base') || ' in ' || w.outfit_clip)
+    from who
+    join public.auto_wardrobe w
+      on w.character_code = upper(btrim(p_code))
+     and w.wardrobe = coalesce(nullif(lower(btrim(p_wardrobe)), ''), 'classic')
+    where who.c is not null;
 $function$;
 
 create or replace function m417_internal.as_words(p_line text)
@@ -108,7 +167,7 @@ as $function$
         when 1 then 'this one word' when 2 then 'these two words' when 3 then 'these three words'
         when 4 then 'these four words' when 5 then 'these five words' when 6 then 'these six words'
         when 7 then 'these seven words' when 8 then 'these eight words' else 'these words' end
-    from (select coalesce(array_length(regexp_split_to_array(btrim(regexp_replace(p_line, '[^[:alnum:]'' ]+', ' ', 'g')), '\s+'), 1), 0) as n) x;
+    from (select coalesce(array_length(regexp_split_to_array(btrim(regexp_replace(p_line, '[^[:alnum:]'' -]+', ' ', 'g')), '\s+'), 1), 0) as n) x;
 $function$;
 
 -- ----- from a spec to the texts sent to the models -------------------------
@@ -170,16 +229,16 @@ begin
     v_pos := case when v_n = 3 then array['On the left', 'In the middle', 'On the right']
                   else array['On the left', 'On the right'] end;
     for i in 1 .. v_n loop
-        v_c := m417_internal.as_char(v_cast[i]);
+        v_c := m417_internal.as_char(v_cast[i], p_spec ->> 'wardrobe');
         if v_c is null then
-            raise exception 'AUTO_SPEC: unknown character %', v_cast[i];
+            raise exception 'AUTO_SPEC: unknown character or wardrobe: % / %', v_cast[i], coalesce(p_spec ->> 'wardrobe', 'classic');
         end if;
         v_positions := v_positions || v_pos[i] || ': ' || format(v_c ->> 'frame', v_ord[i]) || '. ';
         v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || (v_c ->> 'ref'), 'mimeType', 'image/png');
     end loop;
-    v_sp := m417_internal.as_char(v_s1 ->> 'speaker');
-    v_c2 := m417_internal.as_char(v_s2 ->> 'char');
-    v_c3 := m417_internal.as_char(v_s3 ->> 'char');
+    v_sp := m417_internal.as_char(v_s1 ->> 'speaker', p_spec ->> 'wardrobe');
+    v_c2 := m417_internal.as_char(v_s2 ->> 'char', p_spec ->> 'wardrobe');
+    v_c3 := m417_internal.as_char(v_s3 ->> 'char', p_spec ->> 'wardrobe');
     if v_sp is null or not (upper(v_s1 ->> 'speaker') = any (v_cast)) then
         raise exception 'AUTO_SPEC: s1.speaker must be one of the cast';
     end if;
@@ -696,7 +755,7 @@ begin
     end loop;
     foreach v_role in array array['anon', 'authenticated'] loop
         if exists (select 1 from pg_roles where rolname = v_role) then
-            execute format('revoke all on public.auto_shorts, public.auto_shorts_settings, public.auto_shorts_calendar from %I', v_role);
+            execute format('revoke all on public.auto_shorts, public.auto_shorts_settings, public.auto_shorts_calendar, public.auto_wardrobe from %I', v_role);
         end if;
     end loop;
 end $$;
