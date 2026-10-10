@@ -170,6 +170,117 @@ as $function$
     from (select coalesce(array_length(regexp_split_to_array(btrim(regexp_replace(p_line, '[^[:alnum:]'' -]+', ' ', 'g')), '\s+'), 1), 0) as n) x;
 $function$;
 
+-- ----- a dance short: nobody speaks, a song of our own carries it ----------
+-- Spec: {"kind": "dance", "place", "cast"[3], "wardrobe", "start_pose",
+--        "song": {"file": "auto/songs/X.mp3", "trim": 1.0, "volume": 0.9},
+--        "moves": [{"seconds", "move"} x 4]}  (wide, waist-up, wide from below, faces)
+-- The seconds of the moves follow the lines of the song, so that every
+-- line is danced in its own shot.
+create or replace function m417_internal.as_prompts_dance(p_code text, p_spec jsonb)
+ returns jsonb language plpgsql stable security definer set search_path to ''
+as $function$
+declare
+    v_base text := m417_internal.as_set('storage_base');
+    v_dir text := v_base || 'auto/' || p_code || '/';
+    v_cast text[];
+    v_n integer;
+    v_num text[] := array['one', 'two', 'three'];
+    v_ord text[] := array['first', 'second', 'third'];
+    v_pos text[];
+    v_c jsonb;
+    v_names text := '';
+    v_positions text := '';
+    v_refs jsonb := '[]'::jsonb;
+    v_wide jsonb;
+    v_frames jsonb := '[]'::jsonb;
+    v_clips jsonb := '[]'::jsonb;
+    v_expected jsonb := '[]'::jsonb;
+    v_total integer := 0;
+    v_song jsonb := p_spec -> 'song';
+    v_move jsonb;
+    v_sec integer;
+    v_text text;
+    v_same constant text := 'Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. ';
+    v_style constant text := 'Draw one still picture, vertical 9:16, 3D animated kids cartoon, soft rounded Pixar-like style';
+    v_open constant text := 'The video starts exactly from this picture and stays one continuous shot, about %s seconds long. 3D animated family cartoon for kids, a happy dance video. ';
+    v_frame_keys constant text[] := array['W', 'F2', 'F3', 'F4'];
+    v_shots constant text[] := array['Medium-wide shot of', 'Medium shot from the waist up of', 'Wide shot from a low camera of', 'Close shot on the faces of'];
+    i integer;
+begin
+    select array_agg(upper(x)) into v_cast from jsonb_array_elements_text(p_spec -> 'cast') x;
+    v_n := coalesce(array_length(v_cast, 1), 0);
+    if v_n not between 2 and 3 then
+        raise exception 'AUTO_SPEC: cast needs two or three characters';
+    end if;
+    if coalesce(btrim(p_spec ->> 'place'), '') = '' then
+        raise exception 'AUTO_SPEC: place is missing';
+    end if;
+    if coalesce(v_song ->> 'file', '') = '' then
+        raise exception 'AUTO_SPEC: song.file is missing';
+    end if;
+    if jsonb_typeof(p_spec -> 'moves') <> 'array' or jsonb_array_length(p_spec -> 'moves') <> 4 then
+        raise exception 'AUTO_SPEC: a dance needs exactly four moves';
+    end if;
+    v_pos := case when v_n = 3 then array['On the left', 'In the middle', 'On the right']
+                  else array['On the left', 'On the right'] end;
+    for i in 1 .. v_n loop
+        v_c := m417_internal.as_char(v_cast[i], p_spec ->> 'wardrobe');
+        if v_c is null then
+            raise exception 'AUTO_SPEC: unknown character or wardrobe: % / %', v_cast[i], coalesce(p_spec ->> 'wardrobe', 'classic');
+        end if;
+        v_positions := v_positions || v_pos[i] || ': ' || format(v_c ->> 'frame', v_ord[i]) || '. ';
+        v_names := v_names || case when i > 1 then '; ' else '' end || lower(v_pos[i]) || ' ' || (v_c ->> 'clip');
+        v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || (v_c ->> 'ref'), 'mimeType', 'image/png');
+    end loop;
+    v_wide := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_dir || 'W.jpg', 'mimeType', 'image/jpeg');
+
+    -- the four pictures the four shots start from
+    v_frames := jsonb_build_array(
+        jsonb_build_object('key', 'W', 'refs', v_refs, 'prompt',
+            v_style || '. ' || btrim(p_spec ->> 'place') || ' ' || initcap(v_num[v_n]) || ' children '
+            || coalesce(nullif(btrim(p_spec ->> 'start_pose'), ''), 'stand side by side, a little apart, knees slightly bent and both hands up at chest height, ready to dance')
+            || ', with big happy smiles, all ' || v_num[v_n] || ' fully visible from head to feet, medium-wide shot at eye level. ' || v_positions
+            || 'Exactly ' || v_num[v_n] || ' children. ' || v_same || 'Nobody else, no animals, no text, no letters.'),
+        jsonb_build_object('key', 'F2', 'refs', v_wide, 'prompt',
+            v_style || '. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Medium shot at eye level, from the waist up, on the same '
+            || v_num[v_n] || ' children in the same order from left to right, exactly as they look in the last reference image, both arms up in the air, with big happy smiles. '
+            || v_positions || v_same || 'Exactly ' || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.'),
+        jsonb_build_object('key', 'F3', 'refs', v_wide, 'prompt',
+            v_style || '. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Wide shot from a low camera near the ground, looking slightly up at the same '
+            || v_num[v_n] || ' children in the same order from left to right, exactly as they look in the last reference image, all fully visible from head to feet, each with both arms stretched out to the sides, with big happy smiles. '
+            || v_positions || v_same || 'Exactly ' || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.'),
+        jsonb_build_object('key', 'F4', 'refs', v_wide, 'prompt',
+            v_style || ', shallow depth of field. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Close shot at eye level on the same '
+            || v_num[v_n] || ' children, heads close together so that their faces fill the frame, shoulder to shoulder in the same order from left to right, exactly as they look in the last reference image, looking into the camera with huge happy smiles. '
+            || v_positions || 'The background is softly blurred. ' || v_same || 'Exactly ' || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.'));
+
+    for i in 1 .. 4 loop
+        v_move := p_spec -> 'moves' -> (i - 1);
+        if coalesce(btrim(v_move ->> 'move'), '') = '' then
+            raise exception 'AUTO_SPEC: move % is empty', i;
+        end if;
+        v_sec := coalesce((v_move ->> 'seconds')::integer, 4);
+        v_text := format(v_open, v_sec) || v_shots[i] || ' ' || v_num[v_n] || ' children dancing together: ' || v_names || '. '
+            || btrim(v_move ->> 'move') || ' They move in a steady, bouncy rhythm, all at the same time, like children dancing to a happy song. '
+            || case when i = 4 then 'Their faces are very expressive: big open-mouthed laughs, eyes squeezed with joy, cheeks lifted, heads tipping back a little, shoulders shaking. '
+                    else 'Big happy smiles all the time; every face stays exactly the same child. ' end
+            || 'Nobody speaks and nobody sings. The camera does not move. Sound: only '
+            || case when i = 4 then 'happy children''s laughter' else 'light steps, hand claps and happy giggles' end
+            || '. No music, no words, no narrator. Exactly ' || v_num[v_n] || ' children, nobody else appears, no text, no subtitles.';
+        v_clips := v_clips || jsonb_build_object('key', 'C' || i, 'frame', v_frame_keys[i], 'seconds', v_sec, 'prompt', v_text,
+                                                 'volume', case when i = 4 then 0.6 else 0.25 end);
+        v_expected := v_expected || to_jsonb('The children dance: ' || btrim(v_move ->> 'move'));
+        v_total := v_total + v_sec;
+    end loop;
+
+    return jsonb_build_object(
+        'frames', v_frames, 'clips', v_clips, 'expected', v_expected, 'seconds', v_total,
+        'song', jsonb_build_object('src', v_base || (v_song ->> 'file'),
+                                   'trim', coalesce((v_song ->> 'trim')::numeric, 0),
+                                   'volume', coalesce((v_song ->> 'volume')::numeric, 0.9)));
+end;
+$function$;
+
 -- ----- from a spec to the texts sent to the models -------------------------
 -- Returns {"frames":[{key,refs,prompt}], "clips":[{key,frame,seconds,prompt}],
 --          "expected":[...], "seconds": n}. Raises when the spec is incomplete.
@@ -205,6 +316,9 @@ declare
     v_key text;
     i integer;
 begin
+    if p_spec ->> 'kind' = 'dance' then
+        return m417_internal.as_prompts_dance(p_code, p_spec);
+    end if;
     select array_agg(upper(x)) into v_cast from jsonb_array_elements_text(p_spec -> 'cast') x;
     v_n := coalesce(array_length(v_cast, 1), 0);
     if v_n not between 2 and 3 then
@@ -316,7 +430,26 @@ begin
     v_total := coalesce((v_s1 ->> 'seconds')::integer, 4) + coalesce((v_s2 ->> 'seconds')::integer, 3) + coalesce((v_s3 ->> 'seconds')::integer, 3);
 
     -- scene 4: everybody reacts. Written by default; "s4": false leaves it out.
-    if coalesce(p_spec ->> 's4', '') <> 'false' then
+    if coalesce(p_spec ->> 's4', '') <> 'false' and coalesce(btrim(v_s4 ->> 'place'), '') <> '' then
+        -- the reaction happens somewhere else (a magic trip): a new place, the same children
+        v_text := v_style || '. The same ' || v_num[v_n] || ' children as in the last reference image, in exactly the same clothes and in the same order from left to right, now stand in a completely different place: '
+            || btrim(v_s4 ->> 'place') || ' Medium shot at eye level, all ' || v_num[v_n] || ' visible from the knees up, standing close together, faces clearly visible. ' || v_positions
+            || 'All ' || v_num[v_n] || ' ' || coalesce(nullif(btrim(v_s4 ->> 'pose'), ''), 'look around with wide, amazed eyes') || ', mouths closed. Only the place is new: every face, hairstyle, hair colour, skin tone, eye colour, age, body shape and piece of clothing stays exactly as in the last reference image. Exactly '
+            || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.';
+        v_frames := v_frames || jsonb_build_object('key', 'F4', 'prompt', v_text,
+            'refs', v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_dir || 'W.jpg', 'mimeType', 'image/jpeg'));
+        v_text := format(v_open, coalesce((v_s4 ->> 'seconds')::integer, 4)) || 'Medium shot of ' || v_num[v_n] || ' children standing close together in a magical place: ' || v_names
+            || '. ' || coalesce(nullif(btrim(v_s4 ->> 'action'), ''),
+                   'All ' || v_num[v_n] || ' look around with wide, amazed eyes and open mouths for a moment, then look at each other and burst out laughing with joy.')
+            || ' Their faces are very expressive: big open-mouthed laughs, eyes squeezed with joy, cheeks lifted, heads tipping back a little, shoulders shaking.'
+            || ' Nobody says a word; there is only happy children''s laughter. The camera does not move. Sound: '
+            || coalesce(nullif(btrim(v_s4 ->> 'sounds'), '') || ', ', '') || 'the children''s gasp and laughter. No music, no words, no narrator. Exactly '
+            || v_num[v_n] || ' children, nobody else appears, no text, no subtitles.';
+        v_clips := v_clips || jsonb_build_object('key', 'C4', 'frame', 'F4', 'seconds', coalesce((v_s4 ->> 'seconds')::integer, 4), 'prompt', v_text);
+        v_expected := v_expected || to_jsonb(coalesce(nullif(btrim(v_s4 ->> 'expect'), ''),
+            'The same children now stand in a different, magical place (this change of place is wanted), look amazed and then laugh together; nobody speaks.'));
+        v_total := v_total + coalesce((v_s4 ->> 'seconds')::integer, 4);
+    elsif coalesce(p_spec ->> 's4', '') <> 'false' then
         v_text := v_style || ', shallow depth of field. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Close shot at eye level on the same '
             || v_num[v_n] || ' children, heads close together so that their faces fill the frame, shoulder to shoulder in the same order from left to right, exactly as they look in the last reference image. ' || v_positions
             || 'All ' || v_num[v_n] || ' ' || coalesce(nullif(btrim(v_s4 ->> 'pose'), ''), 'look down at something just below the frame with wide, amazed eyes') || ', mouths closed. The background is softly blurred. Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. Exactly '
@@ -354,7 +487,8 @@ begin
         -- later clips lie on top and fade in over the end of the one before
         v_tracks := jsonb_build_array(jsonb_build_object('clips', jsonb_build_array(
             jsonb_build_object(
-                'asset', jsonb_build_object('type', 'video', 'src', v_dir || (v_clip ->> 'key') || '.mp4', 'volume', 1),
+                'asset', jsonb_build_object('type', 'video', 'src', v_dir || (v_clip ->> 'key') || '.mp4',
+                                            'volume', coalesce((v_clip ->> 'volume')::numeric, 1)),
                 'start', greatest(v_at - 0.5 * v_no, 0),
                 'length', (v_clip ->> 'seconds')::numeric,
                 'fit', 'cover')
@@ -363,6 +497,20 @@ begin
         v_at := v_at + (v_clip ->> 'seconds')::numeric;
         v_no := v_no + 1;
     end loop;
+    if p_prompts ? 'song' then
+        -- a dance short: its own song, loud, from the first sung word on
+        return jsonb_build_object(
+            'timeline', jsonb_build_object(
+                'background', '#000000',
+                'tracks', v_tracks || jsonb_build_object('clips', jsonb_build_array(jsonb_build_object(
+                    'asset', jsonb_build_object('type', 'audio', 'src', p_prompts -> 'song' ->> 'src',
+                                                'trim', (p_prompts -> 'song' ->> 'trim')::numeric,
+                                                'volume', (p_prompts -> 'song' ->> 'volume')::numeric,
+                                                'effect', 'fadeOut'),
+                    'start', 0,
+                    'length', v_at - 0.5 * (v_no - 1))))),
+            'output', jsonb_build_object('format', 'mp4', 'aspectRatio', '9:16', 'resolution', '1080', 'fps', 24));
+    end if;
     return jsonb_build_object(
         'timeline', jsonb_build_object(
             'background', '#000000',
@@ -376,12 +524,20 @@ $function$;
 create or replace function m417_internal.as_qc_prompt(p_prompts jsonb)
  returns text language sql stable set search_path to ''
 as $function$
-    select 'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It was made from several generated clips joined with soft fades; a fade between two clips is not a defect, and quiet background music is wanted.'
+    select case when p_prompts ? 'song' then
+        'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It is a dance video: cartoon children dance to a children''s song. The song with its singing voices is the soundtrack and is wanted; the children on the screen dance and laugh and do not sing or speak, and that is not a defect. It was made from several generated clips joined with soft fades; a fade between two clips and a new camera position after it are not defects.'
+        || E'\nExpected, in this order:'
+        || (select string_agg(E'\n' || e.ord || ') ' || e.value, '' order by e.ord)
+            from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
+        || E'\nAnswer FAIL if any of these is true: there is no song, or the song is drowned out, distorted or clashes with a second piece of music; the children stand still for most of a shot instead of dancing; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character looks like a different child from one shot to the next (other face, hair or skin); a character is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
+        || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.'
+    else 'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It was made from several generated clips joined with soft fades; a fade between two clips is not a defect, and quiet background music is wanted.'
         || E'\nExpected, in this order:'
         || (select string_agg(E'\n' || e.ord || ') ' || e.value, '' order by e.ord)
             from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
         || E'\nAnswer FAIL if any of these is true: a spoken line is missing, cut off, in another language or has clearly different words; a voice speaks while nobody''s mouth moves, or the wrong character speaks; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character looks like a different child from one scene to the next (other face, hair or skin); a character or an object is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
-        || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.';
+        || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.'
+    end;
 $function$;
 
 -- ----- small helpers of the timer -----------------------------------------
