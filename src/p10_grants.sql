@@ -22,7 +22,8 @@ declare
         'set_pipeline_enabled', 'set_text_setting', 'set_numeric_setting',
         'open_monthly_budget',
         'resume_production_job', 'cancel_production_job', 'reissue_shot_review',
-        'reset_publication_claim', 'register_music_track'];
+        'reset_publication_claim', 'register_music_track',
+        'next_keyframe_work', 'register_keyframe', 'apply_keyframe_check', 'fail_keyframe'];
     v_has_service boolean := exists (select 1 from pg_roles where rolname = 'service_role');
 begin
     for r in
@@ -64,7 +65,8 @@ begin
     for r in
         select p.oid::regprocedure as sig
         from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-        where n.nspname = 'public' and p.proname in ('watchdog_tick', 'watchdog_run', 'approve_model_pilot', 'revoke_model_pilot', 'set_video_reference', 'set_video_wardrobe')
+        where n.nspname = 'public' and p.proname in ('watchdog_tick', 'watchdog_run', 'approve_model_pilot', 'revoke_model_pilot', 'set_video_reference', 'set_video_wardrobe',
+                                                       'keyframe_overview', 'decide_keyframes', 'require_keyframe_for_attempt', 'keyframes_on_video_stage')
     loop
         execute format('revoke all on function %s from public', r.sig);
         foreach v_role in array array['anon', 'authenticated', 'service_role'] loop
