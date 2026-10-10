@@ -106,34 +106,36 @@ on conflict (key) do nothing;
 
 -- ----- functions that get a 012 layer on top ----------------------------
 -- Seven existing functions keep their body under a second name and get a
--- thin layer with the old name. The block runs every time: whenever the
--- function under the old name is not that layer (first run, or an older
--- migration was applied again), its body becomes the base.
+-- thin layer with the old name. Nothing is dropped or renamed: the body
+-- is copied. The block runs every time: whenever the function under the
+-- old name is not that layer (first run, or an older migration was
+-- applied again), its body is copied to the base again.
 do $$
 declare
     r record;
+    v_def text;
 begin
     for r in
-        select * from (values
-            ('m417_internal', 'validate_shot_package', 'uuid, jsonb', 'validate_shot_package_film'),
-            ('m417_internal', 'validate_script', 'uuid, jsonb', 'validate_script_film'),
-            ('m417_internal', 'build_provider_request', 'uuid', 'build_provider_request_base'),
-            ('m417_internal', 'video_scan', 'boolean', 'video_scan_base'),
-            ('m417_internal', 'step_prompt', 'uuid, integer, text, text', 'step_prompt_base'),
-            ('m417_internal', 'resume_url', 'uuid, integer', 'resume_url_base'),
-            ('public', 'prepare_shot_attempt', 'uuid', 'prepare_shot_attempt_base')
-        ) as x(nsp, fn, args, base)
+        select x.*, p.oid
+        from (values
+            ('m417_internal', 'validate_shot_package', 'validate_shot_package_film'),
+            ('m417_internal', 'validate_script', 'validate_script_film'),
+            ('m417_internal', 'build_provider_request', 'build_provider_request_base'),
+            ('m417_internal', 'video_scan', 'video_scan_base'),
+            ('m417_internal', 'step_prompt', 'step_prompt_base'),
+            ('m417_internal', 'resume_url', 'resume_url_base'),
+            ('public', 'prepare_shot_attempt', 'prepare_shot_attempt_base')
+        ) as x(nsp, fn, base)
+        join pg_namespace n on n.nspname = x.nsp
+        join pg_proc p on p.pronamespace = n.oid and p.proname = x.fn
+        where p.prosrc not like '%M417-LAYER-012%'
     loop
-        if exists (
-            select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-            where n.nspname = r.nsp and p.proname = r.fn and p.prosrc not like '%M417-LAYER-012%')
-        then
-            execute format('drop function if exists m417_internal.%I(%s)', r.base, r.args);
-            execute format('alter function %I.%I(%s) rename to %I', r.nsp, r.fn, r.args, r.base);
-            if r.nsp <> 'm417_internal' then
-                execute format('alter function %I.%I(%s) set schema m417_internal', r.nsp, r.base, r.args);
-            end if;
+        v_def := pg_get_functiondef(r.oid);
+        if position('FUNCTION ' || r.nsp || '.' || r.fn || '(' in v_def) = 0 then
+            raise exception 'M417_012_CANNOT_COPY: %.%', r.nsp, r.fn;
         end if;
+        execute replace(v_def, 'FUNCTION ' || r.nsp || '.' || r.fn || '(',
+                               'FUNCTION m417_internal.' || r.base || '(');
     end loop;
 end $$;
 
@@ -779,8 +781,7 @@ begin
 end;
 $function$;
 
-drop trigger if exists trg_require_keyframe_for_attempt on public.attempts;
-create trigger trg_require_keyframe_for_attempt
+create or replace trigger trg_require_keyframe_for_attempt
     before insert on public.attempts
     for each row execute function public.require_keyframe_for_attempt();
 
@@ -1299,8 +1300,7 @@ begin
 end;
 $function$;
 
-drop trigger if exists trg_keyframes_on_video_stage on public.production_jobs;
-create trigger trg_keyframes_on_video_stage
+create or replace trigger trg_keyframes_on_video_stage
     after update of current_step on public.production_jobs
     for each row
     when (new.current_step = 22 and old.current_step is distinct from 22 and new.state = 'READY')
