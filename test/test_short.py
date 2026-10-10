@@ -206,7 +206,7 @@ rpc('apply_keyframe_check', {"p_keyframe_id": w['items'][0]['keyframe_id'], "p_r
 w = rpc('next_keyframe_work', {"p_job_id": job})
 check('third take for the failed one', w['count'] == 1 and w['items'][0]['take_no'] == 3 and w['items'][0]['shot_code'] == 'SH03' and 'Correction:' not in w['items'][0]['prompt'], str(w)[:300])
 f3 = rpc('fail_keyframe', {"p_keyframe_id": w['items'][0]['keyframe_id'], "p_reason": "again"})
-check('the owner hears that a shot is out of takes', '3 çekimden 1 tanesinin karesi 3 denemede olmadı' in f3['owner_text'] and 'The Red Box' in f3['owner_text'], f3['owner_text'])
+check('the owner hears that a shot is out of takes', '3 çekimden 1 tanesinin karesi 3 denemede otomatik kontrolden geçmedi' in f3['owner_text'] and 'The Red Box' in f3['owner_text'] and 'SH03: again' in f3['owner_text'], f3['owner_text'])
 w = rpc('next_keyframe_work', {"p_job_id": job})
 check('takes used up: a person has to look', w['count'] == 0 and w['exhausted'] == 1, str(w)[:300])
 check('waiting for the owner: nothing to restart', resume(job) == 'NULL', resume(job))
@@ -300,6 +300,32 @@ check('stale work is handed out again; the unchecked picture is redrawn', [(i['s
 rpc('cancel_production_job', {"p_job_id": jobc, "p_actor": "TEST", "p_reason": "x"})
 w3 = rpc('next_keyframe_work', {"p_job_id": jobc})
 check('a cancelled job draws nothing', w3['count'] == 0 and w3['shots'] == 0, str(w3)[:200])
+
+# ---- 6c. the owner overrules the automatic check ---------------------------------------------
+jobo, r, _, _ = upto_script('short-owner')
+r = save_shots(jobo, short_shots()); assert r['accepted'], r
+rpc('save_artifact', {"p_job_id": jobo, "p_artifact_type": "PREQC_REPORT", "p_producer": "GEMINI", "p_content": PREQC_PASS})
+rpc('route_revision', {"p_job_id": jobo})
+rpc('record_final_director_decision', {"p_job_id": jobo, "p_actor": "CLAUDE", "p_result": DIRECTOR_APPROVE})
+rpc('commit_production_package', {"p_job_id": jobo}); voice(jobo)
+sql("update public.system_settings set value_numeric = 1 where key = 'max_keyframe_takes'")
+w = rpc('next_keyframe_work', {"p_job_id": jobo}); assert w['count'] == 3, w
+outs = []
+for i, verdict in zip(w['items'], ('FAIL', 'FAIL', 'PASS')):
+    putpub(i['storage_path']); rpc('register_keyframe', {"p_keyframe_id": i['keyframe_id'], "p_storage_path": i['storage_path']})
+    outs.append(rpc('apply_keyframe_check', {"p_keyframe_id": i['keyframe_id'], "p_result": {"verdict": verdict, "score": 75, "notes": "A letter T on the jacket."}}))
+t = outs[-1]['owner_text']
+check('out of takes: the owner gets the reason and the picture', 'SH01: A letter T on the jacket.' in t and BASE + '/object/public/public-refs/' + w['items'][0]['storage_path'] in t and 'SH02: A letter T' in t and 'SH03:' not in t, t)
+rc, o = owner(f"select public.decide_keyframes('{jobo}', 'APPROVE', 'OWNER')"); d = json.loads(o)
+check('a general approval does not take what the check turned down', d['changed'] == 1 and d['shots_without_approved_frame'] == 2, o[:300])
+rc, o = owner(f"select public.decide_keyframes('{jobo}', 'APPROVE', 'OWNER', '[\"SH01\"]'::jsonb)"); d = json.loads(o)
+check('named by its code, the owner takes it anyway', d['changed'] == 1 and d['shots_without_approved_frame'] == 1, o[:300])
+rc, o = owner(f"select public.decide_keyframes('{jobo}', 'REJECT', 'OWNER', '[\"SH02\"]'::jsonb, 'Plain jacket, no letter.')"); d = json.loads(o)
+check('or sends it back with his own reason', d['changed'] == 1, o[:300])
+w = rpc('next_keyframe_work', {"p_job_id": jobo})
+check('and it is drawn again although the takes were used up', [(i['shot_code'], i['take_no']) for i in w['items']] == [('SH02', 2)] and 'Plain jacket, no letter.' in w['items'][0]['prompt'], str(w)[:300])
+sql("update public.system_settings set value_numeric = 3 where key = 'max_keyframe_takes'")
+rpc('cancel_production_job', {"p_job_id": jobo, "p_actor": "TEST", "p_reason": "x"})
 
 # ---- 7. without the flag everything is as before ---------------------------------------
 sql("update public.system_flags set value = false where key in ('keyframe_required', 'camera_plan_enforced', 'short_format_enforced')")

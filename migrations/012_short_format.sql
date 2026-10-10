@@ -299,6 +299,7 @@ declare
     v_c jsonb := m417_internal.keyframe_counts(p_job_id);
     v_title text;
     v_open integer;
+    v_list text;
 begin
     v_open := (v_c ->> 'drawable')::integer + (v_c ->> 'drawing')::integer;
     if v_open > 0 or ((v_c ->> 'review')::integer = 0 and (v_c ->> 'exhausted')::integer = 0) then
@@ -308,9 +309,32 @@ begin
     from public.production_jobs j join public.episodes e on e.id = j.episode_id
     where j.id = p_job_id;
     if (v_c ->> 'exhausted')::integer > 0 then
+        select string_agg(
+                   x.shot_code || ': ' || coalesce(nullif(x.note, ''), '-')
+                   || case when x.storage_path is null then ''
+                           else E'\n' || m417_internal.keyframe_url(x.storage_path) end,
+                   E'\n' order by x.shot_order)
+        into v_list
+        from (
+            select s.shot_code, s.shot_order, k.note, k.storage_path, k.status, k.take_no, k.decided_by
+            from public.production_jobs j
+            join public.shots s on s.episode_id = j.episode_id
+            join lateral (
+                select kk.* from public.shot_keyframes kk
+                where kk.shot_id = s.id
+                order by kk.take_no desc
+                limit 1) k on true
+            where j.id = p_job_id
+              and s.state not in ('LOCKED', 'CANCELLED')
+              and m417_internal.approved_keyframe(s.id) is null
+        ) x
+        where x.status in ('REJECTED', 'FAILED')
+          and x.take_no >= m417_internal.num('max_keyframe_takes', 3)
+          and coalesce(x.decided_by, '') <> 'OWNER';
         return format(
-            E'🖼 %s: %s çekimden %s tanesinin karesi %s denemede olmadı. Bakman gerekiyor; Claude''a "karelere bak" yaz.',
-            v_title, v_c ->> 'shots', v_c ->> 'exhausted', m417_internal.num('max_keyframe_takes', 3)::integer);
+            E'🖼 %s: %s çekimden %s tanesinin karesi %s denemede otomatik kontrolden geçmedi. Son hâline sen bak:\n%s\n\nUygunsa Claude''a "SH.. onay", değilse "SH.. yeniden: neden" yaz.',
+            v_title, v_c ->> 'shots', v_c ->> 'exhausted', m417_internal.num('max_keyframe_takes', 3)::integer,
+            coalesce(v_list, '-'));
     end if;
     return format(
         E'🖼 %s: %s çekimin ilk kareleri hazır (yukarıdaki resimler). Hepsi uygunsa Claude''a "kareler onay" yaz; beğenmediğin kareyi numarasıyla ve nedeniyle söyle. Onay vermeden video üretilmez.',
@@ -1103,8 +1127,8 @@ begin
             || ' Look only for what a viewer would notice: a named character missing or drawn twice; an extra person; '
             || 'a character whose hair, skin tone or age clearly does not fit the description; children of clearly different heights; '
             || 'an outfit that is clearly not the one described; a main prop missing or duplicated; deformed hands, faces or limbs; '
-            || 'any text, letters or watermark; a framing that is clearly not the one asked for; anything unsuitable for children. '
-            || 'Small differences of shade, pose or background are fine. '
+            || 'any text, letters or watermark; anything unsuitable for children. '
+            || 'Small differences of shade, pose, background or framing are fine: the owner looks at every picture himself. '
             || 'Return one raw JSON object: {"verdict": "PASS or FAIL", "score": 0-100, "notes": "one sentence saying exactly what is wrong, empty when nothing is", "findings": [""]}');
 end;
 $function$;
@@ -1204,7 +1228,9 @@ $function$;
 
 -- The owner's decision. APPROVE takes the newest picture of every shot
 -- (or of the shots named); REJECT sends the named shots back with the
--- reason, and a new picture is drawn.
+-- reason, and a new picture is drawn. For a shot named by its code the
+-- owner's word also reaches a picture the automatic check turned down:
+-- he may take it anyway, or send it back with his own reason.
 create or replace function public.decide_keyframes(
     p_job_id uuid, p_decision text, p_actor text,
     p_shot_codes jsonb default null, p_note text default null)
@@ -1241,8 +1267,11 @@ begin
             order by kk.take_no desc
             limit 1) k on true
         where s.episode_id = v_job.episode_id
-          and k.status = 'GENERATED'
           and (v_codes is null or s.shot_code = any (v_codes))
+          and (k.status = 'GENERATED'
+               or (v_codes is not null and k.status in ('REJECTED', 'FAILED')
+                   and coalesce(k.decided_by, '') <> 'OWNER'
+                   and (v_decision = 'REJECT' or k.storage_path is not null)))
         order by s.shot_order
     loop
         if v_decision = 'APPROVE' then
