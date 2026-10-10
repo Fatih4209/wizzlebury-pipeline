@@ -251,7 +251,7 @@ begin
         || initcap(v_num[v_n]) || ' children ' || btrim(p_spec ->> 'wide_pose') || ', mouths closed, all '
         || v_num[v_n] || ' fully visible, medium-wide shot at eye level. ' || v_positions
         || 'Exactly ' || v_num[v_n] || ' children' || coalesce(' and ' || nullif(btrim(p_spec ->> 'guard'), ''), '')
-        || '. Nobody else, ' || case when coalesce((p_spec ->> 'wide_animals')::boolean, false) then '' else 'no animals, ' end
+        || '. Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. Nobody else, ' || case when coalesce((p_spec ->> 'wide_animals')::boolean, false) then '' else 'no animals, ' end
         || 'no text, no letters.';
     v_frames := v_frames || jsonb_build_object('key', 'W', 'refs', v_refs, 'prompt', v_text);
 
