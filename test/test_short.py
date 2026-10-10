@@ -23,6 +23,7 @@ def sent(source=None):
 def resume(job_):
     return one(f"select coalesce(m417_internal.resume_url('{job_}', 22), 'NULL')")
 subprocess.run(['bash', S + '/mig/build_012.sh'], capture_output=True, check=True)
+subprocess.run(['bash', S + '/mig/build_013.sh'], capture_output=True, check=True)
 rc, err = apply('007_kling_setup.sql'); assert rc == 0, err
 rc, err = apply('008_kling_omni_refs.sql'); assert rc == 0, err
 # the live order: 010 again (it puts the old functions back), then 012 twice
@@ -30,11 +31,13 @@ rc, err = apply('010_film_grammar.sql'); assert rc == 0, err
 check('010 took five of the six 012 layers away', one("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','m417_internal') and p.prosrc like '%M417-LAYER-012%' and p.proname in ('validate_shot_package','validate_script','build_provider_request','video_scan','step_prompt','prepare_shot_attempt','resume_url')") == '2')
 rc, err = apply('012_short_format.sql'); check('012 applies', rc == 0, err[:400])
 rc, err = apply('012_short_format.sql'); check('012 applies a second time', rc == 0, err[:400])
+rc, err = apply('013_one_event.sql'); check('013 applies', rc == 0, err[:400])
+rc, err = apply('013_one_event.sql'); check('013 applies a second time', rc == 0, err[:400])
 sql("update public.system_text_settings set value = 'https://hook.example/kare' where key = 'webhook_keyframes'; update public.system_text_settings set value = 'https://hook.example/s4' where key = 'webhook_s4_driver'")
 check('seven layers in place', one("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','m417_internal') and p.prosrc like '%M417-LAYER-012%' and p.proname in ('validate_shot_package','validate_script','build_provider_request','video_scan','step_prompt','prepare_shot_attempt','resume_url')") == '7')
 check('seven bases kept', one("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname = 'm417_internal' and p.proname in ('validate_shot_package_film','validate_script_film','build_provider_request_base','video_scan_base','step_prompt_base','prepare_shot_attempt_base','resume_url_base')") == '7')
 check('new flags start off', one("select string_agg(value::text, ',' order by key) from public.system_flags where key in ('keyframe_required','camera_plan_enforced','short_format_enforced')") == 'false,false,false')
-check('short prompts in force', one("select string_agg(prompt_code||version, ',' order by prompt_code) from public.step_prompts where is_active") == 'DIRECTOR3,FINAL_QC1,PREQC1,SCRIPT2,SHOT_PACKAGE2,TOPIC2')
+check('short prompts in force', one("select string_agg(prompt_code||version, ',' order by prompt_code) from public.step_prompts where is_active") == 'DIRECTOR3,FINAL_QC1,PREQC1,SCRIPT2,SHOT_PACKAGE3,TOPIC2')
 expect_error('the API may not decide keyframes', 'decide_keyframes', {"p_job_id": "00000000-0000-0000-0000-000000000000", "p_decision": "APPROVE", "p_actor": "x"}, 'permission denied')
 expect_error('the API may not read the overview', 'keyframe_overview', {"p_job_id": "00000000-0000-0000-0000-000000000000"}, 'permission denied')
 
@@ -118,6 +121,7 @@ job, r, _, _ = upto_script('short-1')
 check('short script accepted', r['accepted'] is True and jstep(job) == 11, str(r)[:300])
 p = rpc('get_job_context', {"p_job_id": job})['prompt_text']
 check('shots prompt: camera and first frame', 'camera_angle is one of EYE_LEVEL' in p and 'first_frame describes the still picture' in p and '3 to 4 shots' in p and '"first_frame": ""' in p and '[[' not in p, p[:200])
+check('shots prompt: one event per shot', 'At most 3 beats: one event and the reaction to it.' in p and 'every shot has at most 3 beats, the first at 0;' in p, p[p.find('- beats:'):][:400])
 def broken(fn):
     pkg = short_shots(); fn(pkg['shots']); return pkg
 cases = [
@@ -129,14 +133,16 @@ cases = [
     ('descend without drone', lambda s: s[2].update(camera_move='DRONE_DESCEND'), 'DRONE_DESCEND needs camera_angle DRONE'),
     ('thin first frame', lambda s: s[1].update(first_frame='The box.'), 'first_frame is missing or too thin'),
     ('film rules still apply', lambda s: s[2].update(shot_size='INSERT'), 'same shot_size (INSERT)'),
+    ('two events in one shot', lambda s: s[1]['beats'].extend([{"at": 1.6, "what": "Both children lean in over the box"}, {"at": 2.4, "what": "The lid drops shut with a bang"}]), 'The shot has 4 beats; a shot of a short has at most 3.'),
 ]
 for name, fn_, needle in cases:
     r = save_shots(job, broken(fn_)); d = details(r)
     check(f'camera: {name}', r['accepted'] is False and needle in d, d[:300])
     sql(f"update public.production_jobs set validation_retry_count = 0, current_step = 11, state = 'READY' where id='{job}'")
 alias = short_shots(); alias['shots'][0]['camera_angle'] = 'eye level'; alias['shots'][2]['camera_move'] = 'pull-back'
+alias['shots'][2]['beats'].append({"at": 2.0, "what": "Both children burst out laughing"})
 r = save_shots(job, alias)
-check('camera plan accepted, spelling forgiven', r['accepted'] is True, details(r)[:300])
+check('camera plan accepted, spelling forgiven, three beats allowed', r['accepted'] is True, details(r)[:300])
 rpc('save_artifact', {"p_job_id": job, "p_artifact_type": "PREQC_REPORT", "p_producer": "GEMINI", "p_content": PREQC_PASS})
 rpc('route_revision', {"p_job_id": job})
 p = rpc('get_job_context', {"p_job_id": job})['prompt_text']
@@ -325,9 +331,18 @@ check('or sends it back with his own reason', d['changed'] == 1, o[:300])
 w = rpc('next_keyframe_work', {"p_job_id": jobo})
 check('and it is drawn again although the takes were used up', [(i['shot_code'], i['take_no']) for i in w['items']] == [('SH02', 2)] and 'Plain jacket, no letter.' in w['items'][0]['prompt'], str(w)[:300])
 sql("update public.system_settings set value_numeric = 3 where key = 'max_keyframe_takes'")
+jobr = start('short-recent')
+rpc('save_artifact', {"p_job_id": jobr, "p_artifact_type": "TREND_REPORT", "p_producer": "GROK", "p_content": TREND})
+def recent(): 
+    p_ = rpc('get_job_context', {"p_job_id": jobr})['prompt_text']
+    return p_[p_.find('Recent shorts, newest first:'):].split('\n')[0].count('"pattern"')
+n1 = recent()
 rpc('cancel_production_job', {"p_job_id": jobo, "p_actor": "TEST", "p_reason": "x"})
+n2 = recent()
+check('a cancelled short is not among the recent ones', n1 >= 2 and n2 == n1 - 1, f'{n1} -> {n2}')
+rpc('cancel_production_job', {"p_job_id": jobr, "p_actor": "TEST", "p_reason": "x"})
 
-# ---- 7. without the flag everything is as before ---------------------------------------
+many = short_shots(); many['shots'][1]['beats'].extend([{"at": 1.6, "what": "Both children lean in over the box"}, {"at": 2.4, "what": "The lid drops shut with a bang"}])
 sql("update public.system_flags set value = false where key in ('keyframe_required', 'camera_plan_enforced', 'short_format_enforced')")
 old = short_shots()
 for s_ in old['shots']:
@@ -336,8 +351,10 @@ script_old = copy.deepcopy(SHORT_SCRIPT)
 for k in ('loop', 'music_mood', 'pattern', 'sfx'): script_old.pop(k)
 job2, r, _, _ = upto_script('short-off', script_old)
 check('flags off: script without loop accepted', r['accepted'] is True, details(r)[:300])
+for k in ('camera_angle', 'camera_move', 'first_frame'): many['shots'][1].pop(k, None)
+old['shots'][1]['beats'] = many['shots'][1]['beats']
 r = save_shots(job2, old)
-check('flags off: shots without camera plan accepted', r['accepted'] is True, details(r)[:300])
+check('flags off: shots without camera plan and with four beats accepted', r['accepted'] is True, details(r)[:300])
 rpc('save_artifact', {"p_job_id": job2, "p_artifact_type": "PREQC_REPORT", "p_producer": "GEMINI", "p_content": PREQC_PASS})
 rpc('route_revision', {"p_job_id": job2})
 rpc('record_final_director_decision', {"p_job_id": job2, "p_actor": "CLAUDE", "p_result": DIRECTOR_APPROVE})

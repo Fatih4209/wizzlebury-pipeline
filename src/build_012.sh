@@ -37,7 +37,7 @@ begin
     end if;
 end $$;
 HEAD
-cat short_a.sql short_prompts.sql >> $OUT
+cat short_a.sql short_prompts.sql short_prompts_b.sql >> $OUT
 # the same permission blocks as the full schema
 awk '/^insert into public.events/{exit} {print}' p10_grants.sql >> $OUT
 cat >> $OUT <<'TAIL'
