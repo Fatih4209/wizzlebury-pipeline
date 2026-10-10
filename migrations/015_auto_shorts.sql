@@ -317,15 +317,16 @@ begin
 
     -- scene 4: everybody reacts. Written by default; "s4": false leaves it out.
     if coalesce(p_spec ->> 's4', '') <> 'false' then
-        v_text := v_style || ', shallow depth of field. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Medium close-up at eye level on the same '
-            || v_num[v_n] || ' children, standing close together shoulder to shoulder in the same order from left to right, exactly as they look in the last reference image. ' || v_positions
+        v_text := v_style || ', shallow depth of field. It is taken inside the scene of the last reference image: the same place, the same light and the same clothes. Close shot at eye level on the same '
+            || v_num[v_n] || ' children, heads close together so that their faces fill the frame, shoulder to shoulder in the same order from left to right, exactly as they look in the last reference image. ' || v_positions
             || 'All ' || v_num[v_n] || ' ' || coalesce(nullif(btrim(v_s4 ->> 'pose'), ''), 'look down at something just below the frame with wide, amazed eyes') || ', mouths closed. The background is softly blurred. Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. Exactly '
             || v_num[v_n] || ' children, nobody else, no animals, no text, no letters.';
         v_frames := v_frames || jsonb_build_object('key', 'F4', 'prompt', v_text,
             'refs', v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_dir || 'W.jpg', 'mimeType', 'image/jpeg'));
-        v_text := format(v_open, coalesce((v_s4 ->> 'seconds')::integer, 3)) || 'Medium close-up on ' || v_num[v_n] || ' children standing close together: ' || v_names
+        v_text := format(v_open, coalesce((v_s4 ->> 'seconds')::integer, 3)) || 'Close shot on the faces of ' || v_num[v_n] || ' children standing close together: ' || v_names
             || '. ' || coalesce(nullif(btrim(v_s4 ->> 'action'), ''),
-                   'All ' || v_num[v_n] || ' stare down at something just below the frame with wide, amazed eyes and open mouths for a moment, then burst out laughing together, happy and delighted, and look at each other.')
+                   'All ' || v_num[v_n] || ' stare down at something just below the frame with wide, amazed eyes and open mouths for a moment, then burst out laughing together and look at each other.')
+            || ' Their faces are very expressive: big open-mouthed laughs, eyes squeezed with joy, cheeks lifted, heads tipping back a little, shoulders shaking.'
             || ' Nobody says a word; there is only happy children''s laughter. The camera does not move. Sound: the children''s gasp and laughter and a quiet room tone. No music, no words, no narrator. Exactly '
             || v_num[v_n] || ' children, nobody else appears, no text, no subtitles.';
         v_clips := v_clips || jsonb_build_object('key', 'C4', 'frame', 'F4', 'seconds', coalesce((v_s4 ->> 'seconds')::integer, 3), 'prompt', v_text);
