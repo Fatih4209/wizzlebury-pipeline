@@ -36,7 +36,10 @@ insert into public.auto_shorts_settings (key, value, description) values
     ('webhook_render', 'https://hook.eu1.make.com/hgak8rm3fphyxhm1ga5ybb6rk85fjrmp', 'Make: Shotstack render and status.'),
     ('webhook_qc', 'https://hook.eu1.make.com/9vl7tukmwyk47bn5z3it4ytk24mue34x', 'Make: store the film and let Gemini watch it.'),
     ('webhook_publish', 'https://hook.eu1.make.com/o2f4cerblk4yy9pqf9ppjwou9xjff5p6', 'Make: upload to YouTube.'),
-    ('webhook_cancel', 'https://hook.eu1.make.com/443iogyik0ug55b8va5mqycouv8fm8o3', 'Make: the owner''s cancel link.')
+    ('webhook_cancel', 'https://hook.eu1.make.com/443iogyik0ug55b8va5mqycouv8fm8o3', 'Make: the owner''s cancel link.'),
+    ('subscribe_overlay', 'true', 'Show a red SUBSCRIBE button over the last seconds of every short.'),
+    ('subscribe_text', 'SUBSCRIBE', 'Word on the button.'),
+    ('subscribe_seconds', '2', 'How long the button is shown at the end.')
 on conflict (key) do nothing;
 
 create table if not exists public.auto_shorts (
@@ -202,7 +205,7 @@ declare
     v_text text;
     v_same constant text := 'Only the clothes may differ from the reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. ';
     v_style constant text := 'Draw one still picture, vertical 9:16, 3D animated kids cartoon, soft rounded Pixar-like style';
-    v_open constant text := 'The video starts exactly from this picture and stays one continuous shot, about %s seconds long. 3D animated family cartoon for kids, a happy dance video. ';
+    v_open constant text := 'The video starts exactly from this picture and stays one continuous shot, about %s seconds long. 3D animated family cartoon for kids, a happy dance video. The movement begins in the very first moment, with no still pause. ';
     v_frame_keys constant text[] := array['W', 'F2', 'F3', 'F4'];
     v_shots constant text[] := array['Medium-wide shot of', 'Medium shot from the waist up of', 'Wide shot from a low camera of', 'Close shot on the faces of'];
     i integer;
@@ -312,7 +315,7 @@ declare
     v_clips jsonb := '[]'::jsonb;
     v_text text;
     v_style constant text := 'Draw one still picture, vertical 9:16, 3D animated kids cartoon, soft rounded Pixar-like style';
-    v_open constant text := 'The video starts exactly from this picture and stays one continuous shot, about %s seconds long. 3D animated family cartoon for kids. ';
+    v_open constant text := 'The video starts exactly from this picture and stays one continuous shot, about %s seconds long. 3D animated family cartoon for kids. The movement begins in the very first moment, with no still pause. ';
     v_key text;
     i integer;
 begin
@@ -481,6 +484,8 @@ declare
     v_clip jsonb;
     v_at numeric := 0;
     v_no integer := 0;
+    v_len numeric;
+    v_sub numeric := coalesce(m417_internal.as_set('subscribe_seconds')::numeric, 2);
 begin
     for v_clip in select * from jsonb_array_elements(p_prompts -> 'clips')
     loop
@@ -497,6 +502,22 @@ begin
         v_at := v_at + (v_clip ->> 'seconds')::numeric;
         v_no := v_no + 1;
     end loop;
+    v_len := v_at - 0.5 * (v_no - 1);
+    if coalesce(m417_internal.as_set('subscribe_overlay'), 'false') = 'true' and v_len > v_sub + 2 then
+        -- the top track: a red button over the last seconds
+        v_tracks := jsonb_build_array(jsonb_build_object('clips', jsonb_build_array(jsonb_build_object(
+            'asset', jsonb_build_object(
+                'type', 'html',
+                'html', '<p>' || coalesce(m417_internal.as_set('subscribe_text'), 'SUBSCRIBE') || '</p>',
+                'css', 'p { font-family: "Montserrat ExtraBold"; color: #ffffff; font-size: 62px; text-align: center; }',
+                'width', 600, 'height', 140, 'background', '#FF0000', 'position', 'center'),
+            'start', v_len - v_sub,
+            'length', v_sub,
+            'position', 'bottom',
+            -- measured: 0.27 puts it 15 % above the bottom edge, where the Shorts caption lies; 0.5 is clear of it
+            'offset', jsonb_build_object('x', 0, 'y', 0.5),
+            'transition', jsonb_build_object('in', 'slideUp'))))) || v_tracks;
+    end if;
     if p_prompts ? 'song' then
         -- a dance short: its own song, loud, from the first sung word on
         return jsonb_build_object(
@@ -508,7 +529,7 @@ begin
                                                 'volume', (p_prompts -> 'song' ->> 'volume')::numeric,
                                                 'effect', 'fadeOut'),
                     'start', 0,
-                    'length', v_at - 0.5 * (v_no - 1))))),
+                    'length', v_len)))),
             'output', jsonb_build_object('format', 'mp4', 'aspectRatio', '9:16', 'resolution', '1080', 'fps', 24));
     end if;
     return jsonb_build_object(
@@ -537,7 +558,11 @@ as $function$
             from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
         || E'\nAnswer FAIL if any of these is true: a spoken line is missing, cut off, in another language or has clearly different words; a voice speaks while nobody''s mouth moves, or the wrong character speaks; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character looks like a different child from one scene to the next (other face, hair or skin); a character or an object is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
         || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.'
-    end;
+    end
+    || case when coalesce(m417_internal.as_set('subscribe_overlay'), 'false') = 'true'
+            then E'\nOne exception to the rule about text: a red button with the word ' || coalesce(m417_internal.as_set('subscribe_text'), 'SUBSCRIBE')
+                 || ' that slides in over the lower part of the picture during the last seconds is wanted and is not a defect.'
+            else '' end;
 $function$;
 
 -- ----- small helpers of the timer -----------------------------------------
