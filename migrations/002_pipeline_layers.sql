@@ -12271,7 +12271,7 @@ begin
                 v_ctx := (v_item ->> 'qc_context_text')::jsonb;
                 v_item := v_item || jsonb_build_object('qc_context_text', (v_ctx || jsonb_build_object(
                     'approved_start_frame',
-                    'This clip starts from a still picture the owner approved. The framing, the outfits, the heights of the characters, the props and the place come from that picture and are not defects. Judge what happens after the first frame. FAIL only for something a viewer would notice: the main action is missing or wrong, a face or a body changes or deforms, a limb too many or too few, a person or an object appears from nowhere, garbled text, a clip that does not move.'))::text);
+                    'This clip starts from a still picture the owner approved. The framing, the outfits, the heights of the characters, the props and the place come from that picture and are not defects. Judge what happens after the first frame. FAIL only for something a viewer would notice: the main event of the shot does not happen at all, a face or a body changes or deforms, a limb too many or too few, a person or an object appears from nowhere, garbled text, a clip that does not move. It is not a defect when another character than planned performs the action, when a secondary action is left out or added, or when the timing differs: write it in notes, set prompt_adherence to PASS and pass the clip. The owner watches the finished film.'))::text);
             exception when others then
                 null;
             end;
