@@ -88,6 +88,16 @@ as $function$
             'frame', 'the chubby boy from the %s reference image, same face, same curly ginger hair, same green-and-white varsity jacket over a yellow hoodie',
             'clip', 'Tombik, the chubby boy with curly ginger hair and the green-and-white varsity jacket',
             'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+        when 'OMER' then jsonb_build_object(
+            'name', 'Ömer', 'ref', 'OMER_REF_V1.png',
+            'frame', 'the boy from the %s reference image, same face, same deep brown skin, same short curly dark hair with tapered sides, same blue jacket over a white hoodie',
+            'clip', 'Ömer, the boy with deep brown skin, short curly dark hair and the blue jacket',
+            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
+        when 'BRUCE' then jsonb_build_object(
+            'name', 'Bruce', 'ref', 'BRUCE_REF_V1.png',
+            'frame', 'the boy from the %s reference image, same face, same tousled layered black hair, same blue jacket over a white hoodie',
+            'clip', 'Bruce, the boy with tousled black hair and the blue jacket',
+            'he', 'he', 'his', 'his', 'voice', 'cartoon boy voice')
     end;
 $function$;
 
