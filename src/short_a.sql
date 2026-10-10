@@ -63,6 +63,7 @@ insert into public.system_settings (key, value_numeric, description) values
     ('min_keyframe_bytes', 5000, 'Smallest file accepted as a picture.'),
     ('max_line_words', 6, 'Most words in one spoken line of a short.'),
     ('max_beats_per_shot', 3, 'Most timed beats in one shot of a short: one event and the reaction to it.'),
+    ('start_frame_reference_images', 3, 'Character reference images sent to the video model besides an approved start frame. 0 sends the start frame alone.'),
     ('max_parallel_video_attempts', 3, 'Most video generations in flight at the same time, over all jobs.')
 on conflict (key) do nothing;
 
@@ -708,7 +709,8 @@ begin
     v_plan := coalesce(m417_internal.shot_plan(v_shot_id), '{}'::jsonb);
 
     -- The start frame is image 1; the characters follow.
-    v_max := greatest(coalesce(nullif(v_meta ->> 'max_reference_images', '')::integer, 4) - 1, 0);
+    v_max := least(greatest(coalesce(nullif(v_meta ->> 'max_reference_images', '')::integer, 4) - 1, 0),
+                   greatest(m417_internal.num('start_frame_reference_images', 3)::integer, 0));
     select coalesce(jsonb_agg(jsonb_build_object(
                'n', x.ord + 1, 'name', x.value ->> 'name', 'url', x.value ->> 'url', 'note', x.value ->> 'note')
                order by x.ord), '[]'::jsonb)
@@ -759,7 +761,7 @@ begin
                    then ' Avoid: ' || left(btrim(v_spec.negative_prompt), 300) else '' end;
     v_prompt :=
         'Use @image_1 as the start frame: the video begins exactly with this picture. '
-        || 'Keep its framing, where everyone stands, the outfits, the props, the place and the light; no new person and no new object appears.'
+        || 'Keep its framing, where everyone stands, the outfits, the props, the place and the light; no new person and no new object appears. There is exactly one of each character: never a second copy of anybody, not in the background either.'
         || case when v_names is null then '' else
                ' ' || v_names || ': their faces, hair and body proportions stay exactly as in these reference images.'
                || case when v_notes is null then '' else ' ' || v_notes end end

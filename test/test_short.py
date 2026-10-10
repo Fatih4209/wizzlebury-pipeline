@@ -37,7 +37,7 @@ sql("update public.system_text_settings set value = 'https://hook.example/kare' 
 check('seven layers in place', one("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','m417_internal') and p.prosrc like '%M417-LAYER-012%' and p.proname in ('validate_shot_package','validate_script','build_provider_request','video_scan','step_prompt','prepare_shot_attempt','resume_url')") == '7')
 check('seven bases kept', one("select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname = 'm417_internal' and p.proname in ('validate_shot_package_film','validate_script_film','build_provider_request_base','video_scan_base','step_prompt_base','prepare_shot_attempt_base','resume_url_base')") == '7')
 check('new flags start off', one("select string_agg(value::text, ',' order by key) from public.system_flags where key in ('keyframe_required','camera_plan_enforced','short_format_enforced')") == 'false,false,false')
-check('short prompts in force', one("select string_agg(prompt_code||version, ',' order by prompt_code) from public.step_prompts where is_active") == 'DIRECTOR3,FINAL_QC1,PREQC1,SCRIPT2,SHOT_PACKAGE3,TOPIC2')
+check('short prompts in force', one("select string_agg(prompt_code||version, ',' order by prompt_code) from public.step_prompts where is_active") == 'DIRECTOR3,FINAL_QC1,PREQC1,SCRIPT2,SHOT_PACKAGE4,TOPIC2')
 expect_error('the API may not decide keyframes', 'decide_keyframes', {"p_job_id": "00000000-0000-0000-0000-000000000000", "p_decision": "APPROVE", "p_actor": "x"}, 'permission denied')
 expect_error('the API may not read the overview', 'keyframe_overview', {"p_job_id": "00000000-0000-0000-0000-000000000000"}, 'permission denied')
 
@@ -121,6 +121,7 @@ job, r, _, _ = upto_script('short-1')
 check('short script accepted', r['accepted'] is True and jstep(job) == 11, str(r)[:300])
 p = rpc('get_job_context', {"p_job_id": job})['prompt_text']
 check('shots prompt: camera and first frame', 'camera_angle is one of EYE_LEVEL' in p and 'first_frame describes the still picture' in p and '3 to 4 shots' in p and '"first_frame": ""' in p and '[[' not in p, p[:200])
+check('shots prompt: everybody in shot 1, frames continue', 'Shot 1 shows every character who takes part in the scene' in p and 'exactly in the state in which the shot before ended' in p and 'shot 1 shows everyone in the scene;' in p, p[p.find('Nobody pops'):][:300])
 check('shots prompt: one event per shot', 'At most 3 beats: one event and the reaction to it.' in p and 'every shot has at most 3 beats, the first at 0;' in p, p[p.find('- beats:'):][:400])
 def broken(fn):
     pkg = short_shots(); fn(pkg['shots']); return pkg
@@ -257,6 +258,11 @@ s, (poll, outp, q) = run_shot(ids[0])
 inp = json.loads(s['provider_request_text'])['input']
 pr = inp['prompt']
 check('request: the start frame is image 1', inp['images'] == [BASE + '/object/public/public-refs/' + key1, BASE + '/object/public/public-refs/FATIH_REF_V1.png', BASE + '/object/public/public-refs/MIA_REF_V1.png'], str(inp['images']))
+att1 = one(f"select id from public.attempts where shot_id='{ids[0]}' order by attempt_no limit 1")
+sql("update public.system_settings set value_numeric = 0 where key = 'start_frame_reference_images'")
+alone = json.loads(one(f"select m417_internal.build_provider_request('{att1}')"))['input']
+check('request: the start frame alone when no references are wanted', alone['images'] == [BASE + '/object/public/public-refs/' + key1] and '@image_2' not in alone['prompt'] and alone['prompt'].startswith('Use @image_1 as the start frame') and 'Static camera, no camera movement.' in alone['prompt'], str(alone)[:400])
+sql("update public.system_settings set value_numeric = 3 where key = 'start_frame_reference_images'")
 for needle in ('Use @image_1 as the start frame: the video begins exactly with this picture.', '@image_2 is Fatih, @image_3 is Mia: their faces',
                'Static camera, no camera movement.', 'What happens: Fatih reaches for the wobbling red box while Mia warns him.',
                'Timing: at 0.0 s The red box wobbles on the lawn; at 0.8 s Eyes go wide', 'within the first 3.0 seconds',
