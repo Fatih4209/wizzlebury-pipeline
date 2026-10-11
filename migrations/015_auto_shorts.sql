@@ -466,7 +466,7 @@ begin
             || ' Nobody says a word; there is only happy children''s laughter. The camera does not move. Sound: the children''s gasp and laughter and a quiet room tone. No music, no words, no narrator. Exactly '
             || v_num[v_n] || ' children, nobody else appears, no text, no subtitles.';
         v_clips := v_clips || jsonb_build_object('key', 'C4', 'frame', 'F4', 'seconds', coalesce((v_s4 ->> 'seconds')::integer, 3), 'prompt', v_text);
-        v_expected := v_expected || to_jsonb('All the children look amazed and then laugh together; nobody speaks.'::text);
+        v_expected := v_expected || to_jsonb('Close shot of the children''s faces only: they look amazed and then laugh together; nobody speaks. The table, the room and the things from the earlier shots are outside the picture in this close shot, and that is wanted.'::text);
         v_total := v_total + coalesce((v_s4 ->> 'seconds')::integer, 3);
     end if;
 
