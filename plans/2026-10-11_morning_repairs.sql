@@ -33,3 +33,14 @@
 --
 -- Repairs of the day: dance C2+C3 again (8 s), bottle F3+C3 (4 s),
 -- robot F3+C3+F4+C4 (6 s).
+--
+-- 10. Best fix of the morning: "s3": {"from": "W"} - the payoff clip starts
+--     from the wide picture itself. No extra picture is drawn, so nobody
+--     vanishes and nothing is doubled or changes its look. The first bottle
+--     retake (own picture F3b with all three children) showed two bottles,
+--     one on the rug and one in the hands; from W it passed (72).
+--     Use from-W whenever the payoff happens where the children stand; a
+--     close-up of an animal or thing that is new in the story may keep its
+--     own picture. Changed live: both later bottle shorts, the robot (retake)
+--     and the balloon of 12 Oct (it now lands on Tombik's head instead of
+--     flying through an empty garden).

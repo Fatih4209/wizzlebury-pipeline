@@ -370,7 +370,7 @@ begin
         end if;
     end loop;
     foreach v_key in array array['frame', 'action', 'sounds', 'guard', 'expect'] loop
-        if coalesce(btrim(v_s3 ->> v_key), '') = '' then
+        if coalesce(btrim(v_s3 ->> v_key), '') = '' and not (v_key = 'frame' and upper(coalesce(v_s3 ->> 'from', '')) = 'W') then
             raise exception 'AUTO_SPEC: s3.% is missing', v_key;
         end if;
     end loop;
@@ -451,7 +451,7 @@ begin
         || replace(btrim(v_s3 ->> 'action'), '{CHAR}', coalesce(v_c3 ->> 'clip', ''))
         || ' The camera does not move. Sound: ' || btrim(v_s3 ->> 'sounds') || ' and a quiet room tone. No music, no narrator. '
         || btrim(v_s3 ->> 'guard') || ' no text, no subtitles.';
-    v_clips := v_clips || jsonb_build_object('key', 'C3', 'frame', 'F3', 'seconds', coalesce((v_s3 ->> 'seconds')::integer, 3), 'prompt', v_text);
+    v_clips := v_clips || jsonb_build_object('key', 'C3', 'frame', case when upper(coalesce(v_s3 ->> 'from', '')) = 'W' then 'W' else 'F3' end, 'seconds', coalesce((v_s3 ->> 'seconds')::integer, 3), 'prompt', v_text);
 
     v_expected := jsonb_build_array(
         (v_sp ->> 'name') || ' says: "' || btrim(v_s1 ->> 'line') || '"',
@@ -498,6 +498,11 @@ begin
         v_total := v_total + coalesce((v_s4 ->> 'seconds')::integer, 3);
     end if;
 
+    -- "s3": {"from": "W"}: the payoff starts from the wide picture itself (same people, same things,
+    -- nothing can be doubled or lost); its own picture F3 is then not drawn
+    if upper(coalesce(v_s3 ->> 'from', '')) = 'W' then
+        v_frames := (select jsonb_agg(f order by n) from jsonb_array_elements(v_frames) with ordinality t(f, n) where f ->> 'key' <> 'F3');
+    end if;
     return m417_internal.as_retake(jsonb_build_object('frames', v_frames, 'clips', v_clips, 'expected', v_expected, 'seconds', v_total), p_spec);
 end;
 $function$;
