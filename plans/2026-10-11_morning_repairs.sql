@@ -1,0 +1,35 @@
+-- 11 October, 10:30-11:30: what the first automatic morning showed, and what
+-- was changed. Nothing here has to be run again; the function changes are in
+-- migrations/015_auto_shorts.sql, the spec changes were applied live with
+--   select m417_internal.as_respec(code, spec || patch);
+-- and a failed short was sent back with
+--   select m417_internal.as_move(id, 'FRAMES' or 'CLIPS', '{"retried": {}}');
+--   select m417_internal.as_request(id, 'frames' or 'clips', array['!W' or '*'], true);
+--
+-- 1. SUBSCRIBE button: offset y is a share of the picture height. 0.27 put it
+--    31 % above the bottom edge (right); 0.5 put it in the middle of the
+--    picture (wrong, a misreading of the test grid). Now 0.24.
+-- 2. Reaction picture F4 came out medium-wide with the table but without the
+--    object (robot, egg). It is now an extreme close-up of heads and shoulder
+--    tops only, and the checker is told that close shots hide the rest.
+-- 3. Payoff picture F3: things changed their look (grey robot -> brown
+--    cardboard). The prompt now says every thing of the reference keeps its
+--    shape, colours and material; specs should name the colour again.
+-- 4. Clothes: a football jersey got a number that changed from shot to shot
+--    (10, 12). Every picture prompt now ends "no numbers or logos on the
+--    clothes".
+-- 5. Jumping: "jump up and down three times" became one slow leap, children
+--    hanging in the air. Use "small, quick jumps on the spot, again and
+--    again; feet leave the ground only a little".
+-- 6. Magic bottle: the cork shot showed one child alone on the rug where
+--    three had knelt. s3 now shows all three; the light swirls around all.
+-- 7. Retakes without deleting: spec "retake": {"F3": "b", "C3": "b"} asks
+--    for those files under a new name. A dance move may start from another
+--    picture: {"frame": "W", "shot": "Medium-wide shot of"}.
+-- 8. The checker is not steady: the same dance clips got 72 PASS and then
+--    42 FAIL. A FAIL is still taken seriously (both findings were real).
+-- 9. Mia in group shots (speaking in C1, laughing in C4) was accepted by
+--    Google in the robot short.
+--
+-- Repairs of the day: dance C2+C3 again (8 s), bottle F3+C3 (4 s),
+-- robot F3+C3+F4+C4 (6 s).

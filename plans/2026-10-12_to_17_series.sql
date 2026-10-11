@@ -148,3 +148,14 @@ with fixed as (
 )
 select t.code, t.title, public.auto_short_plan(t.code, t.title, t.description, t.tags_csv, t.spec, t.produce_at, t.publish_at) ->> 'seconds' as seconds
 from todo t order by t.publish_at;
+
+-- ---------------------------------------------------------------------
+-- 11 October, after the first morning (see the notes in
+-- plans/2026-10-11_morning_repairs.sql): applied live with
+-- m417_internal.as_respec(code, spec):
+--   AS-1012-1500-SONG  move 2: small, quick kangaroo hops, feet leave the
+--                      ground only a little (big jumps came out floating).
+--   AS-1013-2000-BOTTLE and AS-1015-2000-BOTTLE  s3: the cork is pulled in
+--                      a shot of all three children (a shot of one child
+--                      alone on the rug read as "the others vanished").
+-- ---------------------------------------------------------------------
