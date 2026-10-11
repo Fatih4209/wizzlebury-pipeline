@@ -228,15 +228,24 @@ insert into public.auto_extras (code, short_name, ref_file, look, clip_text, she
      'the same face, the same grey moustache, the same flat brown cap, the same green vest over the checked shirt',
      'the bus driver, a friendly older man with a grey moustache, a flat brown cap and a green vest',
      'one friendly school bus driver: a kind man of about fifty-five with a grey moustache, a flat brown cap, a green knitted vest over a checked shirt, grey trousers and brown shoes'),
-    ('MOM', 'Mom', 'auto/refs/MOM_REF_V1.jpg',
+    ('MOM', 'Fatih''s mom', 'auto/refs/MOM_REF_V1.jpg',
      'the same face, the same shoulder-length dark brown hair, the same coral sweater',
-     'Mom, a warm woman with shoulder-length dark brown hair in a coral sweater',
+     'Fatih''s mom, a warm woman with shoulder-length dark brown hair in a coral sweater',
      'one warm, loving mother: a woman of about thirty-five with shoulder-length dark brown hair, green eyes and a gentle smile, a soft coral sweater, blue jeans and white sneakers'),
-    ('DAD', 'Dad', 'auto/refs/DAD_REF_V1.jpg',
+    ('DAD', 'Fatih''s dad', 'auto/refs/DAD_REF_V1.jpg',
      'the same face, the same short brown hair and short beard, the same navy shirt',
-     'Dad, a friendly man with short brown hair and a short beard in a navy shirt',
-     'one friendly, playful father: a man of about thirty-eight with short brown hair, a short beard and a broad smile, a navy shirt with rolled-up sleeves, beige trousers and brown shoes')
-on conflict (code) do nothing;
+     'Fatih''s dad, a friendly man with short brown hair and a short beard in a navy shirt',
+     'one friendly, playful father: a man of about thirty-eight with short brown hair, a short beard and a broad smile, a navy shirt with rolled-up sleeves, beige trousers and brown shoes'),
+    -- Fatih (the lead) and Mia (as strong a lead as he) come from two families
+    ('MIAMOM', 'Mia''s mom', 'auto/refs/MIAMOM_REF_V1.jpg',
+     'the same face, the same blonde hair in a loose bun, the same lavender blouse',
+     'Mia''s mom, a cheerful woman with blonde hair in a loose bun in a lavender blouse',
+     'one cheerful, kind mother: a woman of about thirty-five with wavy blonde hair in a loose bun, blue eyes and a bright smile, a lavender blouse, white trousers and beige flat shoes'),
+    ('MIADAD', 'Mia''s dad', 'auto/refs/MIADAD_REF_V1.jpg',
+     'the same face, the same short sandy-blond hair, the same glasses, the same grey sweater',
+     'Mia''s dad, a gentle man with short sandy-blond hair and glasses in a grey sweater',
+     'one gentle, funny father: a tall man of about forty with short sandy-blond hair, rectangular glasses and a kind smile, a light grey sweater over a white shirt, dark jeans and brown shoes')
+on conflict (code) do update set short_name = excluded.short_name, clip_text = excluded.clip_text, look = excluded.look, sheet = excluded.sheet, ref_file = excluded.ref_file;
 
 -- ----- one take: everyday life, one camera, no cut --------------------------
 -- The owner, 11 October: the cut-up gag shorts feel cold; he wants everyday
@@ -247,7 +256,7 @@ on conflict (code) do nothing;
 --        public.auto_extras), "seconds": 10, "action", "sounds",
 --        "expect": [..], "music": true|false}
 -- In "action" {1} {2} {3} stand for the children from left to right and
--- {TEACHER} {COOK} {COACH} {DRIVER} {MOM} {DAD} for the grown-ups. Everybody who appears must be in the first picture: the
+-- {TEACHER} {COOK} {COACH} {DRIVER} {MOM} {DAD} {MIAMOM} {MIADAD} for the grown-ups. Everybody who appears must be in the first picture: the
 -- video model only knows the faces it has seen there.
 create or replace function m417_internal.as_prompts_onetake(p_code text, p_spec jsonb)
  returns jsonb language plpgsql stable security definer set search_path to ''
