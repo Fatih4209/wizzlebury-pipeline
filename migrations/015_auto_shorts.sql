@@ -199,15 +199,55 @@ as $function$
     end;
 $function$;
 
+-- ----- the grown-ups of the children's everyday world -----------------------
+-- Each has one reference picture (auto/refs/<CODE>_REF_V1.jpg) and one fixed
+-- description, so that the teacher is the same teacher in every short.
+create table if not exists public.auto_extras (
+    code text primary key check (code ~ '^[A-Z]{3,12}$'),
+    short_name text not null,
+    ref_file text not null,
+    look text not null,
+    clip_text text not null,
+    sheet text not null
+);
+alter table public.auto_extras enable row level security;
+insert into public.auto_extras (code, short_name, ref_file, look, clip_text, sheet) values
+    ('TEACHER', 'the teacher', 'auto/refs/TEACHER_REF_V1.jpg',
+     'the same face, the same brown ponytail, the same round glasses, the same mustard-yellow cardigan',
+     'the teacher, a friendly woman with a brown ponytail, round glasses and a mustard-yellow cardigan',
+     'one friendly primary school teacher: a woman of about thirty with a warm, kind smile, brown hair in a ponytail, round glasses, a mustard-yellow cardigan over a white blouse, dark blue trousers and flat brown shoes'),
+    ('COOK', 'the cook', 'auto/refs/COOK_REF_V1.jpg',
+     'the same face, the same grey curly hair under the white cook''s cap, the same white apron over the light blue dress',
+     'the school cook, a cheerful round woman with grey curly hair under a white cook''s cap and a white apron',
+     'one cheerful school canteen cook: a round, motherly woman of about fifty-five with rosy cheeks, grey curly hair under a white cook''s cap, a white apron over a light blue dress and white shoes'),
+    ('COACH', 'the coach', 'auto/refs/COACH_REF_V1.jpg',
+     'the same face, the same short black hair, the same blue tracksuit with white stripes, the same silver whistle around the neck',
+     'the sports teacher, a sporty man with short black hair in a blue tracksuit with a whistle around his neck',
+     'one friendly school sports teacher: a sporty man of about thirty-five with short black hair and a big smile, a blue tracksuit with white stripes, white sneakers and a silver whistle on a cord around his neck'),
+    ('DRIVER', 'the driver', 'auto/refs/DRIVER_REF_V1.jpg',
+     'the same face, the same grey moustache, the same flat brown cap, the same green vest over the checked shirt',
+     'the bus driver, a friendly older man with a grey moustache, a flat brown cap and a green vest',
+     'one friendly school bus driver: a kind man of about fifty-five with a grey moustache, a flat brown cap, a green knitted vest over a checked shirt, grey trousers and brown shoes'),
+    ('MOM', 'Mom', 'auto/refs/MOM_REF_V1.jpg',
+     'the same face, the same shoulder-length dark brown hair, the same coral sweater',
+     'Mom, a warm woman with shoulder-length dark brown hair in a coral sweater',
+     'one warm, loving mother: a woman of about thirty-five with shoulder-length dark brown hair, green eyes and a gentle smile, a soft coral sweater, blue jeans and white sneakers'),
+    ('DAD', 'Dad', 'auto/refs/DAD_REF_V1.jpg',
+     'the same face, the same short brown hair and short beard, the same navy shirt',
+     'Dad, a friendly man with short brown hair and a short beard in a navy shirt',
+     'one friendly, playful father: a man of about thirty-eight with short brown hair, a short beard and a broad smile, a navy shirt with rolled-up sleeves, beige trousers and brown shoes')
+on conflict (code) do nothing;
+
 -- ----- one take: everyday life, one camera, no cut --------------------------
 -- The owner, 11 October: the cut-up gag shorts feel cold; he wants everyday
 -- life (classroom, school bus, canteen, sports lesson) filmed like a real
 -- video: one camera that turns from the one who speaks to the next.
 -- Spec: {"kind": "onetake", "place", "scene", "cast"[2-3], "wardrobe",
---        "adult": "TEACHER" (optional), "seconds": 10, "action", "sounds",
+--        "adults": ["TEACHER", "DRIVER"] (optional, at most two; from
+--        public.auto_extras), "seconds": 10, "action", "sounds",
 --        "expect": [..], "music": true|false}
--- In "action" {1} {2} {3} stand for the children from left to right and {T}
--- for the teacher. Everybody who appears must be in the first picture: the
+-- In "action" {1} {2} {3} stand for the children from left to right and
+-- {TEACHER} {COOK} {COACH} {DRIVER} {MOM} {DAD} for the grown-ups. Everybody who appears must be in the first picture: the
 -- video model only knows the faces it has seen there.
 create or replace function m417_internal.as_prompts_onetake(p_code text, p_spec jsonb)
  returns jsonb language plpgsql stable security definer set search_path to ''
@@ -217,19 +257,22 @@ declare
     v_cast text[];
     v_n integer;
     v_num text[] := array['one', 'two', 'three'];
-    v_ord text[] := array['first', 'second', 'third', 'fourth'];
+    v_ord text[] := array['first', 'second', 'third', 'fourth', 'fifth'];
     v_pos text[];
     v_c jsonb;
     v_names text := '';
     v_positions text := '';
     v_refs jsonb := '[]'::jsonb;
     v_action text := btrim(coalesce(p_spec ->> 'action', ''));
-    v_teacher boolean := upper(coalesce(p_spec ->> 'adult', '')) = 'TEACHER';
+    v_adults text[];
+    v_x public.auto_extras;
+    v_adult_frame text := '';
+    v_adult_clip text := '';
+    v_refno integer;
     v_sec integer := coalesce((p_spec ->> 'seconds')::integer, 10);
     v_key text;
     v_frame text;
     v_clip text;
-    v_teacher_clip constant text := 'the teacher, a friendly woman with a brown ponytail, round glasses and a mustard-yellow cardigan';
     v_style constant text := 'Draw one still picture, vertical 9:16, 3D animated kids cartoon, soft rounded Pixar-like style';
     i integer;
 begin
@@ -261,29 +304,48 @@ begin
         v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || (v_c ->> 'ref'), 'mimeType', 'image/png');
         v_action := replace(v_action, '{' || i || '}', v_c ->> 'name');
     end loop;
+    -- the grown-ups: "adults": [...] or the older "adult": "TEACHER"
+    select array_agg(upper(x)) into v_adults
+    from jsonb_array_elements_text(case when jsonb_typeof(p_spec -> 'adults') = 'array' then p_spec -> 'adults'
+                                        when coalesce(p_spec ->> 'adult', '') <> '' then jsonb_build_array(p_spec ->> 'adult')
+                                        else '[]'::jsonb end) x;
+    if coalesce(array_length(v_adults, 1), 0) > 2 then
+        raise exception 'AUTO_SPEC: at most two grown-ups in one short';
+    end if;
+    v_refno := v_n;
+    for i in 1 .. coalesce(array_length(v_adults, 1), 0) loop
+        select e.* into v_x from public.auto_extras e where e.code = v_adults[i];
+        if not found then
+            raise exception 'AUTO_SPEC: unknown grown-up: %', v_adults[i];
+        end if;
+        v_refno := v_refno + 1;
+        v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || v_x.ref_file, 'mimeType', 'image/jpeg');
+        v_adult_frame := v_adult_frame || initcap(left(v_x.short_name, 1)) || substr(v_x.short_name, 2) || ' is the person from the ' || v_ord[v_refno]
+            || ' reference image, exactly as in that image: ' || v_x.look || '. ';
+        v_adult_clip := v_adult_clip || '; and ' || v_x.clip_text;
+        v_action := replace(v_action, '{' || v_x.code || '}', v_x.short_name);
+    end loop;
     v_action := replace(v_action, '{T}', 'the teacher');
     if position('{' in v_action) > 0 then
         raise exception 'AUTO_SPEC: action has an unknown placeholder';
     end if;
-    if v_teacher then
-        v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || 'auto/refs/TEACHER_REF_V1.jpg', 'mimeType', 'image/jpeg');
-    end if;
 
     v_frame := v_style || ', like a frame of a real video filmed by one camera at the eye level of a child. '
         || btrim(p_spec ->> 'place') || ' ' || btrim(p_spec ->> 'scene') || ' The children, from left to right: ' || v_positions
-        || case when v_teacher then 'The teacher is the woman from the ' || v_ord[v_n + 1]
-               || ' reference image, exactly as she looks there: the same face, the same brown ponytail, the same round glasses, the same mustard-yellow cardigan. ' else '' end
+        || v_adult_frame
         || 'Everybody is fully inside the picture with the face clearly visible, mouths closed. Exactly ' || v_num[v_n] || ' children'
-        || case when v_teacher then ' and one teacher' else '' end
+        || case coalesce(array_length(v_adults, 1), 0) when 1 then ' and one grown-up' when 2 then ' and two grown-ups' else '' end
+        || coalesce(' ' || nullif(btrim(p_spec ->> 'crowd'), ''), '')
         || '. Only the clothes of the children may differ from their reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. '
-        || 'Nobody else, no animals, no text, no letters, no numbers or logos on the clothes, nothing written on walls, boards, books or signs.';
+        || case when coalesce(btrim(p_spec ->> 'crowd'), '') = '' then 'Nobody else, no' else 'No' end
+        || ' animals, no text, no letters, no numbers or logos on the clothes, nothing written on walls, boards, books or signs.';
 
     v_clip := 'The video starts exactly from this picture and is one single continuous shot without any cut, about ' || v_sec
         || ' seconds long, filmed like a real video by one hand-held camera that turns smoothly toward whoever speaks. 3D animated family cartoon for kids, warm and natural like everyday life. The movement begins in the very first moment, with no still pause. '
-        || 'The people in the picture: ' || v_names || case when v_teacher then '; and ' || v_teacher_clip else '' end || '. '
+        || 'The people in the picture: ' || v_names || v_adult_clip || '. '
         || v_action
         || ' Whenever somebody speaks or sings, the camera is on that person and the mouth forms every word clearly, exactly in sync with the voice. Every line is said or sung once, in English, only by those named for it. '
-        || 'The camera never cuts and nobody appears who is not in the first picture; every face and all clothes stay exactly as they are in the first picture. Sound: '
+        || 'The camera never cuts and nobody new appears who is not in the first picture; every face and all clothes stay exactly as they are in the first picture. Sound: '
         || btrim(p_spec ->> 'sounds') || ' and a quiet room tone. No narrator, no text, no subtitles, nothing written anywhere.'
         || case when coalesce((p_spec ->> 'music')::boolean, true) then ' No music.' else '' end;
 

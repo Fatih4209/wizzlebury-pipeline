@@ -24,7 +24,7 @@ with fixed as (
  'What is this? An apple... or Tombik''s lunch? A warm, funny school moment with Mia, Tombik and Ömer. Watch to the end!',
  '#school #classroom #funnykids', 'classroom,funny answer,teacher and students,school for kids,funny kids,mia,tombik,omer',
  '2026-10-12 07:00+00'::timestamptz, '2026-10-12 12:00+00'::timestamptz, $j${
-  "kind": "onetake", "wardrobe": "school", "adult": "TEACHER", "seconds": 10,
+  "kind": "onetake", "wardrobe": "school", "adults": ["TEACHER"], "seconds": 10,
   "place": "A bright, cozy classroom with light wooden desks, a plain green board without any writing and big windows, warm morning light from the left.",
   "scene": "The teacher stands on the right side at the front, holding one red apple in her hand. Three children sit side by side at their desks on the left and in the middle, turned toward her.",
   "cast": ["MIA", "TOMBIK", "OMER"],
