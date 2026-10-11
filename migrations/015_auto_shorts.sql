@@ -199,6 +199,104 @@ as $function$
     end;
 $function$;
 
+-- ----- one take: everyday life, one camera, no cut --------------------------
+-- The owner, 11 October: the cut-up gag shorts feel cold; he wants everyday
+-- life (classroom, school bus, canteen, sports lesson) filmed like a real
+-- video: one camera that turns from the one who speaks to the next.
+-- Spec: {"kind": "onetake", "place", "scene", "cast"[2-3], "wardrobe",
+--        "adult": "TEACHER" (optional), "seconds": 10, "action", "sounds",
+--        "expect": [..], "music": true|false}
+-- In "action" {1} {2} {3} stand for the children from left to right and {T}
+-- for the teacher. Everybody who appears must be in the first picture: the
+-- video model only knows the faces it has seen there.
+create or replace function m417_internal.as_prompts_onetake(p_code text, p_spec jsonb)
+ returns jsonb language plpgsql stable security definer set search_path to ''
+as $function$
+declare
+    v_base text := m417_internal.as_set('storage_base');
+    v_cast text[];
+    v_n integer;
+    v_num text[] := array['one', 'two', 'three'];
+    v_ord text[] := array['first', 'second', 'third', 'fourth'];
+    v_pos text[];
+    v_c jsonb;
+    v_names text := '';
+    v_positions text := '';
+    v_refs jsonb := '[]'::jsonb;
+    v_action text := btrim(coalesce(p_spec ->> 'action', ''));
+    v_teacher boolean := upper(coalesce(p_spec ->> 'adult', '')) = 'TEACHER';
+    v_sec integer := coalesce((p_spec ->> 'seconds')::integer, 10);
+    v_key text;
+    v_frame text;
+    v_clip text;
+    v_teacher_clip constant text := 'the teacher, a friendly woman with a brown ponytail, round glasses and a mustard-yellow cardigan';
+    v_style constant text := 'Draw one still picture, vertical 9:16, 3D animated kids cartoon, soft rounded Pixar-like style';
+    i integer;
+begin
+    select array_agg(upper(x)) into v_cast from jsonb_array_elements_text(p_spec -> 'cast') x;
+    v_n := coalesce(array_length(v_cast, 1), 0);
+    if v_n not between 2 and 3 then
+        raise exception 'AUTO_SPEC: cast needs two or three characters';
+    end if;
+    foreach v_key in array array['place', 'scene', 'action', 'sounds'] loop
+        if coalesce(btrim(p_spec ->> v_key), '') = '' then
+            raise exception 'AUTO_SPEC: % is missing', v_key;
+        end if;
+    end loop;
+    if jsonb_typeof(p_spec -> 'expect') <> 'array' or jsonb_array_length(p_spec -> 'expect') = 0 then
+        raise exception 'AUTO_SPEC: expect needs at least one line';
+    end if;
+    if v_sec not between 5 and 15 then
+        raise exception 'AUTO_SPEC: seconds must be 5 to 15';
+    end if;
+    v_pos := case when v_n = 3 then array['On the left', 'In the middle', 'On the right']
+                  else array['On the left', 'On the right'] end;
+    for i in 1 .. v_n loop
+        v_c := m417_internal.as_char(v_cast[i], p_spec ->> 'wardrobe');
+        if v_c is null then
+            raise exception 'AUTO_SPEC: unknown character or wardrobe: % / %', v_cast[i], coalesce(p_spec ->> 'wardrobe', 'classic');
+        end if;
+        v_positions := v_positions || v_pos[i] || ': ' || format(v_c ->> 'frame', v_ord[i]) || '. ';
+        v_names := v_names || case when i > 1 then '; ' else '' end || lower(v_pos[i]) || ' ' || (v_c ->> 'clip');
+        v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || (v_c ->> 'ref'), 'mimeType', 'image/png');
+        v_action := replace(v_action, '{' || i || '}', v_c ->> 'name');
+    end loop;
+    v_action := replace(v_action, '{T}', 'the teacher');
+    if position('{' in v_action) > 0 then
+        raise exception 'AUTO_SPEC: action has an unknown placeholder';
+    end if;
+    if v_teacher then
+        v_refs := v_refs || jsonb_build_object('upload_format', 'url', 'uri', v_base || 'auto/refs/TEACHER_REF_V1.jpg', 'mimeType', 'image/jpeg');
+    end if;
+
+    v_frame := v_style || ', like a frame of a real video filmed by one camera at the eye level of a child. '
+        || btrim(p_spec ->> 'place') || ' ' || btrim(p_spec ->> 'scene') || ' The children, from left to right: ' || v_positions
+        || case when v_teacher then 'The teacher is the woman from the ' || v_ord[v_n + 1]
+               || ' reference image, exactly as she looks there: the same face, the same brown ponytail, the same round glasses, the same mustard-yellow cardigan. ' else '' end
+        || 'Everybody is fully inside the picture with the face clearly visible, mouths closed. Exactly ' || v_num[v_n] || ' children'
+        || case when v_teacher then ' and one teacher' else '' end
+        || '. Only the clothes of the children may differ from their reference images: every face, hairstyle, hair colour, skin tone, eye colour, age and body shape stays exactly as in its reference image. '
+        || 'Nobody else, no animals, no text, no letters, no numbers or logos on the clothes, nothing written on walls, boards, books or signs.';
+
+    v_clip := 'The video starts exactly from this picture and is one single continuous shot without any cut, about ' || v_sec
+        || ' seconds long, filmed like a real video by one hand-held camera that turns smoothly toward whoever speaks. 3D animated family cartoon for kids, warm and natural like everyday life. The movement begins in the very first moment, with no still pause. '
+        || 'The people in the picture: ' || v_names || case when v_teacher then '; and ' || v_teacher_clip else '' end || '. '
+        || v_action
+        || ' Whenever somebody speaks or sings, the camera is on that person and the mouth forms every word clearly, exactly in sync with the voice. Every line is said or sung once, in English, only by those named for it. '
+        || 'The camera never cuts and nobody appears who is not in the first picture; every face and all clothes stay exactly as they are in the first picture. Sound: '
+        || btrim(p_spec ->> 'sounds') || ' and a quiet room tone. No narrator, no text, no subtitles, nothing written anywhere.'
+        || case when coalesce((p_spec ->> 'music')::boolean, true) then ' No music.' else '' end;
+
+    return jsonb_build_object(
+        'frames', jsonb_build_array(jsonb_build_object('key', 'W', 'refs', v_refs, 'prompt', v_frame)),
+        'clips', jsonb_build_array(jsonb_build_object('key', 'C1', 'frame', 'W', 'seconds', v_sec, 'prompt', v_clip)),
+        'expected', p_spec -> 'expect',
+        'seconds', v_sec,
+        'one_take', true)
+        || case when coalesce((p_spec ->> 'music')::boolean, true) then '{}'::jsonb else '{"no_music": true}'::jsonb end;
+end;
+$function$;
+
 -- ----- a dance short: nobody speaks, a song of our own carries it ----------
 -- Spec: {"kind": "dance", "place", "cast"[3], "wardrobe", "start_pose",
 --        "song": {"file": "auto/songs/X.mp3", "trim": 1.0, "volume": 0.9},
@@ -348,6 +446,9 @@ declare
 begin
     if p_spec ->> 'kind' = 'dance' then
         return m417_internal.as_retake(m417_internal.as_prompts_dance(p_code, p_spec), p_spec);
+    end if;
+    if p_spec ->> 'kind' = 'onetake' then
+        return m417_internal.as_retake(m417_internal.as_prompts_onetake(p_code, p_spec), p_spec);
     end if;
     select array_agg(upper(x)) into v_cast from jsonb_array_elements_text(p_spec -> 'cast') x;
     v_n := coalesce(array_length(v_cast, 1), 0);
@@ -565,6 +666,12 @@ begin
                     'length', v_len)))),
             'output', jsonb_build_object('format', 'mp4', 'aspectRatio', '9:16', 'resolution', '1080', 'fps', 24));
     end if;
+    if coalesce((p_prompts ->> 'no_music')::boolean, false) then
+        -- the children sing in the clip itself: no music under it
+        return jsonb_build_object(
+            'timeline', jsonb_build_object('background', '#000000', 'tracks', v_tracks),
+            'output', jsonb_build_object('format', 'mp4', 'aspectRatio', '9:16', 'resolution', '1080', 'fps', 24));
+    end if;
     return jsonb_build_object(
         'timeline', jsonb_build_object(
             'background', '#000000',
@@ -584,6 +691,13 @@ as $function$
         || (select string_agg(E'\n' || e.ord || ') ' || e.value, '' order by e.ord)
             from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
         || E'\nAnswer FAIL if any of these is true: there is no song, or the song is drowned out, distorted or clashes with a second piece of music; the children stand still for most of a shot instead of dancing; any text, letters, subtitles, logo or watermark is visible; a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a character looks like a different child from one shot to the next (other face, hair or skin); a character is duplicated, appears from nowhere or vanishes; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
+        || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.'
+    when coalesce((p_prompts ->> 'one_take')::boolean, false) then
+        'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It is one single continuous shot of an everyday scene: one camera turns from one person to the next, without a cut. While the camera is on one person the others may be outside the picture; that is not a defect.'
+        || E'\nExpected, in this order:'
+        || (select string_agg(E'\n' || e.ord || ') ' || e.value, '' order by e.ord)
+            from jsonb_array_elements_text(p_prompts -> 'expected') with ordinality e(value, ord))
+        || E'\nAnswer FAIL if any of these is true: a spoken line is missing, cut off, in another language or has clearly different words; a voice speaks while the mouth of the one who should speak does not move, or the wrong person speaks; there is a hard cut or a jump in the picture; a person looks different at the end than at the beginning (other face, hair, skin or clothes); a face, a hand or a body is deformed, has too many or too few parts, or changes into another one; a person is duplicated or a new person appears who was not there at the beginning; any text, letters, subtitles, logo or watermark is visible; a part of the video is frozen or black; anything is scary, unsafe or unsuitable for small children. Otherwise answer PASS.'
         || E'\nReturn exactly this JSON and nothing else: {"verdict": "PASS or FAIL", "score": 0, "heard": [""], "problems": [""]}. score is 0 to 100; heard lists the words you actually hear, in order.'
     else 'You are the quality inspector of a cartoon channel for small children. Watch this short vertical video with its sound and judge it strictly. It was made from several generated clips joined with soft fades; a fade between two clips is not a defect, and quiet background music is wanted. A close shot may show only one child, only an object or only the faces; whoever and whatever is outside the picture in such a close shot has not vanished, and that is not a defect.'
         || E'\nExpected, in this order:'
