@@ -444,8 +444,35 @@ begin
 end;
 $function$;
 
+-- ----- one finished scene of an episode -> one planned short ------------------
+-- Used for the first tests (scenes 1, 3 and 5 of an episode) and later by the
+-- planner of whole episodes. The short gets the code EP01-S05.
+create or replace function m417_internal.writer_plan_scene(
+    p_episode text, p_n integer, p_produce_at timestamptz, p_publish_at timestamptz)
+ returns jsonb language plpgsql security definer set search_path to ''
+as $function$
+declare
+    v_s jsonb;
+    v_code text := p_episode || '-S' || lpad(p_n::text, 2, '0');
+begin
+    select x into v_s from public.writer_episodes e, jsonb_array_elements(e.specs) x
+    where e.code = p_episode and e.state = 'DONE' and (x ->> 'n')::integer = p_n;
+    if v_s is null then
+        raise exception 'WRITER: % has no finished scene %', p_episode, p_n;
+    end if;
+    return public.auto_short_plan(v_code, v_s ->> 'title',
+        (v_s ->> 'l1') || E'\n' || (v_s ->> 'l2') || E'\n'
+          || 'WIZZLEBURY: short, funny cartoons for kids with Fatih, Mia, Ömer, Tombik and Bruce. New videos every day!'
+          || E'\n#shorts #cartoon #kidscartoon ' || (v_s ->> 'hashtags'),
+        'kids cartoons,cartoons for kids,kids videos,funny cartoon,kids animation,cartoon shorts,wizzlebury,videos for kids,animation for kids,'
+          || regexp_replace(v_s ->> 'tags', '\s*,\s*', ',', 'g'),
+        v_s -> 'spec', p_produce_at, p_publish_at) || jsonb_build_object('code', v_code);
+end;
+$function$;
+
 do $do$
 begin
+    revoke all on function m417_internal.writer_plan_scene(text, integer, timestamptz, timestamptz) from public;
     revoke all on function m417_internal.writer_tick() from public;
     revoke all on function m417_internal.writer_start(text, text) from public;
     revoke all on function m417_internal.writer_fill(text, text, text) from public;
