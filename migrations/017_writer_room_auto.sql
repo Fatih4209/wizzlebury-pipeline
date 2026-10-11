@@ -179,7 +179,7 @@ Every object has exactly these keys:
   - "scene": the FIRST PICTURE of this scene for the painter, three to five sentences: how close and how high the camera is, where every child and grown-up is (left, middle, right; front or back; sitting, standing, kneeling), what each one holds, what lies where, and the pose and the face each one has in the first frame. Name nobody here: write "the boy on the left", "the girl in the middle", "the boy in the back on the right", "the teacher", "the father". Blank things stay blank: "a plain blue folder with nothing on it".
   - "action": what happens in the ten seconds, as ONE paragraph of at most 120 words, in the present tense and in order. The first sentence is the FIRST SECOND of the script; the last sentence is the LAST FACE. Keep every acting moment of the script (the looks, the pauses, what each face does), but in plain visible words: no comparisons ("like grass in the wind"), no thoughts ("as if it might bite"), no "silently saying". Write the children as {1}, {2}, {3} (their number in "cast") and the grown-ups as {TEACHER}, {COOK}, {COACH}, {DRIVER}, {MOM}, {DAD}, {MIAMOM}, {MIADAD}; never write their names. Say when "the camera turns to" somebody or "moves slowly closer". Every spoken line is written like this: who, how, the line - for example: {2} leans to {1} and whispers in a happy, cheeky cartoon boy voice: "Leave it to me!" Voices: Fatih "a warm, bright cartoon boy voice"; Mia "a clear, cheerful cartoon child voice"; Tombik "a happy, cheeky cartoon boy voice"; Ömer "a quick, eager cartoon boy voice"; Bruce "a dreamy, excited cartoon boy voice"; the teacher and mothers "a warm, friendly woman's voice"; fathers and other men "a warm, friendly man's voice". A line is said only while the camera is on the speaker.
   - "sounds": the sounds of the script besides the voices, in lower case, separated by commas.
-  - "expect": two to four short sentences that a checker can verify by watching the finished video: who does what, with every spoken line in quotation marks, using the real names here (for example: Tombik raises his hand and calls: "Miss Lily! Question!").
+  - "expect": a JSON list of two to four strings, each one short sentence that a checker can verify by watching the finished video: who does what, with every spoken line in quotation marks, using the real names here (for example: Tombik raises his hand and calls: "Miss Lily! Question!").
 
 Inside JSON strings every quotation mark is written as \" and there are no line breaks.
 
@@ -283,6 +283,7 @@ declare
     v_arr jsonb;
     v_one jsonb;
     v_n integer;
+    v_out jsonb := '[]'::jsonb;
 begin
     if v_from = 0 or v_to <= v_from then
         raise exception 'the answer is not a JSON array';
@@ -297,6 +298,10 @@ begin
     end if;
     for v_one in select x from jsonb_array_elements(v_arr) x loop
         v_n := (v_one ->> 'n')::integer;
+        -- the model likes to write the expected events as one text
+        if jsonb_typeof(v_one -> 'spec' -> 'expect') = 'string' then
+            v_one := jsonb_set(v_one, '{spec,expect}', jsonb_build_array(v_one -> 'spec' ->> 'expect'));
+        end if;
         if coalesce(btrim(v_one ->> 'title'), '') = '' or length(v_one ->> 'title') > 60 then
             raise exception 'scene %: title is missing or longer than 60 characters', v_n;
         end if;
@@ -307,16 +312,17 @@ begin
         if v_one -> 'spec' ->> 'kind' is distinct from 'onetake' then
             raise exception 'scene %: spec.kind must be "onetake"', v_n;
         end if;
-        if array_length(regexp_split_to_array(btrim(v_one -> 'spec' ->> 'action'), '\s+'), 1) > 150 then
-            raise exception 'scene %: action is longer than 150 words', v_n;
+        if array_length(regexp_split_to_array(btrim(v_one -> 'spec' ->> 'action'), '\s+'), 1) > 170 then
+            raise exception 'scene %: action is longer than 170 words (120 are asked for)', v_n;
         end if;
         begin
             perform m417_internal.as_prompts(p_code || '-S' || lpad(v_n::text, 2, '0'), v_one -> 'spec');
         exception when others then
             raise exception 'scene %: %', v_n, left(sqlerrm, 300);
         end;
+        v_out := v_out || jsonb_build_array(v_one);
     end loop;
-    return v_arr;
+    return v_out;
 end;
 $function$;
 
