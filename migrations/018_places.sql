@@ -26,9 +26,39 @@ create table if not exists public.auto_places (
 alter table public.auto_places enable row level security;
 
 -- A note on the set of an episode (seating, which place picture), given to
--- the SPEC step through {EP_SET}. Column applied live 13 Oct; the writer_fill
--- / writer_p_spec change that uses it is NOT applied yet.
+-- the SPEC step through {EP_SET} (writer_fill below, writer_p_spec gets the
+-- placeholder right after {EP_ERROR}). Applied live 13 October.
+-- Lesson: the Supabase MCP tool cancels a query whose quoted text contains a
+-- semicolon (it seems to split statements on it); write such texts without ';'.
 alter table public.writer_episodes add column if not exists set_note text;
+
+update public.auto_shorts_settings set value = replace(value, E'{EP_ERROR}\nEvery object', E'{EP_ERROR}{EP_SET}\nEvery object')
+where key = 'writer_p_spec' and position('{EP_SET}' in value) = 0;
+
+create or replace function m417_internal.writer_fill(p_tpl text, p_code text, p_part text)
+ returns text language plpgsql stable security definer set search_path to ''
+as $function$
+declare
+    ep public.writer_episodes;
+    v text := p_tpl;
+begin
+    select * into ep from public.writer_episodes e where e.code = p_code;
+    v := replace(v, '{PART}', coalesce(p_part, ''));
+    v := replace(v, '{EP_NO}', ep.no::text);
+    v := replace(v, '{EP_TITLE}', ep.title);
+    v := replace(v, '{EP_PLACE}', ep.place);
+    v := replace(v, '{EP_WARDROBE}', ep.wardrobe);
+    v := replace(v, '{EP_PREMISE}', ep.premise);
+    v := replace(v, '{EP_ERROR}', case when coalesce(ep.error, '') = '' then ''
+        else E'\nNOTE: your previous answer was rejected by the checker with this message: ' || ep.error || E'\nFix exactly that.\n' end);
+    v := replace(v, '{EP_SET}', coalesce(E'\n' || nullif(ep.set_note, '') || E'\n', ''));
+    v := replace(v, '{EP_RESEARCH}', coalesce(ep.research, ''));
+    v := replace(v, '{EP_EDIT}', coalesce(ep.edit, ''));
+    v := replace(v, '{EP_DRAFT}', coalesce(ep.draft, ''));
+    v := replace(v, '{EP_FINAL}', coalesce(ep.final_text, ''));
+    return v;
+end;
+$function$;
 
 insert into public.auto_shorts_settings (key, value, description) values
     ('webhook_copy', 'https://hook.eu1.make.com/h7jlnk98riauh6qrgugb37g2apjkl3lo', 'Make: copy a file from a private bucket to public-refs ({from_bucket, from, to}).')
